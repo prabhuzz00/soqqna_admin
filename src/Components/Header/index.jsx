@@ -122,6 +122,7 @@ const Header = () => {
                 <img
                   src={localStorage.getItem('logo')}
                   className="w-[170px] md:w-[200px]"
+                  style="height: 50px;"
                 />
               </Link>
             </div>

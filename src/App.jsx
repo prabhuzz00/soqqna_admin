@@ -41,7 +41,7 @@ import AddLabel from "./Pages/Products//label/addLabel";
 import Brands from "./Pages/Products/brands";
 import Tags from "./Pages/Products/tags";
 import Label from "./Pages/Products/label";
-import VerifiedProducts from "./Pages/VerifiedProducts";
+import VerifiedProducts from "./Pages/VerifyProducts";
 
 const MyContext = createContext();
 function App() {
@@ -234,7 +234,7 @@ function App() {
       ),      
     },
     {
-      path: "/vendors/verified-products",
+      path: "/vendors/verify-products",
       exact: true,      
       element: (
         <>

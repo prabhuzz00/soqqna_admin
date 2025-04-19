@@ -197,7 +197,7 @@ const Sidebar = () => {
               onClick={() => isOpenSubMenu(4)}
             >
               <RiProductHuntLine className="text-[18px]" />{" "}
-              <span>Products</span>
+              <span>Inventory</span>
               <span className="ml-auto w-[30px] h-[30px] flex items-center justify-center">
                 <FaAngleDown
                   className={`transition-all ${submenuIndex === 4 ? "rotate-180" : ""
@@ -215,11 +215,11 @@ const Sidebar = () => {
                   }}>
                     <Button className="!text-[rgba(0,0,0,0.7)] !capitalize !justify-start !w-full !text-[13px] !font-[500] !pl-9 flex gap-3">
                       <span className="block w-[5px] h-[5px] rounded-full bg-[rgba(0,0,0,0.2)]"></span>{" "}
-                      Product List
+                      Products
                     </Button>
                   </Link>
                 </li>
-                <li className="w-full">
+                {/* <li className="w-full">
                   <Button className="!text-[rgba(0,0,0,0.7)] !capitalize !justify-start !w-full !text-[13px] !font-[500] !pl-9 flex gap-3" onClick={() => {
                     context.setIsOpenFullScreenPanel({
                       open: true,
@@ -231,7 +231,7 @@ const Sidebar = () => {
                     <span className="block w-[5px] h-[5px] rounded-full bg-[rgba(0,0,0,0.2)]"></span>
                     Product Upload
                   </Button>
-                </li>
+                </li> */}
 
 
                 <li className="w-full">
@@ -241,7 +241,7 @@ const Sidebar = () => {
                   }}>
                     <Button className="!text-[rgba(0,0,0,0.7)] !capitalize !justify-start !w-full !text-[13px] !font-[500] !pl-9 flex gap-3">
                       <span className="block w-[5px] h-[5px] rounded-full bg-[rgba(0,0,0,0.2)]"></span>
-                      Add Product Color
+                      Product Color
                     </Button>
                   </Link>
                 </li>
@@ -255,7 +255,7 @@ const Sidebar = () => {
                   >
                     <Button className="!text-[rgba(0,0,0,0.7)] !capitalize !justify-start !w-full !text-[13px] !font-[500] !pl-9 flex gap-3">
                       <span className="block w-[5px] h-[5px] rounded-full bg-[rgba(0,0,0,0.2)]"></span>
-                      Add Product WEIGHT
+                      Product Weight
                     </Button>
                   </Link>
                 </li>
@@ -269,7 +269,7 @@ const Sidebar = () => {
                   >
                     <Button className="!text-[rgba(0,0,0,0.7)] !capitalize !justify-start !w-full !text-[13px] !font-[500] !pl-9 flex gap-3">
                       <span className="block w-[5px] h-[5px] rounded-full bg-[rgba(0,0,0,0.2)]"></span>
-                      Add Product SIZE
+                      Product Size
                     </Button>
                   </Link>
                 </li>
@@ -318,6 +318,54 @@ const Sidebar = () => {
               </ul>
             </Collapse>
           </li>
+          <li>
+            <Link to="/orders"
+              onClick={() => {
+                context?.windowWidth < 992 && context?.setisSidebarOpen(false)
+                setSubmenuIndex(null)
+              }}
+            >
+              <Button className="w-full !capitalize !justify-start flex gap-3 text-[14px] !text-[rgba(0,0,0,0.8)] !font-[500] items-center !py-2 hover:!bg-[#f1f1f1]">
+                <IoBagCheckOutline className="text-[20px]" /> <span>Orders</span>
+              </Button>
+            </Link>
+          </li>
+          <li>
+            <Link to="/"
+              onClick={() => {
+                context?.windowWidth < 992 && context?.setisSidebarOpen(false)
+                setSubmenuIndex(null)
+              }}
+            >
+              <Button className="w-full !capitalize !justify-start flex gap-3 text-[14px] !text-[rgba(0,0,0,0.8)] !font-[500] items-center !py-2 hover:!bg-[#f1f1f1]">
+                <IoBagCheckOutline className="text-[20px]" /> <span>Invoices</span>
+              </Button>
+            </Link>
+          </li>
+          <li>
+            <Link to="/"
+              onClick={() => {
+                context?.windowWidth < 992 && context?.setisSidebarOpen(false)
+                setSubmenuIndex(null)
+              }}
+            >
+              <Button className="w-full !capitalize !justify-start flex gap-3 text-[14px] !text-[rgba(0,0,0,0.8)] !font-[500] items-center !py-2 hover:!bg-[#f1f1f1]">
+                <IoBagCheckOutline className="text-[20px]" /> <span>Incomplete Orders</span>
+              </Button>
+            </Link>
+          </li>
+          <li>
+            <Link to="/"
+              onClick={() => {
+                context?.windowWidth < 992 && context?.setisSidebarOpen(false)
+                setSubmenuIndex(null)
+              }}
+            >
+              <Button className="w-full !capitalize !justify-start flex gap-3 text-[14px] !text-[rgba(0,0,0,0.8)] !font-[500] items-center !py-2 hover:!bg-[#f1f1f1]">
+                <IoBagCheckOutline className="text-[20px]" /> <span>Order Return</span>
+              </Button>
+            </Link>
+          </li>
 
 
 
@@ -335,18 +383,7 @@ const Sidebar = () => {
           </li>
 
 
-          <li>
-            <Link to="/orders"
-              onClick={() => {
-                context?.windowWidth < 992 && context?.setisSidebarOpen(false)
-                setSubmenuIndex(null)
-              }}
-            >
-              <Button className="w-full !capitalize !justify-start flex gap-3 text-[14px] !text-[rgba(0,0,0,0.8)] !font-[500] items-center !py-2 hover:!bg-[#f1f1f1]">
-                <IoBagCheckOutline className="text-[20px]" /> <span>Orders</span>
-              </Button>
-            </Link>
-          </li>
+         
 
 
 
@@ -474,7 +511,7 @@ const Sidebar = () => {
           </li>
 
 
-          <li>
+          {/* <li>
             <Link to="/logo/manage">
               <Button
                 className="w-full !capitalize !justify-start flex gap-3 text-[14px] !text-[rgba(0,0,0,0.8)] !font-[500] items-center !py-2 hover:!bg-[#f1f1f1]"
@@ -483,7 +520,7 @@ const Sidebar = () => {
                 <span>Manage Logo</span>
               </Button>
             </Link>
-          </li>
+          </li> */}
           <li>
             <Button
               className="w-full !capitalize !justify-start flex gap-3 text-[14px] !text-[rgba(0,0,0,0.8)] !font-[500] items-center !py-2 hover:!bg-[#f1f1f1]"
@@ -527,7 +564,7 @@ const Sidebar = () => {
                   </Link>
                 </li>
                 <li className="w-full">
-                  <Link to="/vendors/verified-products"
+                  <Link to="/vendors/verify-products"
                     onClick={() => {
                       context?.windowWidth < 992 && context?.setisSidebarOpen(false)
                       setSubmenuIndex(null)
@@ -535,13 +572,29 @@ const Sidebar = () => {
                   >
                     <Button className="!text-[rgba(0,0,0,0.7)] !capitalize !justify-start !w-full !text-[13px] !font-[500] !pl-9 flex gap-3">
                       <span className="block w-[5px] h-[5px] rounded-full bg-[rgba(0,0,0,0.2)]"></span>{" "}
-                      Verified Products
+                      Verify Products
                     </Button>
                   </Link>
                 </li>
               </ul>
             </Collapse>
           </li>
+
+          <li>
+            <Link to="/logo/manage"
+              onClick={() => {
+                context?.windowWidth < 992 && context?.setisSidebarOpen(false)
+                setSubmenuIndex(null)
+              }}
+            >
+              <Button className="w-full !capitalize !justify-start flex gap-3 text-[14px] !text-[rgba(0,0,0,0.8)] !font-[500] items-center !py-2 hover:!bg-[#f1f1f1]">
+                <IoLogoBuffer className="text-[20px]" /> <span>Site Setting</span>
+              </Button>
+            </Link>
+          </li>
+
+          
+          
 
           <li>
             <Button className="w-full !capitalize !justify-start flex gap-3 text-[14px] !text-[rgba(0,0,0,0.8)] !font-[500] items-center !py-2 hover:!bg-[#f1f1f1]" onClick={logout}>

@@ -182,7 +182,7 @@ const Dashboard = () => {
 
   return (
     <>
-      <div className="w-full py-4 lg:py-1 px-5 border bg-[#f1faff] border-[rgba(0,0,0,0.1)] flex items-center gap-8 mb-5 justify-between rounded-md">
+      {/* <div className="w-full py-4 lg:py-1 px-5 border bg-[#f1faff] border-[rgba(0,0,0,0.1)] flex items-center gap-8 mb-5 justify-between rounded-md">
         <div className="info">
           <h1 className="text-[26px] lg:text-[35px] font-bold leading-8 lg:leading-10 mb-3">
             Welcome,
@@ -203,7 +203,7 @@ const Dashboard = () => {
         </div>
 
         <img src="/shop-illustration.webp" className="w-[250px] hidden lg:block" />
-      </div>
+      </div> */}
 
       {
         productData?.products?.length !== 0 && users?.length !== 0 && allReviews?.length !== 0 && <DashboardBoxes orders={ordersCount} products={productData?.products?.length} users={users?.length} reviews={allReviews?.length} category={context?.catData?.length} />
