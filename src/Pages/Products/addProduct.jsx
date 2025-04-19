@@ -21,7 +21,9 @@ const AddProduct = () => {
 
     const [formFields, setFormFields] = useState({
         name: "",
+        arbName: "",
         description: "",
+        arbDescription: "",
         images: [],
         brand: "",
         price: "",
@@ -45,6 +47,7 @@ const AddProduct = () => {
         isDisplayOnHomeBanner:false,
         isVerified: true,
         vendorId: null,
+        barcode: "",
 
     })
 
@@ -93,6 +96,39 @@ const AddProduct = () => {
         })
     }, [])
 
+
+    //discount logic
+    useEffect(() => {
+        const price = parseFloat(formFields.price);
+        const oldPrice = parseFloat(formFields.oldPrice);
+    
+        if (!isNaN(price) && !isNaN(oldPrice) && oldPrice > 0) {
+            const discount = ((oldPrice - price) / oldPrice) * 100;
+            setFormFields(prev => ({
+                ...prev,
+                discount: Math.round(discount)
+            }));
+        }
+    }, [formFields.price, formFields.oldPrice]);
+    
+
+    //generate barcode
+    useEffect(() => {
+        const generateBarcode = () => {
+            const timestamp = Date.now().toString(); // 13 digits
+            const randomPart = Math.floor(100000000 + Math.random() * 900000000).toString(); // 9 digits
+            const barcode = (timestamp + randomPart).slice(0, 20); // Make sure it’s exactly 20 digits
+            
+    
+            setFormFields(prev => ({
+                ...prev,
+                barcode: barcode
+            }));
+        };
+    
+        generateBarcode();
+    }, []);
+    
 
     const handleChangeProductCat = (event) => {
         setProductCat(event.target.value);
@@ -265,6 +301,15 @@ const AddProduct = () => {
             return false;
         }
 
+        if (formFields.arbName === "") {
+            context.alertBox("error", "Please enter product Arbic Name");
+            return false;
+        }
+        if (formFields.arbDescription === "") {
+            context.alertBox("error", "Please enter product Arbic Description");
+            return false;
+        }
+
         if (formFields.description === "") {
             context.alertBox("error", "Please enter product description");
             return false;
@@ -354,11 +399,23 @@ const AddProduct = () => {
                             <input type="text" className='w-full h-[40px] border border-[rgba(0,0,0,0.2)] focus:outline-none focus:border-[rgba(0,0,0,0.4)] rounded-sm p-3 text-sm' name="name" value={formFields.name} onChange={onChangeInput} />
                         </div>
                     </div>
+                    <div className='grid grid-cols-1 mb-3'>
+                        <div className='col'>
+                            <h3 className='text-[14px] font-[500] mb-1 text-black'>Product Name in Arbic</h3>
+                            <input type="text" className='w-full h-[40px] border border-[rgba(0,0,0,0.2)] focus:outline-none focus:border-[rgba(0,0,0,0.4)] rounded-sm p-3 text-sm' name="arbName" value={formFields.arbName} onChange={onChangeInput} />
+                        </div>
+                    </div>
 
                     <div className='grid grid-cols-1 mb-3'>
                         <div className='col'>
                             <h3 className='text-[14px] font-[500] mb-1 text-black'>Product Description</h3>
                             <textarea type="text" className='w-full h-[140px] border border-[rgba(0,0,0,0.2)] focus:outline-none focus:border-[rgba(0,0,0,0.4)] rounded-sm p-3 text-sm' name="description" value={formFields.description} onChange={onChangeInput} />
+                        </div>
+                    </div>
+                    <div className='grid grid-cols-1 mb-3'>
+                        <div className='col'>
+                            <h3 className='text-[14px] font-[500] mb-1 text-black'>Product Description in Arbic</h3>
+                            <textarea type="text" className='w-full h-[140px] border border-[rgba(0,0,0,0.2)] focus:outline-none focus:border-[rgba(0,0,0,0.4)] rounded-sm p-3 text-sm' name="arbDescription" value={formFields.arbDescription} onChange={onChangeInput} />
                         </div>
                     </div>
 
@@ -513,7 +570,7 @@ const AddProduct = () => {
 
                         <div className='col'>
                             <h3 className='text-[14px] font-[500] mb-1 text-black'>Product Discount</h3>
-                            <input type="number" className='w-full h-[40px] border border-[rgba(0,0,0,0.2)] focus:outline-none focus:border-[rgba(0,0,0,0.4)] rounded-sm p-3 text-sm ' name="discount" value={formFields.discount} onChange={onChangeInput} />
+                            <input type="number" className='w-full h-[40px] border border-[rgba(0,0,0,0.2)] focus:outline-none focus:border-[rgba(0,0,0,0.4)] rounded-sm p-3 text-sm ' name="discount" value={formFields.discount} onChange={onChangeInput} readOnly />
                         </div>
 
 

@@ -35,6 +35,12 @@ import LoadingBar from "react-top-loading-bar";
 import VerifiedVendors from "./Pages/VerifiedVendor";
 import UnverifiedVendors from "./Pages/UnverifiedVendor";
 import EditVendor from "./Pages/EditVendor";
+import AddBrand from "./Pages/Products/brands/addBrand";
+import AddTags from "./Pages/Products/tags/addTags";
+import AddLabel from "./Pages/Products//label/addLabel";
+import Brands from "./Pages/Products/brands";
+import Tags from "./Pages/Products/tags";
+import Label from "./Pages/Products/label";
 
 const MyContext = createContext();
 function App() {
@@ -43,6 +49,7 @@ function App() {
   const [userData, setUserData] = useState(null);
   const [address, setAddress] = useState([]);
   const [catData, setCatData] = useState([]);
+  const [brandData, setBrandData] = useState([]);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [sidebarWidth, setSidebarWidth] = useState(18);
 
@@ -501,6 +508,157 @@ function App() {
         </>
       ),
     },
+
+    {
+      path: "/product/brands",
+      exact: true,
+      element: (
+        <>
+          <section className="main">
+            <Header />
+            <div className="contentMain flex">
+              <div
+                className={`overflow-hidden sidebarWrapper ${isSidebarOpen === true ? windowWidth < 992 ? `w-[${sidebarWidth / 1.5}%]` : `w-[20%]` : "w-[0px] opacity-0 invisible"
+                  } transition-all`}
+              >
+                <Sidebar />
+              </div>
+              <div
+                className={`contentRight overflow-hidden py-4 px-5 ${isSidebarOpen === true && windowWidth < 992 && 'opacity-0'}  transition-all`}
+                style={{ width: isSidebarOpen === false ? "100%" : '80%' }}
+              >
+                <Brands />
+              </div>
+            </div>
+          </section>
+        </>
+      ),
+    },
+    {
+      path: "/product/brands/addBrand",
+      exact: true,
+      element: (
+        <>
+          <section className="main">
+            <Header />
+            <div className="contentMain flex">
+              <div
+                className={`overflow-hidden sidebarWrapper ${isSidebarOpen === true ? windowWidth < 992 ? `w-[${sidebarWidth / 1.5}%]` : `w-[20%]` : "w-[0px] opacity-0 invisible"
+                  } transition-all`}
+              >
+                <Sidebar />
+              </div>
+              <div
+                className={`contentRight overflow-hidden py-4 px-5 ${isSidebarOpen === true && windowWidth < 992 && 'opacity-0'}  transition-all`}
+                style={{ width: isSidebarOpen === false ? "100%" : '80%' }}
+              >
+                <AddBrand />
+              </div>
+            </div>
+          </section>
+        </>
+      ),
+    },
+    {
+      path: "/product/tags",
+      exact: true,
+      element: (
+        <>
+          <section className="main">
+            <Header />
+            <div className="contentMain flex">
+              <div
+                className={`overflow-hidden sidebarWrapper ${isSidebarOpen === true ? windowWidth < 992 ? `w-[${sidebarWidth / 1.5}%]` : `w-[20%]` : "w-[0px] opacity-0 invisible"
+                  } transition-all`}
+              >
+                <Sidebar />
+              </div>
+              <div
+                className={`contentRight overflow-hidden py-4 px-5 ${isSidebarOpen === true && windowWidth < 992 && 'opacity-0'}  transition-all`}
+                style={{ width: isSidebarOpen === false ? "100%" : '80%' }}
+              >
+                <Tags />
+              </div>
+            </div>
+          </section>
+        </>
+      ),
+    },
+    {
+      path: "/product/tags/addTags",
+      exact: true,
+      element: (
+        <>
+          <section className="main">
+            <Header />
+            <div className="contentMain flex">
+              <div
+                className={`overflow-hidden sidebarWrapper ${isSidebarOpen === true ? windowWidth < 992 ? `w-[${sidebarWidth / 1.5}%]` : `w-[20%]` : "w-[0px] opacity-0 invisible"
+                  } transition-all`}
+              >
+                <Sidebar />
+              </div>
+              <div
+                className={`contentRight overflow-hidden py-4 px-5 ${isSidebarOpen === true && windowWidth < 992 && 'opacity-0'}  transition-all`}
+                style={{ width: isSidebarOpen === false ? "100%" : '80%' }}
+              >
+                <AddTags />
+              </div>
+            </div>
+          </section>
+        </>
+      ),
+    },
+    {
+      path: "/product/label",
+      exact: true,
+      element: (
+        <>
+          <section className="main">
+            <Header />
+            <div className="contentMain flex">
+              <div
+                className={`overflow-hidden sidebarWrapper ${isSidebarOpen === true ? windowWidth < 992 ? `w-[${sidebarWidth / 1.5}%]` : `w-[20%]` : "w-[0px] opacity-0 invisible"
+                  } transition-all`}
+              >
+                <Sidebar />
+              </div>
+              <div
+                className={`contentRight overflow-hidden py-4 px-5 ${isSidebarOpen === true && windowWidth < 992 && 'opacity-0'}  transition-all`}
+                style={{ width: isSidebarOpen === false ? "100%" : '80%' }}
+              >
+                <Label />
+              </div>
+            </div>
+          </section>
+        </>
+      ),
+    },
+    {
+      path: "/product/label/addLabel",
+      exact: true,
+      element: (
+        <>
+          <section className="main">
+            <Header />
+            <div className="contentMain flex">
+              <div
+                className={`overflow-hidden sidebarWrapper ${isSidebarOpen === true ? windowWidth < 992 ? `w-[${sidebarWidth / 1.5}%]` : `w-[20%]` : "w-[0px] opacity-0 invisible"
+                  } transition-all`}
+              >
+                <Sidebar />
+              </div>
+              <div
+                className={`contentRight overflow-hidden py-4 px-5 ${isSidebarOpen === true && windowWidth < 992 && 'opacity-0'}  transition-all`}
+                style={{ width: isSidebarOpen === false ? "100%" : '80%' }}
+              >
+                <AddLabel />
+              </div>
+            </div>
+          </section>
+        </>
+      ),
+    },
     {
       path: "/bannerV1/list",
       exact: true,
@@ -661,6 +819,13 @@ function App() {
     })
   }
 
+  const getBrand = () => {
+    fetchDataFromApi("/api/brands").then((res) => {
+      setBrandData(res?.data)
+    })
+  }
+
+
 
   const values = {
     isSidebarOpen,
@@ -677,6 +842,9 @@ function App() {
     catData,
     setCatData,
     getCat,
+    brandData,
+    setBrandData,
+    getBrand,
     windowWidth,
     setSidebarWidth,
     sidebarWidth,

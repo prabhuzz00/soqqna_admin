@@ -71,7 +71,20 @@ const EditProduct = () => {
 
     const context = useContext(MyContext);
 
-
+//discount logic
+    useEffect(() => {
+        const price = parseFloat(formFields.price);
+        const oldPrice = parseFloat(formFields.oldPrice);
+    
+        if (!isNaN(price) && !isNaN(oldPrice) && oldPrice > 0) {
+            const discount = ((oldPrice - price) / oldPrice) * 100;
+            setFormFields(prev => ({
+                ...prev,
+                discount: Math.round(discount)
+            }));
+        }
+    }, [formFields.price, formFields.oldPrice]);
+    
     useEffect(() => {
 
         fetchDataFromApi("/api/product/productRAMS/get").then((res) => {
@@ -95,6 +108,18 @@ const EditProduct = () => {
 
         fetchDataFromApi(`/api/product/${context?.isOpenFullScreenPanel?.id}`).then((res) => {
 
+            const product = res?.product;
+
+    // Calculate discount based on oldPrice and price
+    const price = parseFloat(product?.price);
+    const oldPrice = parseFloat(product?.oldPrice);
+    let discount = "";
+    if (!isNaN(price) && !isNaN(oldPrice) && oldPrice > 0) {
+        discount = Math.round(((oldPrice - price) / oldPrice) * 100);
+    }
+
+            
+
             setFormFields({
                 name: res?.product?.name,
                 description: res?.product?.description,
@@ -112,7 +137,7 @@ const EditProduct = () => {
                 countInStock: res?.product?.countInStock,
                 rating: res?.product?.rating,
                 isFeatured: res?.product?.isFeatured,
-                discount: res?.product?.discount,
+                discount: product?.discount,
                 productRam: res?.product?.productRam,
                 size: res?.product?.size,
                 productWeight: res?.product?.productWeight,
@@ -138,6 +163,8 @@ const EditProduct = () => {
         })
     }, []);
 
+
+ 
 
     const handleChangeProductCat = (event) => {
         setProductCat(event.target.value);
@@ -388,6 +415,8 @@ const EditProduct = () => {
         })
     }
 
+    
+
     return (
         <section className='p-5 bg-gray-50'>
             <form className='form py-1 p-1 md:p-8 md:py-1' onSubmit={handleSubmitg}>
@@ -558,7 +587,7 @@ const EditProduct = () => {
 
                         <div className='col'>
                             <h3 className='text-[14px] font-[500] mb-1 text-black'>Product Discount</h3>
-                            <input type="number" className='w-full h-[40px] border border-[rgba(0,0,0,0.2)] focus:outline-none focus:border-[rgba(0,0,0,0.4)] rounded-sm p-3 text-sm ' name="discount" value={formFields.discount} onChange={onChangeInput} />
+                            <input type="number" className='w-full h-[40px] border border-[rgba(0,0,0,0.2)] focus:outline-none focus:border-[rgba(0,0,0,0.4)] rounded-sm p-3 text-sm ' name="discount" value={formFields.discount} onChange={onChangeInput} readOnly/>
                         </div>
 
 

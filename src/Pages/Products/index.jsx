@@ -26,6 +26,8 @@ import CircularProgress from '@mui/material/CircularProgress';
 
 import Lightbox from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
+import Barcode from 'react-barcode';
+
 
 
 const label = { inputProps: { "aria-label": "Checkbox demo" } };
@@ -59,9 +61,14 @@ const columns = [
         minWidth: 100,
     },
     {
+        id: "barcode",
+        label: "BARCODE",
+        minWidth: 100,
+    },
+    {
         id: "action",
         label: "ACTION",
-        minWidth: 120,
+        minWidth: 100,
     },
 ];
 
@@ -581,6 +588,10 @@ export const Products = () => {
 
 
                                             </TableCell>
+                                            <TableCell style={{ minWidth: columns.minWidth, maxWidth:190 }}>
+                                                <Barcode value={product?.barcode} width={1} height={40} fontSize={12} />
+                                            </TableCell>
+
 
                                             <TableCell style={{ minWidth: columns.minWidth }}>
                                                 <div className="flex items-center gap-1">
