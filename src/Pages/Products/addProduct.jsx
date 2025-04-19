@@ -257,7 +257,7 @@ const AddProduct = () => {
    const removeImg = (image, index) => {
         var imageArr = [];
         imageArr = previews;
-        deleteImages(`/api/category/deteleImage?img=${image}`).then((res) => {
+        deleteImages(`/api/category/deleteVendorImage?img=${image}`).then((res) => {
             imageArr.splice(index, 1);
 
             setPreviews([]);
@@ -273,7 +273,7 @@ const AddProduct = () => {
     const removeBannerImg = (image, index) => {
         var imageArr = [];
         imageArr = bannerPreviews;
-        deleteImages(`/api/category/deteleImage?img=${image}`).then((res) => {
+        deleteImages(`/api/category/deleteVendorImage?img=${image}`).then((res) => {
             imageArr.splice(index, 1);
 
             setBannerPreviews([]);

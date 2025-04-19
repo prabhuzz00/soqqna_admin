@@ -1,9 +1,8 @@
-// components/EditVendor.jsx
 import React, { useState, useEffect, useContext } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
-import { Button, TextField, Checkbox, FormControlLabel, Select, MenuItem, InputLabel, FormControl, Box, Typography, CircularProgress, Stack } from "@mui/material";
+import { Button, TextField, Checkbox, FormControlLabel, Select, MenuItem, InputLabel, FormControl, Box, Typography, CircularProgress, Stack, FormLabel } from "@mui/material";
 import { MyContext } from "../../App";
-import { fetchDataFromApi, patchDataLatest } from "../../utils/api";
+import { fetchDataFromApi, patchDataLatest, deleteImages } from "../../utils/api";
 import UploadBox from '../../Components/UploadBox';
 import { IoMdClose } from "react-icons/io";
 
@@ -13,6 +12,8 @@ const EditVendor = () => {
   const location = useLocation();
   const context = useContext(MyContext);
   const [isLoading, setIsLoading] = useState(false);
+  const [previews, setPreviews] = useState([]);
+  const [bannerPreviews, setBannerPreviews] = useState([]);
   const [vendorData, setVendorData] = useState({
     storeName: "",
     storeDescription: "",
@@ -20,8 +21,8 @@ const EditVendor = () => {
     emailAddress: "",
     phoneNumber: "",
     storeAddress: "",
-    storeLogo: [],
-    storeBanner: [],
+    images: [],
+    bannerImages: [],
     productCategories: [],
     commissionRate: "",
     paymentDetails: "",
@@ -30,11 +31,6 @@ const EditVendor = () => {
     isVerified: false,
     status: true,
   });
-  const [storeLogoPreview, setStoreLogoPreview] = useState(null);
-  const [storeBannerPreview, setStoreBannerPreview] = useState(null);
-
-  const [previews, setPreviews] = useState([]);
-      const [bannerPreviews, setBannerPreviews] = useState([]);
 
   useEffect(() => {
     fetchVendorData();
@@ -53,8 +49,8 @@ const EditVendor = () => {
           emailAddress: vendor.emailAddress || "",
           phoneNumber: vendor.phoneNumber || "",
           storeAddress: vendor.storeAddress || "",
-          storeLogo: null,
-          storeBanner: null,
+          images: vendor.storeLogo || [],
+          bannerImages: vendor.storeBanner || [],
           productCategories: vendor.productCategories || [],
           commissionRate: vendor.commissionRate ? vendor.commissionRate.toString() : "",
           paymentDetails: vendor.paymentDetails || "",
@@ -63,8 +59,8 @@ const EditVendor = () => {
           isVerified: Boolean(vendor.isVerified),
           status: Boolean(vendor.status),
         });
-        setStoreLogoPreview(vendor.storeLogo || null);
-        setStoreBannerPreview(vendor.storeBanner || null);
+        setPreviews(vendor.storeLogo || []);
+        setBannerPreviews(vendor.storeBanner || []);
       } else {
         context.alertBox("error", "Vendor not found");
         navigate(location.state?.from || "/vendors/verified-vendors");
@@ -85,79 +81,65 @@ const EditVendor = () => {
     }));
   };
 
-  const handleFileChange = (e) => {
-    const { name, files } = e.target;
-    if (files[0]) {
-      setVendorData((prev) => ({ ...prev, [name]: files[0] }));
-      const previewUrl = URL.createObjectURL(files[0]);
-      if (name === "storeLogo") {
-        setStoreLogoPreview(previewUrl);
-      } else if (name === "storeBanner") {
-        setStoreBannerPreview(previewUrl);
-      }
+  const setPreviewsFun = (previewsArr) => {
+    const imgArr = [...previews];
+    for (let i = 0; i < previewsArr.length; i++) {
+      imgArr.push(previewsArr[i]);
     }
+    setPreviews([]);
+    setTimeout(() => {
+      setPreviews(imgArr);
+      setVendorData((prev) => ({
+        ...prev,
+        images: imgArr,
+      }));
+    }, 10);
   };
 
-  
-      const setPreviewsFun = (previewsArr) => {
-          const imgArr = previews;
-          for (let i = 0; i < previewsArr.length; i++) {
-              imgArr.push(previewsArr[i])
-          }
-  
-          setPreviews([])
-          setTimeout(() => {
-              setPreviews(imgArr)
-              formFields.images = imgArr
-          }, 10);
-      }
-  
-  
-      const setBannerImagesFun = (previewsArr) => {
-          const imgArr = bannerPreviews;
-          for (let i = 0; i < previewsArr.length; i++) {
-              imgArr.push(previewsArr[i])
-          }
-  
-          setBannerPreviews([])
-          setTimeout(() => {
-              setBannerPreviews(imgArr)
-              formFields.bannerimages = imgArr
-          }, 10);
-      }
-  
-  
-  
-     const removeImg = (image, index) => {
-          var imageArr = [];
-          imageArr = previews;
-          deleteImages(`/api/vendor/deteleImage?img=${image}`).then((res) => {
-              imageArr.splice(index, 1);
-  
-              setPreviews([]);
-              setTimeout(() => {
-                  setPreviews(imageArr);
-                  formFields.images = imageArr
-              }, 100);
-  
-          })
-      }
-  
-  
-      const removeBannerImg = (image, index) => {
-          var imageArr = [];
-          imageArr = bannerPreviews;
-          deleteImages(`/api/vendor/deteleImage?img=${image}`).then((res) => {
-              imageArr.splice(index, 1);
-  
-              setBannerPreviews([]);
-              setTimeout(() => {
-                  setBannerPreviews(imageArr);
-                  formFields.bannerimages = imageArr
-              }, 100);
-  
-          })
-      }
+  const setBannerImagesFun = (previewsArr) => {
+    const imgArr = [...bannerPreviews];
+    for (let i = 0; i < previewsArr.length; i++) {
+      imgArr.push(previewsArr[i]);
+    }
+    setBannerPreviews([]);
+    setTimeout(() => {
+      setBannerPreviews(imgArr);
+      setVendorData((prev) => ({
+        ...prev,
+        bannerImages: imgArr,
+      }));
+    }, 10);
+  };
+
+  const removeImg = (image, index) => {
+    const imageArr = [...previews];
+    deleteImages(`/api/category/deleteVendorImage?img=${image}`).then((res) => { 
+      imageArr.splice(index, 1);
+      setPreviews([]);
+      setTimeout(() => {
+        setPreviews(imageArr);
+        setVendorData((prev) => ({
+          ...prev,
+          images: imageArr,
+        }));
+      }, 100);
+    });
+  };
+
+  const removeBannerImg = (image, index) => {
+    const imageArr = [...bannerPreviews];
+    deleteImages(`/api/category/deleteVendorImage?img=${image}`).then((res) => {
+      imageArr.splice(index, 1);
+      setBannerPreviews([]);
+      setTimeout(() => {
+        setBannerPreviews(imageArr);
+        setVendorData((prev) => ({
+          ...prev,
+          bannerImages: imageArr,
+        }));
+      }, 100);
+    });
+  };
 
   const handleCategoriesChange = (e) => {
     setVendorData((prev) => ({
@@ -168,17 +150,12 @@ const EditVendor = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Removed termsAgreement check since checkbox is commented out
-    // if (!vendorData.termsAgreement) {
-    //   context.alertBox("error", "You must agree to the terms");
-    //   return;
-    // }
-
     setIsLoading(true);
+
     const formData = new FormData();
     Object.keys(vendorData).forEach((key) => {
-      if (key === "productCategories") {
-        formData.append(key, JSON.stringify(vendorData[key]));
+      if (key === "productCategories" || key === "images" || key === "bannerImages") {
+        formData.append(key, JSON.stringify(vendorData[key] || []));
       } else if (key === "termsAgreement" || key === "isVerified" || key === "status") {
         formData.append(key, vendorData[key].toString());
       } else if (vendorData[key] !== null && vendorData[key] !== undefined) {
@@ -186,18 +163,12 @@ const EditVendor = () => {
       }
     });
 
-    console.log("Sending FormData:");
-    for (let [key, value] of formData.entries()) {
-      console.log(`  ${key}: ${value}`);
-    }
-
     try {
       const res = await patchDataLatest(`/api/vendor/${id}`, formData);
       if (res.error) {
         context.alertBox("error", `Update failed: ${res.message}`);
       } else {
         context.alertBox("success", "Vendor updated successfully");
-        console.log("Update response:", res.data);
         navigate(location.state?.from || "/vendors/verified-vendors");
       }
     } catch (error) {
@@ -279,79 +250,55 @@ const EditVendor = () => {
         onChange={handleInputChange}
         margin="normal"
       />
-      {/* <Box sx={{ mt: 2 }}>
-        <InputLabel>Store Logo</InputLabel>
-        {storeLogoPreview && (
-          <Box component="img" src={storeLogoPreview} alt="Store Logo Preview" sx={{ width: 100, height: 100, objectFit: "cover", mb: 1 }} />
-        )}
-        <input
-          type="file"
-          name="storeLogo"
-          accept="image/*"
-          onChange={handleFileChange}
-          style={{ marginTop: "8px" }}
-        />
-      </Box> */}
-
-       <Box sx={{ mt: 2 }}>
-        <InputLabel>Store Logo</InputLabel>
-        <div className="grid grid-cols-2 md:grid-cols-7 gap-4">
-                            {
-                                previews?.length !== 0 && previews?.map((image, index) => {
-                                    return (
-                                        <div className="uploadBoxWrapper relative" key={index}>
-
-                                            <span className='absolute w-[20px] h-[20px] rounded-full  overflow-hidden bg-red-700 -top-[5px] -right-[5px] flex items-center justify-center z-50 cursor-pointer' onClick={() => removeImg(image, index)}><IoMdClose className='text-white text-[17px]' /></span>
-
-
-                                            <div className='uploadBox p-0 rounded-md overflow-hidden border border-dashed border-[rgba(0,0,0,0.3)] h-[150px] w-[100%] bg-gray-100 cursor-pointer hover:bg-gray-200 flex items-center justify-center flex-col relative'>
-
-                                                <img src={image} className='w-100' />
-                                            </div>
-                                        </div>
-                                    )
-                                })
-                            }
-
-
-                            <UploadBox multiple={true} name="images" url="/api/vendor/uploadImages" setPreviewsFun={setPreviewsFun} />
-                        </div>
-      </Box>
-      
       <Box sx={{ mt: 2 }}>
-        <InputLabel>Store Banner</InputLabel>
-        {/* {storeBannerPreview && (
-          <Box component="img" src={storeBannerPreview} alt="Store Banner Preview" sx={{ width: 200, height: 100, objectFit: "cover", mb: 1 }} />
-        )}
-        <input
-          type="file"
-          name="storeBanner"
-          accept="image/*"
-          onChange={handleFileChange}
-          style={{ marginTop: "8px" }}
-        /> */}
-        <div className="grid grid-cols-2 md:grid-cols-7 gap-4">
-
-{
-    bannerPreviews?.length !== 0 && bannerPreviews?.map((image, index) => {
-        return (
+        <FormLabel>Store Logo</FormLabel>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          {previews?.map((image, index) => (
             <div className="uploadBoxWrapper relative" key={index}>
-
-                <span className='absolute w-[20px] h-[20px] rounded-full  overflow-hidden bg-red-700 -top-[5px] -right-[5px] flex items-center justify-center z-50 cursor-pointer' onClick={() => removeBannerImg(image, index)}><IoMdClose className='text-white text-[17px]' /></span>
-
-
-                <div className='uploadBox p-0 rounded-md overflow-hidden border border-dashed border-[rgba(0,0,0,0.3)] h-[150px] w-[100%] bg-gray-100 cursor-pointer hover:bg-gray-200 flex items-center justify-center flex-col relative'>
-
-                    <img src={image} className='w-100' />
-                </div>
+              <span
+                className="absolute w-[20px] h-[20px] rounded-full bg-red-700 -top-[5px] -right-[5px] flex items-center justify-center z-50 cursor-pointer"
+                onClick={() => removeImg(image, index)}
+              >
+                <IoMdClose className="text-white text-[17px]" />
+              </span>
+              <div className="uploadBox p-0 rounded-md overflow-hidden border border-dashed border-[rgba(0,0,0,0.3)] h-[150px] w-[100%] bg-gray-100">
+                <img src={image} className="w-full h-full object-cover" />
+              </div>
             </div>
-        )
-    })
-}
-
-
-<UploadBox multiple={true} name="bannerimages" url="/api/product/uploadBannerImages" setPreviewsFun={setBannerImagesFun} />
-</div>
+          ))}
+          <UploadBox
+            multiple={true}
+            name="images"
+            url="/api/vendor/uploadImages"
+            setPreviewsFun={setPreviewsFun}
+            disabled={isLoading}
+          />
+        </div>
+      </Box>
+      <Box sx={{ mt: 2 }}>
+        <FormLabel>Store Banner</FormLabel>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          {bannerPreviews?.map((image, index) => (
+            <div className="uploadBoxWrapper relative" key={index}>
+              <span
+                className="absolute w-[20px] h-[20px] rounded-full bg-red-700 -top-[5px] -right-[5px] flex items-center justify-center z-50 cursor-pointer"
+                onClick={() => removeBannerImg(image, index)}
+              >
+                <IoMdClose className="text-white text-[17px]" />
+              </span>
+              <div className="uploadBox p-0 rounded-md overflow-hidden border border-dashed border-[rgba(0,0,0,0.3)] h-[150px] w-[100%] bg-gray-100">
+                <img src={image} className="w-full h-full object-cover" />
+              </div>
+            </div>
+          ))}
+          <UploadBox
+            multiple={true}
+            name="bannerImages"
+            url="/api/vendor/uploadBannerImages"
+            setPreviewsFun={setBannerImagesFun}
+            disabled={isLoading}
+          />
+        </div>
       </Box>
       <FormControl fullWidth margin="normal">
         <InputLabel>Product Categories</InputLabel>
