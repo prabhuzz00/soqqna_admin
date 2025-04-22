@@ -13,7 +13,7 @@ import { useContext } from "react";
 
 import { MyContext } from "../../App.jsx";
 
-export const Orders = () => {
+export const OrdersReturn = () => {
   const [isOpenOrderdProduct, setIsOpenOrderdProduct] = useState(null);
   const [orderStatus, setOrderStatus] = useState("");
 
@@ -50,19 +50,19 @@ export const Orders = () => {
 
   useEffect(() => {
     context?.setProgress(50);
-    fetchDataFromApi(`/api/order/order-list?page=${pageOrder}&limit=5`).then(
-      (res) => {
-        if (res?.error === false) {
-          setOrdersData(res?.data);
-          context?.setProgress(100);
-        }
-      }
-    );
-    fetchDataFromApi(`/api/order/order-list`).then((res) => {
+    fetchDataFromApi(
+      `/api/order/return-order-list?page=${pageOrder}&limit=5`
+    ).then((res) => {
       if (res?.error === false) {
-        setTotalOrdersData(res);
+        setOrdersData(res?.data);
+        context?.setProgress(100);
       }
     });
+    // fetchDataFromApi(`/api/order/order-list`).then((res) => {
+    //   if (res?.error === false) {
+    //     setTotalOrdersData(res)
+    //   }
+    // })
   }, [orderStatus, pageOrder]);
 
   useEffect(() => {
@@ -81,14 +81,14 @@ export const Orders = () => {
       );
       setOrdersData(filteredOrders);
     } else {
-      fetchDataFromApi(`/api/order/order-list?page=${pageOrder}&limit=5`).then(
-        (res) => {
-          if (res?.error === false) {
-            setOrders(res);
-            setOrdersData(res?.data);
-          }
+      fetchDataFromApi(
+        `/api/order/return-order-list?page=${pageOrder}&limit=5`
+      ).then((res) => {
+        if (res?.error === false) {
+          setOrders(res);
+          setOrdersData(res?.data);
         }
-      );
+      });
     }
   }, [searchQuery]);
 
@@ -96,7 +96,7 @@ export const Orders = () => {
     if (context?.userData?.role === "ADMIN") {
       deleteData(`/api/order/deleteOrder/${id}`).then((res) => {
         fetchDataFromApi(
-          `/api/order/order-list?page=${pageOrder}&limit=5`
+          `/api/order/return-order-list?page=${pageOrder}&limit=5`
         ).then((res) => {
           if (res?.error === false) {
             setOrdersData(res?.data);
@@ -105,7 +105,7 @@ export const Orders = () => {
           }
         });
 
-        fetchDataFromApi(`/api/order/order-list`).then((res) => {
+        fetchDataFromApi(`/api/order/return-order-list`).then((res) => {
           if (res?.error === false) {
             setTotalOrdersData(res);
           }
@@ -120,7 +120,7 @@ export const Orders = () => {
     <div className="card my-2 md:mt-4 shadow-md sm:rounded-lg bg-white">
       <div className="grid grid-cols-1 lg:grid-cols-2 px-5 py-5 flex-col sm:flex-row">
         <h2 className="text-[18px] font-[600] text-left mb-2 lg:mb-0">
-          Recent Orders
+          Order Returns
         </h2>
         <div className="ml-auto w-full">
           <SearchBox
@@ -248,8 +248,15 @@ export const Orders = () => {
                           {order?.userId?._id}
                         </span>
                       </td>
-
                       <td className="px-6 py-4 font-[500]">
+                        <span className="text-red-500">
+                          {order?.order_status !== null
+                            ? "RETURNED"
+                            : orderStatus}
+                        </span>
+                      </td>
+
+                      {/* <td className="px-6 py-4 font-[500]">
                         <Select
                           labelId="demo-simple-select-helper-label"
                           id="demo-simple-select-helper"
@@ -269,7 +276,7 @@ export const Orders = () => {
                           <MenuItem value={"delivered"}>Delivered</MenuItem>
                           <MenuItem value={"canceled"}>Canceled</MenuItem>
                         </Select>
-                      </td>
+                      </td> */}
                       <td className="px-6 py-4 font-[500] whitespace-nowrap">
                         {order?.createdAt?.split("T")[0]}
                       </td>
@@ -409,4 +416,4 @@ export const Orders = () => {
   );
 };
 
-export default Orders;
+export default OrdersReturn;
