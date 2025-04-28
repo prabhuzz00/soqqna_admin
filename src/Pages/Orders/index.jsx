@@ -264,10 +264,14 @@ export const Orders = () => {
                           className="w-full"
                           onChange={(e) => handleChange(e, order?._id)}
                         >
-                          <MenuItem value={"pending"}>Pending</MenuItem>
-                          <MenuItem value={"confirm"}>Confirm</MenuItem>
-                          <MenuItem value={"delivered"}>Delivered</MenuItem>
-                          <MenuItem value={"canceled"}>Canceled</MenuItem>
+                          <MenuItem value={"Received"}>Received</MenuItem>
+                          <MenuItem value={"Picked"}>Picked</MenuItem>
+                          <MenuItem value={"In-Transist"}>In-Transist</MenuItem>
+                          <MenuItem value={"Out for Delivery"}>
+                            Out for Delivery
+                          </MenuItem>
+                          <MenuItem value={"Delivered"}>Delivered</MenuItem>
+                          <MenuItem value={"Canceled"}>Canceled</MenuItem>
                         </Select>
                       </td>
                       <td className="px-6 py-4 font-[500] whitespace-nowrap">
