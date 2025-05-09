@@ -48,6 +48,7 @@ const AddProduct = () => {
         isVerified: true,
         vendorId: null,
         barcode: "",
+        tags: [],
 
     })
 
@@ -101,7 +102,7 @@ const AddProduct = () => {
     useEffect(() => {
         const price = parseFloat(formFields.price);
         const oldPrice = parseFloat(formFields.oldPrice);
-    
+
         if (!isNaN(price) && !isNaN(oldPrice) && oldPrice > 0) {
             const discount = ((oldPrice - price) / oldPrice) * 100;
             setFormFields(prev => ({
@@ -110,7 +111,7 @@ const AddProduct = () => {
             }));
         }
     }, [formFields.price, formFields.oldPrice]);
-    
+
 
     //generate barcode
     useEffect(() => {
@@ -118,17 +119,17 @@ const AddProduct = () => {
             const timestamp = Date.now().toString(); // 13 digits
             const randomPart = Math.floor(100000000 + Math.random() * 900000000).toString(); // 9 digits
             const barcode = (timestamp + randomPart).slice(0, 20); // Make sure it’s exactly 20 digits
-            
-    
+
+
             setFormFields(prev => ({
                 ...prev,
                 barcode: barcode
             }));
         };
-    
+
         generateBarcode();
     }, []);
-    
+
 
     const handleChangeProductCat = (event) => {
         setProductCat(event.target.value);
@@ -207,12 +208,21 @@ const AddProduct = () => {
 
     const onChangeInput = (e) => {
         const { name, value } = e.target;
-        setFormFields(() => {
-            return {
-                ...formFields,
-                [name]: value
-            }
-        })
+        if (name === 'tags') {
+            setFormFields(() => {
+                return {
+                    ...formFields,
+                    [name]: value.split(',').map(tag => tag.trim()),
+                };
+            });
+        } else {
+            setFormFields(() => {
+                return {
+                    ...formFields,
+                    [name]: value
+                };
+            });
+        }
     }
 
     const onChangeRating = (e) => {
@@ -295,7 +305,6 @@ const AddProduct = () => {
     const handleSubmitg = (e) => {
         e.preventDefault(0);
 
-        console.log(formFields)
         if (formFields.name === "") {
             context.alertBox("error", "Please enter product name");
             return false;
@@ -648,6 +657,12 @@ const AddProduct = () => {
                                     }
                                 </Select>
                             }
+                        </div>
+
+
+                        <div className='col'>
+                            <h3 className='text-[14px] font-[500] mb-1 text-black'>Product Tags</h3>
+                            <input type="text" className='w-full h-[40px] border border-[rgba(0,0,0,0.2)] focus:outline-none focus:border-[rgba(0,0,0,0.4)] rounded-sm p-3 text-sm' name="tags" value={formFields.tags} onChange={onChangeInput} />
                         </div>
 
 
