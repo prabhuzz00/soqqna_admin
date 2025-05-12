@@ -119,7 +119,7 @@ const Header = () => {
             >
               <Link to="/">
                 <img
-                  src="/public/logo.svg"
+                  src="logo.svg"
                   className="w-[170px] md:w-[200px]"
                   style="height: 50px;"
                 />

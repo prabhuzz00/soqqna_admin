@@ -179,7 +179,7 @@ const Login = () => {
       <div className="relative w-full max-w-md bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl p-8 z-50">
         <div className="flex justify-center mb-6">
           <img
-            src="/public/logo.svg"
+            src="logo.svg"
             className="w-40 h-[56px] filter drop-shadow-md"
             alt="Logo"
           />
