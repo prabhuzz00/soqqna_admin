@@ -47,7 +47,7 @@ const Sidebar = () => {
   return (
     <>
       <div
-        className={`sidebar fixed top-0 left-0 z-[52] bg-[#fff] h-full border-r border-[rgba(0,0,0,0.1)] py-2 px-4 w-[${
+        className={`sidebar fixed top-0 left-0 z-[52] bg-[#0d215c] h-full text-white border-r border-[rgba(0,0,0,0.1)] py-2 px-4 w-[${
           context.isSidebarOpen === true ? `${20}%` : "0px"
         }]`}
       >
@@ -60,8 +60,8 @@ const Sidebar = () => {
         >
           <Link to="/">
             <img
-              src={localStorage.getItem("logo")}
-              className="w-[170px] md:min-w-[200px]"
+              src="public/logo.svg"
+              className="w-[170px] md:min-w-[200px] h-[56px] mt-[20px] ml-[10px] "
             />
           </Link>
         </div>
@@ -75,7 +75,7 @@ const Sidebar = () => {
                 setSubmenuIndex(null);
               }}
             >
-              <Button className="w-full !capitalize !justify-start flex gap-3 text-[14px] !text-[rgba(0,0,0,0.8)] !font-[500] items-center !py-2 hover:!bg-[#f1f1f1]">
+              <Button className="w-full !capitalize !justify-start flex gap-3 text-[14px] !text-[rgba(255,255,255,0.8)] !font-[500] items-center !py-2 hover:!bg-[#ffffff] hover:!text-[#000000]">
                 <RxDashboard className="text-[18px]" /> <span>Dashboard</span>
               </Button>
             </Link>
@@ -83,7 +83,7 @@ const Sidebar = () => {
 
           <li>
             <Button
-              className="w-full !capitalize !justify-start flex gap-3 text-[14px] !text-[rgba(0,0,0,0.8)] !font-[500] items-center !py-2 hover:!bg-[#f1f1f1]"
+              className="w-full !capitalize !justify-start flex gap-3 text-[14px] !text-[rgba(255,255,255,0.8)] !font-[500] items-center !py-2 hover:!bg-[#ffffff] hover:!text-[#000000]"
               onClick={() => isOpenSubMenu(1)}
             >
               <FaRegImage className="text-[18px]" /> <span>Home Slides</span>
@@ -107,7 +107,7 @@ const Sidebar = () => {
                       setSubmenuIndex(null);
                     }}
                   >
-                    <Button className="!text-[rgba(0,0,0,0.7)] !capitalize !justify-start !w-full !text-[13px] !font-[500] !pl-9 flex gap-3">
+                    <Button className="!text-[rgba(255,255,255,0.8)] !font-[500] items-center !py-2 hover:!bg-[#ffffff] hover:!text-[#000000] !capitalize !justify-start !w-full !text-[13px] !pl-9 flex gap-3">
                       <span className="block w-[5px] h-[5px] rounded-full bg-[rgba(0,0,0,0.2)]"></span>{" "}
                       Home Banners List
                     </Button>
@@ -115,7 +115,7 @@ const Sidebar = () => {
                 </li>
                 <li className="w-full">
                   <Button
-                    className="!text-[rgba(0,0,0,0.7)] !capitalize !justify-start !w-full !text-[13px] !font-[500] !pl-9 flex gap-3"
+                    className="!text-[rgba(255,255,255,0.8)] !font-[500] items-center !py-2 hover:!bg-[#ffffff] hover:!text-[#000000] !capitalize !justify-start !w-full !text-[13px] !pl-9 flex gap-3"
                     onClick={() => {
                       context.setIsOpenFullScreenPanel({
                         open: true,
@@ -136,7 +136,7 @@ const Sidebar = () => {
 
           <li>
             <Button
-              className="w-full !capitalize !justify-start flex gap-3 text-[14px] !text-[rgba(0,0,0,0.8)] !font-[500] items-center !py-2 hover:!bg-[#f1f1f1]"
+              className="w-full !capitalize !justify-start flex gap-3 text-[14px] !text-[rgba(255,255,255,0.8)] !font-[500] items-center !py-2 hover:!bg-[#ffffff] hover:!text-[#000000]"
               onClick={() => isOpenSubMenu(3)}
             >
               <TbCategory className="text-[18px]" /> <span>Category</span>
@@ -160,7 +160,7 @@ const Sidebar = () => {
                       setSubmenuIndex(null);
                     }}
                   >
-                    <Button className="!text-[rgba(0,0,0,0.7)] !capitalize !justify-start !w-full !text-[13px] !font-[500] !pl-9 flex gap-3">
+                    <Button className="!text-[rgba(255,255,255,0.8)] !font-[500] items-center !py-2 hover:!bg-[#ffffff] hover:!text-[#000000] !capitalize !justify-start !w-full !text-[13px] !pl-9 flex gap-3">
                       <span className="block w-[5px] h-[5px] rounded-full bg-[rgba(0,0,0,0.2)]"></span>{" "}
                       Category List
                     </Button>
@@ -168,7 +168,7 @@ const Sidebar = () => {
                 </li>
                 <li className="w-full">
                   <Button
-                    className="!text-[rgba(0,0,0,0.7)] !capitalize !justify-start !w-full !text-[13px] !font-[500] !pl-9 flex gap-3"
+                    className="!text-[rgba(255,255,255,0.8)] !font-[500] items-center !py-2 hover:!bg-[#ffffff] hover:!text-[#000000] !capitalize !justify-start !w-full !text-[13px] !pl-9 flex gap-3"
                     onClick={() => {
                       context.setIsOpenFullScreenPanel({
                         open: true,
@@ -191,7 +191,7 @@ const Sidebar = () => {
                         context?.setisSidebarOpen(false);
                     }}
                   >
-                    <Button className="!text-[rgba(0,0,0,0.7)] !capitalize !justify-start !w-full !text-[13px] !font-[500] !pl-9 flex gap-3">
+                    <Button className="!text-[rgba(255,255,255,0.8)] !font-[500] items-center !py-2 hover:!bg-[#ffffff] hover:!text-[#000000] !capitalize !justify-start !w-full !text-[13px] !pl-9 flex gap-3">
                       <span className="block w-[5px] h-[5px] rounded-full bg-[rgba(0,0,0,0.2)]"></span>
                       Sub Category List
                     </Button>
@@ -199,7 +199,7 @@ const Sidebar = () => {
                 </li>
                 <li className="w-full">
                   <Button
-                    className="!text-[rgba(0,0,0,0.7)] !capitalize !justify-start !w-full !text-[13px] !font-[500] !pl-9 flex gap-3"
+                    className="!text-[rgba(255,255,255,0.8)] !font-[500] items-center !py-2 hover:!bg-[#ffffff] hover:!text-[#000000] !capitalize !justify-start !w-full !text-[13px] !pl-9 flex gap-3"
                     onClick={() => {
                       context.setIsOpenFullScreenPanel({
                         open: true,
@@ -220,7 +220,7 @@ const Sidebar = () => {
 
           <li>
             <Button
-              className="w-full !capitalize !justify-start flex gap-3 text-[14px] !text-[rgba(0,0,0,0.8)] !font-[500] items-center !py-2 hover:!bg-[#f1f1f1]"
+              className="w-full !capitalize !justify-start flex gap-3 text-[14px] !text-[rgba(255,255,255,0.8)] !font-[500] items-center !py-2 hover:!bg-[#ffffff] hover:!text-[#000000]"
               onClick={() => isOpenSubMenu(4)}
             >
               <RiProductHuntLine className="text-[18px]" />{" "}
@@ -245,7 +245,7 @@ const Sidebar = () => {
                       setSubmenuIndex(null);
                     }}
                   >
-                    <Button className="!text-[rgba(0,0,0,0.7)] !capitalize !justify-start !w-full !text-[13px] !font-[500] !pl-9 flex gap-3">
+                    <Button className="!text-[rgba(255,255,255,0.8)] !font-[500] items-center !py-2 hover:!bg-[#ffffff] hover:!text-[#000000] !capitalize !justify-start !w-full !text-[13px] !pl-9 flex gap-3">
                       <span className="block w-[5px] h-[5px] rounded-full bg-[rgba(0,0,0,0.2)]"></span>{" "}
                       Products
                     </Button>
@@ -274,7 +274,7 @@ const Sidebar = () => {
                       setSubmenuIndex(null);
                     }}
                   >
-                    <Button className="!text-[rgba(0,0,0,0.7)] !capitalize !justify-start !w-full !text-[13px] !font-[500] !pl-9 flex gap-3">
+                    <Button className="!text-[rgba(255,255,255,0.8)] !font-[500] items-center !py-2 hover:!bg-[#ffffff] hover:!text-[#000000] !capitalize !justify-start !w-full !text-[13px] !pl-9 flex gap-3">
                       <span className="block w-[5px] h-[5px] rounded-full bg-[rgba(0,0,0,0.2)]"></span>
                       Product Color
                     </Button>
@@ -290,7 +290,7 @@ const Sidebar = () => {
                       setSubmenuIndex(null);
                     }}
                   >
-                    <Button className="!text-[rgba(0,0,0,0.7)] !capitalize !justify-start !w-full !text-[13px] !font-[500] !pl-9 flex gap-3">
+                    <Button className="!text-[rgba(255,255,255,0.8)] !font-[500] items-center !py-2 hover:!bg-[#ffffff] hover:!text-[#000000] !capitalize !justify-start !w-full !text-[13px] !pl-9 flex gap-3">
                       <span className="block w-[5px] h-[5px] rounded-full bg-[rgba(0,0,0,0.2)]"></span>
                       Product Weight
                     </Button>
@@ -306,7 +306,7 @@ const Sidebar = () => {
                       setSubmenuIndex(null);
                     }}
                   >
-                    <Button className="!text-[rgba(0,0,0,0.7)] !capitalize !justify-start !w-full !text-[13px] !font-[500] !pl-9 flex gap-3">
+                    <Button className="!text-[rgba(255,255,255,0.8)] !font-[500] items-center !py-2 hover:!bg-[#ffffff] hover:!text-[#000000] !capitalize !justify-start !w-full !text-[13px] !pl-9 flex gap-3">
                       <span className="block w-[5px] h-[5px] rounded-full bg-[rgba(0,0,0,0.2)]"></span>
                       Product Size
                     </Button>
@@ -322,7 +322,7 @@ const Sidebar = () => {
                       setSubmenuIndex(null);
                     }}
                   >
-                    <Button className="!text-[rgba(0,0,0,0.7)] !capitalize !justify-start !w-full !text-[13px] !font-[500] !pl-9 flex gap-3">
+                    <Button className="!text-[rgba(255,255,255,0.8)] !font-[500] items-center !py-2 hover:!bg-[#ffffff] hover:!text-[#000000] !capitalize !justify-start !w-full !text-[13px] !pl-9 flex gap-3">
                       <span className="block w-[5px] h-[5px] rounded-full bg-[rgba(0,0,0,0.2)]"></span>
                       Product Tags
                     </Button>
@@ -337,7 +337,7 @@ const Sidebar = () => {
                       setSubmenuIndex(null);
                     }}
                   >
-                    <Button className="!text-[rgba(0,0,0,0.7)] !capitalize !justify-start !w-full !text-[13px] !font-[500] !pl-9 flex gap-3">
+                    <Button className="!text-[rgba(255,255,255,0.8)] !font-[500] items-center !py-2 hover:!bg-[#ffffff] hover:!text-[#000000] !capitalize !justify-start !w-full !text-[13px] !pl-9 flex gap-3">
                       <span className="block w-[5px] h-[5px] rounded-full bg-[rgba(0,0,0,0.2)]"></span>
                       Product Brands
                     </Button>
@@ -352,7 +352,7 @@ const Sidebar = () => {
                       setSubmenuIndex(null);
                     }}
                   >
-                    <Button className="!text-[rgba(0,0,0,0.7)] !capitalize !justify-start !w-full !text-[13px] !font-[500] !pl-9 flex gap-3">
+                    <Button className="!text-[rgba(255,255,255,0.8)] !font-[500] items-center !py-2 hover:!bg-[#ffffff] hover:!text-[#000000] !capitalize !justify-start !w-full !text-[13px] !pl-9 flex gap-3">
                       <span className="block w-[5px] h-[5px] rounded-full bg-[rgba(0,0,0,0.2)]"></span>
                       Product Label
                     </Button>
@@ -369,7 +369,7 @@ const Sidebar = () => {
                 setSubmenuIndex(null);
               }}
             >
-              <Button className="w-full !capitalize !justify-start flex gap-3 text-[14px] !text-[rgba(0,0,0,0.8)] !font-[500] items-center !py-2 hover:!bg-[#f1f1f1]">
+              <Button className="w-full !capitalize !justify-start flex gap-3 text-[14px] !text-[rgba(255,255,255,0.8)] !font-[500] items-center !py-2 hover:!bg-[#ffffff] hover:!text-[#000000]">
                 <IoBagCheckOutline className="text-[20px]" />{" "}
                 <span>Orders</span>
               </Button>
@@ -383,7 +383,7 @@ const Sidebar = () => {
                 setSubmenuIndex(null);
               }}
             >
-              <Button className="w-full !capitalize !justify-start flex gap-3 text-[14px] !text-[rgba(0,0,0,0.8)] !font-[500] items-center !py-2 hover:!bg-[#f1f1f1]">
+              <Button className="w-full !capitalize !justify-start flex gap-3 text-[14px] !text-[rgba(255,255,255,0.8)] !font-[500] items-center !py-2 hover:!bg-[#ffffff] hover:!text-[#000000]">
                 <IoBagCheckOutline className="text-[20px]" />{" "}
                 <span>Invoices</span>
               </Button>
@@ -397,7 +397,7 @@ const Sidebar = () => {
                 setSubmenuIndex(null);
               }}
             >
-              <Button className="w-full !capitalize !justify-start flex gap-3 text-[14px] !text-[rgba(0,0,0,0.8)] !font-[500] items-center !py-2 hover:!bg-[#f1f1f1]">
+              <Button className="w-full !capitalize !justify-start flex gap-3 text-[14px] !text-[rgba(255,255,255,0.8)] !font-[500] items-center !py-2 hover:!bg-[#ffffff] hover:!text-[#000000]">
                 <IoBagCheckOutline className="text-[20px]" />{" "}
                 <span>Incomplete Orders</span>
               </Button>
@@ -411,7 +411,7 @@ const Sidebar = () => {
                 setSubmenuIndex(null);
               }}
             >
-              <Button className="w-full !capitalize !justify-start flex gap-3 text-[14px] !text-[rgba(0,0,0,0.8)] !font-[500] items-center !py-2 hover:!bg-[#f1f1f1]">
+              <Button className="w-full !capitalize !justify-start flex gap-3 text-[14px] !text-[rgba(255,255,255,0.8)] !font-[500] items-center !py-2 hover:!bg-[#ffffff] hover:!text-[#000000]">
                 <IoBagCheckOutline className="text-[20px]" />{" "}
                 <span>Order Return</span>
               </Button>
@@ -426,7 +426,7 @@ const Sidebar = () => {
                 setSubmenuIndex(null);
               }}
             >
-              <Button className="w-full !capitalize !justify-start flex gap-3 text-[14px] !text-[rgba(0,0,0,0.8)] !font-[500] items-center !py-2 hover:!bg-[#f1f1f1]">
+              <Button className="w-full !capitalize !justify-start flex gap-3 text-[14px] !text-[rgba(255,255,255,0.8)] !font-[500] items-center !py-2 hover:!bg-[#ffffff] hover:!text-[#000000]">
                 <FiUsers className="text-[18px]" /> <span>Users</span>
               </Button>
             </Link>
@@ -434,7 +434,7 @@ const Sidebar = () => {
 
           <li>
             <Button
-              className="w-full !capitalize !justify-start flex gap-3 text-[14px] !text-[rgba(0,0,0,0.8)] !font-[500] items-center !py-2 hover:!bg-[#f1f1f1]"
+              className="w-full !capitalize !justify-start flex gap-3 text-[14px] !text-[rgba(255,255,255,0.8)] !font-[500] items-center !py-2 hover:!bg-[#ffffff] hover:!text-[#000000]"
               onClick={() => isOpenSubMenu(5)}
             >
               <RiProductHuntLine className="text-[18px]" />
@@ -459,7 +459,7 @@ const Sidebar = () => {
                       setSubmenuIndex(null);
                     }}
                   >
-                    <Button className="!text-[rgba(0,0,0,0.7)] !capitalize !justify-start !w-full !text-[13px] !font-[500] !pl-9 flex gap-3">
+                    <Button className="!text-[rgba(255,255,255,0.8)] !font-[500] items-center !py-2 hover:!bg-[#ffffff] hover:!text-[#000000] !capitalize !justify-start !w-full !text-[13px] !pl-9 flex gap-3">
                       <span className="block w-[5px] h-[5px] rounded-full bg-[rgba(0,0,0,0.2)]"></span>{" "}
                       Home Banner List
                     </Button>
@@ -467,7 +467,7 @@ const Sidebar = () => {
                 </li>
                 <li className="w-full">
                   <Button
-                    className="!text-[rgba(0,0,0,0.7)] !capitalize !justify-start !w-full !text-[13px] !font-[500] !pl-9 flex gap-3"
+                    className="!text-[rgba(255,255,255,0.8)] !font-[500] items-center !py-2 hover:!bg-[#ffffff] hover:!text-[#000000] !capitalize !justify-start !w-full !text-[13px] !pl-9 flex gap-3"
                     onClick={() => {
                       context.setIsOpenFullScreenPanel({
                         open: true,
@@ -492,7 +492,7 @@ const Sidebar = () => {
                       setSubmenuIndex(null);
                     }}
                   >
-                    <Button className="!text-[rgba(0,0,0,0.7)] !capitalize !justify-start !w-full !text-[13px] !font-[500] !pl-9 flex gap-3">
+                    <Button className="!text-[rgba(255,255,255,0.8)] !font-[500] items-center !py-2 hover:!bg-[#ffffff] hover:!text-[#000000] !capitalize !justify-start !w-full !text-[13px] !pl-9 flex gap-3">
                       <span className="block w-[5px] h-[5px] rounded-full bg-[rgba(0,0,0,0.2)]"></span>{" "}
                       Home Banner List 2
                     </Button>
@@ -500,7 +500,7 @@ const Sidebar = () => {
                 </li>
                 <li className="w-full">
                   <Button
-                    className="!text-[rgba(0,0,0,0.7)] !capitalize !justify-start !w-full !text-[13px] !font-[500] !pl-9 flex gap-3"
+                    className="!text-[rgba(255,255,255,0.8)] !font-[500] items-center !py-2 hover:!bg-[#ffffff] hover:!text-[#000000] !capitalize !justify-start !w-full !text-[13px] !pl-9 flex gap-3"
                     onClick={() => {
                       context.setIsOpenFullScreenPanel({
                         open: true,
@@ -521,7 +521,7 @@ const Sidebar = () => {
 
           <li>
             <Button
-              className="w-full !capitalize !justify-start flex gap-3 text-[14px] !text-[rgba(0,0,0,0.8)] !font-[500] items-center !py-2 hover:!bg-[#f1f1f1]"
+              className="w-full !capitalize !justify-start flex gap-3 text-[14px] !text-[rgba(255,255,255,0.8)] !font-[500] items-center !py-2 hover:!bg-[#ffffff] hover:!text-[#000000]"
               onClick={() => isOpenSubMenu(6)}
             >
               <SiBloglovin className="text-[18px]" />
@@ -546,7 +546,7 @@ const Sidebar = () => {
                       setSubmenuIndex(null);
                     }}
                   >
-                    <Button className="!text-[rgba(0,0,0,0.7)] !capitalize !justify-start !w-full !text-[13px] !font-[500] !pl-9 flex gap-3">
+                    <Button className="!text-[rgba(255,255,255,0.8)] !font-[500] items-center !py-2 hover:!bg-[#ffffff] hover:!text-[#000000] !capitalize !justify-start !w-full !text-[13px] !pl-9 flex gap-3">
                       <span className="block w-[5px] h-[5px] rounded-full bg-[rgba(0,0,0,0.2)]"></span>
                       Blog List
                     </Button>
@@ -554,7 +554,7 @@ const Sidebar = () => {
                 </li>
                 <li className="w-full">
                   <Button
-                    className="!text-[rgba(0,0,0,0.7)] !capitalize !justify-start !w-full !text-[13px] !font-[500] !pl-9 flex gap-3"
+                    className="!text-[rgba(255,255,255,0.8)] !font-[500] items-center !py-2 hover:!bg-[#ffffff] hover:!text-[#000000] !capitalize !justify-start !w-full !text-[13px] !pl-9 flex gap-3"
                     onClick={() => {
                       context.setIsOpenFullScreenPanel({
                         open: true,
@@ -572,20 +572,9 @@ const Sidebar = () => {
               </ul>
             </Collapse>
           </li>
-
-          {/* <li>
-            <Link to="/logo/manage">
-              <Button
-                className="w-full !capitalize !justify-start flex gap-3 text-[14px] !text-[rgba(0,0,0,0.8)] !font-[500] items-center !py-2 hover:!bg-[#f1f1f1]"
-              >
-                <IoLogoBuffer className="text-[18px]" />
-                <span>Manage Logo</span>
-              </Button>
-            </Link>
-          </li> */}
           <li>
             <Button
-              className="w-full !capitalize !justify-start flex gap-3 text-[14px] !text-[rgba(0,0,0,0.8)] !font-[500] items-center !py-2 hover:!bg-[#f1f1f1]"
+              className="w-full !capitalize !justify-start flex gap-3 text-[14px] !text-[rgba(255,255,255,0.8)] !font-[500] items-center !py-2 hover:!bg-[#ffffff] hover:!text-[#000000]"
               onClick={() => isOpenSubMenu(7)}
             >
               <FaRegImage className="text-[18px]" /> <span>Vendors</span>
@@ -609,7 +598,7 @@ const Sidebar = () => {
                       setSubmenuIndex(null);
                     }}
                   >
-                    <Button className="!text-[rgba(0,0,0,0.7)] !capitalize !justify-start !w-full !text-[13px] !font-[500] !pl-9 flex gap-3">
+                    <Button className="!text-[rgba(255,255,255,0.8)] !font-[500] items-center !py-2 hover:!bg-[#ffffff] hover:!text-[#000000] !capitalize !justify-start !w-full !text-[13px] !pl-9 flex gap-3">
                       <span className="block w-[5px] h-[5px] rounded-full bg-[rgba(0,0,0,0.2)]"></span>{" "}
                       Verified Vendors
                     </Button>
@@ -624,7 +613,7 @@ const Sidebar = () => {
                       setSubmenuIndex(null);
                     }}
                   >
-                    <Button className="!text-[rgba(0,0,0,0.7)] !capitalize !justify-start !w-full !text-[13px] !font-[500] !pl-9 flex gap-3">
+                    <Button className="!text-[rgba(255,255,255,0.8)] !font-[500] items-center !py-2 hover:!bg-[#ffffff] hover:!text-[#000000] !capitalize !justify-start !w-full !text-[13px] !pl-9 flex gap-3">
                       <span className="block w-[5px] h-[5px] rounded-full bg-[rgba(0,0,0,0.2)]"></span>{" "}
                       Unverified Vendors
                     </Button>
@@ -639,7 +628,7 @@ const Sidebar = () => {
                       setSubmenuIndex(null);
                     }}
                   >
-                    <Button className="!text-[rgba(0,0,0,0.7)] !capitalize !justify-start !w-full !text-[13px] !font-[500] !pl-9 flex gap-3">
+                    <Button className="!text-[rgba(255,255,255,0.8)] !font-[500] items-center !py-2 hover:!bg-[#ffffff] hover:!text-[#000000] !capitalize !justify-start !w-full !text-[13px] !pl-9 flex gap-3">
                       <span className="block w-[5px] h-[5px] rounded-full bg-[rgba(0,0,0,0.2)]"></span>{" "}
                       Verify Products
                     </Button>
@@ -657,7 +646,7 @@ const Sidebar = () => {
                 setSubmenuIndex(null);
               }}
             >
-              <Button className="w-full !capitalize !justify-start flex gap-3 text-[14px] !text-[rgba(0,0,0,0.8)] !font-[500] items-center !py-2 hover:!bg-[#f1f1f1]">
+              <Button className="w-full !capitalize !justify-start flex gap-3 text-[14px] !text-[rgba(255,255,255,0.8)] !font-[500] items-center !py-2 hover:!bg-[#ffffff] hover:!text-[#000000]">
                 <IoLogoBuffer className="text-[20px]" />{" "}
                 <span>Site Setting</span>
               </Button>
@@ -666,7 +655,7 @@ const Sidebar = () => {
 
           <li>
             <Button
-              className="w-full !capitalize !justify-start flex gap-3 text-[14px] !text-[rgba(0,0,0,0.8)] !font-[500] items-center !py-2 hover:!bg-[#f1f1f1]"
+              className="w-full !capitalize !justify-start flex gap-3 text-[14px] !text-[rgba(255,255,255,0.8)] !font-[500] items-center !py-2 hover:!bg-[#ffffff] hover:!text-[#000000]"
               onClick={logout}
             >
               <IoMdLogOut className="text-[20px]" /> <span>Logout</span>

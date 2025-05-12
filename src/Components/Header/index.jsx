@@ -101,7 +101,7 @@ const Header = () => {
   return (
     <>
       <header
-        className={`w-full h-[auto] py-2 ${
+        className={`w-full h-[auto] py-2 bg-[#0d215c] ${
           context.isSidebarOpen === true ? "pl-[22%]" : "pl-5"
         } ${
           context.isSidebarOpen === true &&
@@ -119,7 +119,7 @@ const Header = () => {
             >
               <Link to="/">
                 <img
-                  src={localStorage.getItem("logo")}
+                  src="/public/logo.svg"
                   className="w-[170px] md:w-[200px]"
                   style="height: 50px;"
                 />
@@ -127,12 +127,12 @@ const Header = () => {
             </div>
           )}
 
-          <Button
+          {/* <Button
             className="!w-[40px] !h-[40px] !rounded-full !min-w-[40px] !text-[rgba(0,0,0,0.8)]"
             onClick={() => context.setisSidebarOpen(!context.isSidebarOpen)}
           >
             <RiMenu2Line className="text-[18px] text-[rgba(0,0,0,0.8)]" />
-          </Button>
+          </Button> */}
         </div>
 
         <div className="part2  flex items-center justify-end gap-5">

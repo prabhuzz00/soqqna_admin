@@ -168,140 +168,295 @@ const Login = () => {
       });
   };
   return (
-    <section className="bg-white w-full">
-      <header className="w-full static lg:fixed top-0 left-0  px-4 py-3 flex items-center justify-center sm:justify-between z-50">
-        {/* <Link to="/">
-          <img src={localStorage.getItem("logo")} className="w-[200px]" />
-        </Link> */}
-
-        {/* <div className="hidden sm:flex items-center gap-0">
-          <NavLink to="/login" exact={true} activeClassName="isActive">
-            <Button className="!rounded-full !text-[rgba(0,0,0,0.8)] !px-5 flex gap-1">
-              <CgLogIn className="text-[18px]" /> Login
-            </Button>
-          </NavLink>
-
-          <NavLink to="/sign-up" exact={true} activeClassName="isActive">
-            <Button className="!rounded-full !text-[rgba(0,0,0,0.8)] !px-5 flex gap-1">
-              <FaRegUser className="text-[15px]" /> Sign Up
-            </Button>
-          </NavLink>
-        </div> */}
-      </header>
-      <img src="/patern.webp" className="w-full fixed top-0 left-0 opacity-5" />
-
-      <div className="loginBox card w-full md:w-[600px] h-[auto] pb-20 mx-auto pt-5 lg:pt-20 relative z-50">
-        <div className="text-center d-flex justify-content-center">
-          <img src={localStorage.getItem("logo")} className="w-[200px] " />
+    <section className="min-h-screen bg-gradient-to-br from-indigo-600 via-purple-500 to-pink-500 flex items-center justify-center p-4">
+      <div className="absolute inset-0 opacity-10">
+        <img
+          src="/patern.webp"
+          className="w-full h-full object-cover"
+          alt="Background Pattern"
+        />
+      </div>
+      <div className="relative w-full max-w-md bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl p-8 z-50">
+        <div className="flex justify-center mb-6">
+          <img
+            src="/public/logo.svg"
+            className="w-40 h-[56px] filter drop-shadow-md"
+            alt="Logo"
+          />
         </div>
-
-        {/* <h1 className="text-center text-[18px] sm:text-[35px] font-[800] mt-4">
-          Welcome Back!
-          <br />
-          Sign in with your credentials.
-        </h1> */}
-
-        <div className="flex items-center justify-center w-full mt-5 gap-4">
-          <LoadingButton
-            size="small"
-            onClick={authWithGoogle}
-            endIcon={<FcGoogle />}
-            loading={loadingGoogle}
-            loadingPosition="end"
-            variant="outlined"
-            className="!bg-none !py-2 !text-[15px] !capitalize !px-5 !text-[rgba(0,0,0,0.7)]"
-          >
-            Signin with Google
-          </LoadingButton>
-        </div>
-
-        <br />
-
-        {/* <div className="w-full flex items-center justify-center gap-3">
-          <span className="flex items-center w-[100px] h-[1px] bg-[rgba(0,0,0,0.2)]"></span>
-          <span className="text-[10px] lg:text-[14px] font-[500]">
-            Or, Sign in with your email
-          </span>
-          <span className="flex items-center w-[100px] h-[1px] bg-[rgba(0,0,0,0.2)]"></span>
-        </div> */}
-
-        <br />
-
-        <form className="w-full px-8 mt-3" onSubmit={handleSubmit}>
-          <div className="form-group mb-4 w-full">
-            <h4 className="text-[14px] font-[500] mb-1">Email</h4>
+        <form className="w-full" onSubmit={handleSubmit}>
+          <div className="mb-6">
+            <label className="block text-white text-sm font-medium mb-2">
+              Email
+            </label>
             <input
               type="email"
-              className="w-full h-[50px] border-2 border-[rgba(0,0,0,0.1)] rounded-md focus:border-[rgba(0,0,0,0.7)] focus:outline-none px-3"
               name="email"
               value={formFields.email}
-              disabled={isLoading === true ? true : false}
               onChange={onChangeInput}
+              disabled={isLoading}
+              className="w-full bg-transparent border-b-2 border-white/30 focus:border-indigo-300 text-white placeholder-white/50 focus:outline-none py-2 transition-all duration-300"
+              placeholder="Enter your email"
             />
           </div>
-
-          <div className="form-group mb-4 w-full">
-            <h4 className="text-[14px] font-[500] mb-1">Password</h4>
-            <div className="relative w-full">
+          <div className="mb-6 relative">
+            <label className="block text-white text-sm font-medium mb-2">
+              Password
+            </label>
+            <input
+              type={isPasswordShow ? "text" : "password"}
+              name="password"
+              value={formFields.password}
+              onChange={onChangeInput}
+              disabled={isLoading}
+              className="w-full bg-transparent border-b-2 border-white/30 focus:border-indigo-300 text-white placeholder-white/50 focus:outline-none py-2 transition-all duration-300"
+              placeholder="Enter your password"
+            />
+            <button
+              type="button"
+              className="absolute top-10 right-2 text-white/70 hover:text-white focus:outline-none"
+              onClick={() => setIsPasswordShow(!isPasswordShow)}
+            >
+              {isPasswordShow ? (
+                <i className="fas fa-eye-slash"></i>
+              ) : (
+                <i className="fas fa-eye"></i>
+              )}
+            </button>
+          </div>
+          <div className="mb-6 flex items-center justify-between">
+            <label className="flex items-center text-white text-sm">
               <input
-                type={isPasswordShow === false ? "password" : "text"}
-                className="w-full h-[50px] border-2 border-[rgba(0,0,0,0.1)] rounded-md focus:border-[rgba(0,0,0,0.7)] focus:outline-none px-3"
-                name="password"
-                value={formFields.password}
-                disabled={isLoading === true ? true : false}
-                onChange={onChangeInput}
+                type="checkbox"
+                defaultChecked
+                className="mr-2 accent-indigo-300"
               />
-              <Button
-                className="!absolute top-[7px] right-[10px] z-50 !rounded-full !w-[35px] !h-[35px] !min-w-[35px] !text-gray-600"
-                onClick={() => setisPasswordShow(!isPasswordShow)}
-              >
-                {isPasswordShow === false ? (
-                  <FaRegEye className="text-[18px]" />
-                ) : (
-                  <FaEyeSlash className="text-[18px]" />
-                )}
-              </Button>
-            </div>
-          </div>
-
-          <div className="form-group mb-4 w-full flex items-center justify-between">
-            <FormControlLabel
-              control={<Checkbox defaultChecked />}
-              label="Remember Me"
-            />
-
+              Remember Me
+            </label>
             <a
               onClick={forgotPassword}
-              className="text-primary font-[700] text-[15px] hover:underline hover:text-gray-700 cursor-pointer"
+              className="text-indigo-200 hover:text-indigo-100 font-medium text-sm cursor-pointer transition-colors"
             >
               Forgot Password?
             </a>
           </div>
-
-          {/* <div className="flex items-center justify-between mb-4">
-            <span className="text-[14px]">Don't have an account?</span>
-            <Link
-              to="/sign-up"
-              className="text-primary font-[700] text-[15px] hover:underline hover:text-gray-700 cursor-pointer"
-            >
-              Sign Up
-            </Link>
-          </div> */}
-
-          <Button
+          <button
             type="submit"
-            disabled={!valideValue}
-            className="btn-blue btn-lg w-full"
+            disabled={!valideValue || isLoading}
+            className="w-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold py-3 rounded-lg hover:scale-105 hover:from-indigo-600 hover:to-purple-700 disabled:opacity-50 transition-transform duration-300 flex items-center justify-center"
+            style={{ color: "#FFFFFF" }} // Ensures bright white text
           >
-            {isLoading === true ? (
-              <CircularProgress color="inherit" />
+            {isLoading ? (
+              <svg
+                className="animate-spin h-5 w-5 text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 1v2.7a10 10 0 0 0 5.3 8.7l2.7-4.6h-5A5 5 0 0 1 4 1z"
+                ></path>
+              </svg>
             ) : (
               "Sign In"
             )}
-          </Button>
+          </button>
         </form>
       </div>
     </section>
+    // <section className="min-h-screen bg-gradient-to-br from-indigo-600 via-purple-500 to-pink-500 flex items-center justify-center p-4">
+    //   <div className="absolute inset-0 opacity-10">
+    //     <img
+    //       src="/patern.webp"
+    //       className="w-full h-full object-cover"
+    //       alt="Background Pattern"
+    //     />
+    //   </div>
+    //   {/* <header className="w-full fixed top-0 left-0 px-4 py-3 flex items-center justify-center z-50">
+    //     <h1 className="text-white text-2xl font-bold">Welcome</h1>
+    //   </header> */}
+    //   <div className="relative w-full max-w-md bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl p-8 z-50">
+    //     <div className="flex justify-center mb-6">
+    //       <img
+    //         src="/public/logo_blk.svg"
+    //         className="w-40 filter drop-shadow-md"
+    //         alt="Logo"
+    //       />
+    //     </div>
+    //     <form className="w-full" onSubmit={handleSubmit}>
+    //       <div className="mb-6">
+    //         <label className="block text-white text-sm font-medium mb-2">
+    //           Email
+    //         </label>
+    //         <input
+    //           type="email"
+    //           name="email"
+    //           value={formFields.email}
+    //           onChange={onChangeInput}
+    //           disabled={isLoading}
+    //           className="w-full bg-transparent border-b-2 border-white/30 focus:border-indigo-300 text-white placeholder-white/50 focus:outline-none py-2 transition-all duration-300"
+    //           placeholder="Enter your email"
+    //         />
+    //       </div>
+    //       <div className="mb-6 relative">
+    //         <label className="block text-white text-sm font-medium mb-2">
+    //           Password
+    //         </label>
+    //         <input
+    //           type={isPasswordShow ? "text" : "password"}
+    //           name="password"
+    //           value={formFields.password}
+    //           onChange={onChangeInput}
+    //           disabled={isLoading}
+    //           className="w-full bg-transparent border-b-2 border-white/30 focus:border-indigo-300 text-white placeholder-white/50 focus:outline-none py-2 transition-all duration-300"
+    //           placeholder="Enter your password"
+    //         />
+    //         <button
+    //           type="button"
+    //           className="absolute top-10 right-2 text-white/70 hover:text-white focus:outline-none"
+    //           onClick={() => setIsPasswordShow(!isPasswordShow)}
+    //         >
+    //           {isPasswordShow ? (
+    //             <i className="fas fa-eye-slash"></i>
+    //           ) : (
+    //             <i className="fas fa-eye"></i>
+    //           )}
+    //         </button>
+    //       </div>
+    //       <div className="mb-6 flex items-center justify-between">
+    //         <label className="flex items-center text-white text-sm">
+    //           <input
+    //             type="checkbox"
+    //             defaultChecked
+    //             className="mr-2 accent-indigo-300"
+    //           />
+    //           Remember Me
+    //         </label>
+    //         <a
+    //           onClick={forgotPassword}
+    //           className="text-indigo-200 hover:text-indigo-100 font-medium text-sm cursor-pointer transition-colors"
+    //         >
+    //           Forgot Password?
+    //         </a>
+    //       </div>
+    //       <button
+    //         type="submit"
+    //         disabled={!valideValue || isLoading}
+    //         className="w-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold py-3 rounded-lg hover:scale-105 hover:from-indigo-600 hover:to-purple-700 disabled:opacity-50 transition-transform duration-300 flex items-center justify-center"
+    //       >
+    //         {isLoading ? (
+    //           <svg
+    //             className="animate-spin h-5 w-5 text-white"
+    //             xmlns="http://www.w3.org/2000/svg"
+    //             fill="none"
+    //             viewBox="0 0 24 24"
+    //           >
+    //             <circle
+    //               className="opacity-25"
+    //               cx="12"
+    //               cy="12"
+    //               r="10"
+    //               stroke="currentColor"
+    //               strokeWidth="4"
+    //             ></circle>
+    //             <path
+    //               className="opacity-75"
+    //               fill="currentColor"
+    //               d="M4 1v2.7a10 10 0 0 0 5.3 8.7l2.7-4.6h-5A5 5 0 0 1 4 1z"
+    //             ></path>
+    //           </svg>
+    //         ) : (
+    //           "Sign In"
+    //         )}
+    //       </button>
+    //     </form>
+    //   </div>
+    // </section>
+    // <section className="bg-white w-full">
+    //   <header className="w-full static lg:fixed top-0 left-0  px-4 py-3 flex items-center justify-center sm:justify-between z-50"></header>
+    //   <img src="/patern.webp" className="w-full fixed top-0 left-0 opacity-5" />
+
+    //   <div className="loginBox card w-full md:w-[600px] h-[auto] pb-20 mx-auto pt-5 lg:pt-20 relative z-50">
+    //     <div className="flex justify-center">
+    //       <img src="/public/logo_blk.svg" className="w-[200px]  " />
+    //     </div>
+    //     <br />
+
+    //     <form className="w-full px-8 mt-3" onSubmit={handleSubmit}>
+    //       <div className="form-group mb-4 w-full">
+    //         <h4 className="text-[14px] font-[500] mb-1">Email</h4>
+    //         <input
+    //           type="email"
+    //           className="w-full h-[50px] border-2 border-[rgba(0,0,0,0.1)] rounded-md focus:border-[rgba(0,0,0,0.7)] focus:outline-none px-3"
+    //           name="email"
+    //           value={formFields.email}
+    //           disabled={isLoading === true ? true : false}
+    //           onChange={onChangeInput}
+    //         />
+    //       </div>
+
+    //       <div className="form-group mb-4 w-full">
+    //         <h4 className="text-[14px] font-[500] mb-1">Password</h4>
+    //         <div className="relative w-full">
+    //           <input
+    //             type={isPasswordShow === false ? "password" : "text"}
+    //             className="w-full h-[50px] border-2 border-[rgba(0,0,0,0.1)] rounded-md focus:border-[rgba(0,0,0,0.7)] focus:outline-none px-3"
+    //             name="password"
+    //             value={formFields.password}
+    //             disabled={isLoading === true ? true : false}
+    //             onChange={onChangeInput}
+    //           />
+    //           <Button
+    //             className="!absolute top-[7px] right-[10px] z-50 !rounded-full !w-[35px] !h-[35px] !min-w-[35px] !text-gray-600"
+    //             onClick={() => setisPasswordShow(!isPasswordShow)}
+    //           >
+    //             {isPasswordShow === false ? (
+    //               <FaRegEye className="text-[18px]" />
+    //             ) : (
+    //               <FaEyeSlash className="text-[18px]" />
+    //             )}
+    //           </Button>
+    //         </div>
+    //       </div>
+
+    //       <div className="form-group mb-4 w-full flex items-center justify-between">
+    //         <FormControlLabel
+    //           control={<Checkbox defaultChecked />}
+    //           label="Remember Me"
+    //         />
+
+    //         <a
+    //           onClick={forgotPassword}
+    //           className="text-primary font-[700] text-[15px] hover:underline hover:text-gray-700 cursor-pointer"
+    //         >
+    //           Forgot Password?
+    //         </a>
+    //       </div>
+
+    //       <Button
+    //         type="submit"
+    //         disabled={!valideValue}
+    //         className="btn-blue btn-lg w-full"
+    //       >
+    //         {isLoading === true ? (
+    //           <CircularProgress color="inherit" />
+    //         ) : (
+    //           "Sign In"
+    //         )}
+    //       </Button>
+    //     </form>
+    //   </div>
+    // </section>
   );
 };
 
