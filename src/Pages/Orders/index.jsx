@@ -264,6 +264,7 @@ export const Orders = () => {
                           className="w-full"
                           onChange={(e) => handleChange(e, order?._id)}
                         >
+                          <MenuItem value={"Pending"}>Pending</MenuItem>
                           <MenuItem value={"Received"}>Received</MenuItem>
                           <MenuItem value={"Picked"}>Picked</MenuItem>
                           <MenuItem value={"In-Transist"}>In-Transist</MenuItem>
