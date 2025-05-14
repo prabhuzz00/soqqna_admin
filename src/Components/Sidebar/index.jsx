@@ -60,7 +60,7 @@ const Sidebar = () => {
         >
           <Link to="/">
             <img
-              src="logo.svg"
+              src="/logo.svg"
               className="w-[170px] md:min-w-[200px] h-[56px] mt-[20px] ml-[10px] "
             />
           </Link>
