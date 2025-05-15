@@ -33,17 +33,68 @@ export const IncompleteOrders = () => {
     }
   };
 
+  // const handleChange = (event, id) => {
+  //   setOrderStatus(event.target.value);
+
+  //   const obj = {
+  //     id: id,
+  //     order_status: event.target.value,
+  //   };
+
+  //   editData(`/api/order/order-status/${id}`, obj).then((res) => {
+  //     if (res?.data?.error === false) {
+  //       context.alertBox("success", res?.data?.message);
+  //     }
+  //   });
+  // };
+  // const handleChange = (event, id) => {
+  //   const newStatus = event.target.value;
+  //   setOrderStatus(newStatus);
+
+  //   const obj = {
+  //     id: id,
+  //     order_status: newStatus,
+  //   };
+
+  //   editData(`/api/order/order-status/${id}`, obj).then((res) => {
+  //     if (res?.data?.error === false) {
+  //       // Show success alert
+  //       context.alertBox("success", res?.data?.message);
+
+  //       // Update the local state
+  //       const updatedOrders = ordersData.map((order) => {
+  //         if (order._id === id) {
+  //           return { ...order, order_status: newStatus };
+  //         }
+  //         return order;
+  //       });
+
+  //       setOrdersData(updatedOrders);
+  //     }
+  //   });
+  // };
+
   const handleChange = (event, id) => {
-    setOrderStatus(event.target.value);
+    const newStatus = event.target.value;
+    setOrderStatus(newStatus);
 
     const obj = {
       id: id,
-      order_status: event.target.value,
+      order_status: newStatus,
     };
 
     editData(`/api/order/order-status/${id}`, obj).then((res) => {
       if (res?.data?.error === false) {
         context.alertBox("success", res?.data?.message);
+
+        // Re-fetch data from backend
+        fetchDataFromApi(
+          `/api/order/incomplete-order-list?page=${pageOrder}&limit=5`
+        ).then((res) => {
+          if (res?.error === false) {
+            setOrdersData(res?.data);
+          }
+        });
       }
     });
   };
@@ -58,11 +109,6 @@ export const IncompleteOrders = () => {
         context?.setProgress(100);
       }
     });
-    // fetchDataFromApi(`/api/order/order-list`).then((res) => {
-    //   if (res?.error === false) {
-    //     setTotalOrdersData(res)
-    //   }
-    // })
   }, [orderStatus, pageOrder]);
 
   useEffect(() => {
@@ -264,10 +310,15 @@ export const IncompleteOrders = () => {
                           className="w-full"
                           onChange={(e) => handleChange(e, order?._id)}
                         >
-                          <MenuItem value={"pending"}>Pending</MenuItem>
-                          <MenuItem value={"confirm"}>Confirm</MenuItem>
-                          <MenuItem value={"delivered"}>Delivered</MenuItem>
-                          <MenuItem value={"canceled"}>Canceled</MenuItem>
+                          <MenuItem value={"Pending"}>Pending</MenuItem>
+                          <MenuItem value={"Received"}>Received</MenuItem>
+                          <MenuItem value={"Picked"}>Picked</MenuItem>
+                          <MenuItem value={"In-Transist"}>In-Transist</MenuItem>
+                          <MenuItem value={"Out for Delivery"}>
+                            Out for Delivery
+                          </MenuItem>
+                          <MenuItem value={"Delivered"}>Delivered</MenuItem>
+                          <MenuItem value={"Canceled"}>Canceled</MenuItem>
                         </Select>
                       </td>
                       <td className="px-6 py-4 font-[500] whitespace-nowrap">

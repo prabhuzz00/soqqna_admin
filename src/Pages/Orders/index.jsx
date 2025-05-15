@@ -34,16 +34,26 @@ export const Orders = () => {
   };
 
   const handleChange = (event, id) => {
-    setOrderStatus(event.target.value);
+    const newStatus = event.target.value;
+    setOrderStatus(newStatus);
 
     const obj = {
       id: id,
-      order_status: event.target.value,
+      order_status: newStatus,
     };
 
     editData(`/api/order/order-status/${id}`, obj).then((res) => {
       if (res?.data?.error === false) {
         context.alertBox("success", res?.data?.message);
+
+        // Re-fetch data from backend
+        fetchDataFromApi(
+          `/api/order/order-list?page=${pageOrder}&limit=5`
+        ).then((res) => {
+          if (res?.error === false) {
+            setOrdersData(res?.data);
+          }
+        });
       }
     });
   };
