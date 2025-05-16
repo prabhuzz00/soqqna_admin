@@ -47,6 +47,16 @@ const columns = [
   { id: "product", label: "PRODUCT", minWidth: 150 },
   { id: "category", label: "CATEGORY", minWidth: 100 },
   {
+    id: "shopname",
+    label: "SHOP NAME",
+    minWidth: 150,
+  },
+  {
+    id: "ownername",
+    label: "OWNER NAME",
+    minWidth: 150,
+  },
+  {
     id: "subcategory",
     label: "SUB CATEGORY",
     minWidth: 150,
@@ -590,6 +600,12 @@ export const VerifiedProducts = () => {
 
                       <TableCell style={{ minWidth: columns.minWidth }}>
                         {product?.catName}
+                      </TableCell>
+                      <TableCell style={{ minWidth: columns.minWidth }}>
+                        {product?.vendorId.storeName}
+                      </TableCell>
+                      <TableCell style={{ minWidth: columns.minWidth }}>
+                        {product?.vendorId.ownerName}
                       </TableCell>
 
                       <TableCell style={{ minWidth: columns.minWidth }}>
