@@ -8,20 +8,19 @@ import { FaEyeSlash } from "react-icons/fa";
 import { useContext } from "react";
 import { MyContext } from "../../App.jsx";
 
-import CircularProgress from '@mui/material/CircularProgress';
+import CircularProgress from "@mui/material/CircularProgress";
 import { fetchDataFromApi, postData } from "../../utils/api.js";
 import { useEffect } from "react";
 
 const ChangePassword = () => {
-
   const [isPasswordShow, setisPasswordShow] = useState(false);
   const [isPasswordShow2, setisPasswordShow2] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const [formFields, setFormsFields] = useState({
     email: localStorage.getItem("userEmail"),
-    newPassword: '',
-    confirmPassword: ''
+    newPassword: "",
+    confirmPassword: "",
   });
 
   const context = useContext(MyContext);
@@ -29,22 +28,21 @@ const ChangePassword = () => {
 
   useEffect(() => {
     fetchDataFromApi("/api/logo").then((res) => {
-      localStorage.setItem('logo', res?.logo[0]?.logo)
-    })
-  }, [])
+      localStorage.setItem("logo", res?.logo[0]?.logo);
+    });
+  }, []);
 
   const onChangeInput = (e) => {
     const { name, value } = e.target;
     setFormsFields(() => {
       return {
         ...formFields,
-        [name]: value
-      }
-    })
-  }
+        [name]: value,
+      };
+    });
+  };
 
-
-  const valideValue = Object.values(formFields).every(el => el)
+  const valideValue = Object.values(formFields).every((el) => el);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -54,49 +52,40 @@ const ChangePassword = () => {
     if (formFields.newPassword === "") {
       context.alertBox("error", "Please enter new password");
       setIsLoading(false);
-      return false
+      return false;
     }
-
 
     if (formFields.confirmPassword === "") {
       context.alertBox("error", "Please enter confirm password");
       setIsLoading(false);
-      return false
+      return false;
     }
 
     if (formFields.confirmPassword !== formFields.newPassword) {
       context.alertBox("error", "Password and confirm password not match");
       setIsLoading(false);
-      return false
+      return false;
     }
 
-
-    postData(`/api/user/reset-password`, formFields).then((res) => {
-      console.log(res)
+    postData(`/api/admin/reset-password`, formFields).then((res) => {
+      console.log(res);
       if (res?.error === false) {
-        localStorage.removeItem("userEmail")
-        localStorage.removeItem("actionType")
+        localStorage.removeItem("userEmail");
+        localStorage.removeItem("actionType");
         context.alertBox("success", res?.message);
         setIsLoading(false);
-        history("/login")
-      }
-      else {
+        history("/login");
+      } else {
         context.alertBox("error", res?.message);
       }
-    })
-
-
-  }
-
+    });
+  };
 
   return (
     <section className="bg-white w-full">
       <header className="w-full static lg:fixed top-0 left-0  px-4 py-3 flex items-center justify-center sm:justify-between z-50">
         <Link to="/">
-          <img
-            src={localStorage.getItem('logo')}
-            className="w-[200px]"
-          />
+          <img src={localStorage.getItem("logo")} className="w-[200px]" />
         </Link>
 
         <div className="hidden sm:flex items-center gap-0">
@@ -126,25 +115,24 @@ const ChangePassword = () => {
           You can change your password from here
         </h1>
 
-
         <br />
 
-
-
         <form className="w-full px-3 sm:px-3 mt-3" onSubmit={handleSubmit}>
-
           <div className="form-group mb-4 w-full">
             <h4 className="text-[14px] font-[500] mb-1">New Password</h4>
             <div className="relative w-full">
               <input
-                type={isPasswordShow === false ? 'password' : 'text'}
+                type={isPasswordShow === false ? "password" : "text"}
                 className="w-full h-[50px] border-2 border-[rgba(0,0,0,0.1)] rounded-md focus:border-[rgba(0,0,0,0.7)] focus:outline-none px-3"
                 name="newPassword"
                 value={formFields.newPassword}
                 disabled={isLoading === true ? true : false}
                 onChange={onChangeInput}
               />
-              <Button className="!absolute top-[7px] right-[10px] z-50 !rounded-full !w-[35px] !h-[35px] !min-w-[35px] !text-gray-600" onClick={() => setisPasswordShow(!isPasswordShow)}>
+              <Button
+                className="!absolute top-[7px] right-[10px] z-50 !rounded-full !w-[35px] !h-[35px] !min-w-[35px] !text-gray-600"
+                onClick={() => setisPasswordShow(!isPasswordShow)}
+              >
                 {isPasswordShow === false ? (
                   <FaRegEye className="text-[18px]" />
                 ) : (
@@ -154,19 +142,21 @@ const ChangePassword = () => {
             </div>
           </div>
 
-
           <div className="form-group mb-4 w-full">
             <h4 className="text-[14px] font-[500] mb-1">Confirm Password</h4>
             <div className="relative w-full">
               <input
-                type={isPasswordShow2 === false ? 'password' : 'text'}
+                type={isPasswordShow2 === false ? "password" : "text"}
                 className="w-full h-[50px] border-2 border-[rgba(0,0,0,0.1)] rounded-md focus:border-[rgba(0,0,0,0.7)] focus:outline-none px-3"
                 name="confirmPassword"
                 value={formFields.confirmPassword}
                 disabled={isLoading === true ? true : false}
                 onChange={onChangeInput}
               />
-              <Button className="!absolute top-[7px] right-[10px] z-50 !rounded-full !w-[35px] !h-[35px] !min-w-[35px] !text-gray-600" onClick={() => setisPasswordShow2(!isPasswordShow2)}>
+              <Button
+                className="!absolute top-[7px] right-[10px] z-50 !rounded-full !w-[35px] !h-[35px] !min-w-[35px] !text-gray-600"
+                onClick={() => setisPasswordShow2(!isPasswordShow2)}
+              >
                 {isPasswordShow2 === false ? (
                   <FaRegEye className="text-[18px]" />
                 ) : (
@@ -176,12 +166,16 @@ const ChangePassword = () => {
             </div>
           </div>
 
-          <Button type="submit" disabled={!valideValue} className="btn-blue btn-lg w-full">
-            {
-              isLoading === true ? <CircularProgress color="inherit" />
-                :
-                'Change Password'
-            }
+          <Button
+            type="submit"
+            disabled={!valideValue}
+            className="btn-blue btn-lg w-full"
+          >
+            {isLoading === true ? (
+              <CircularProgress color="inherit" />
+            ) : (
+              "Change Password"
+            )}
           </Button>
         </form>
       </div>

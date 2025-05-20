@@ -86,7 +86,7 @@ const Header = () => {
     setAnchorMyAcc(null);
 
     fetchDataFromApi(
-      `/api/user/logout?token=${localStorage.getItem("accessToken")}`,
+      `/api/admin/logout?token=${localStorage.getItem("accessToken")}`,
       { withCredentials: true }
     ).then((res) => {
       if (res?.error === false) {

@@ -93,7 +93,7 @@ export const OrdersReturn = () => {
   }, [searchQuery]);
 
   const deleteOrder = (id) => {
-    if (context?.userData?.role === "ADMIN") {
+    if (context?.userData?.role === "SUPERADMIN") {
       deleteData(`/api/order/deleteOrder/${id}`).then((res) => {
         fetchDataFromApi(
           `/api/order/return-order-list?page=${pageOrder}&limit=5`

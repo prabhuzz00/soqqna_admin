@@ -8,11 +8,10 @@ import { useContext } from "react";
 import { MyContext } from "../../App";
 import { useNavigate } from "react-router-dom";
 import { fetchDataFromApi, postData } from "../../utils/api";
-import CircularProgress from '@mui/material/CircularProgress';
+import CircularProgress from "@mui/material/CircularProgress";
 import { useEffect } from "react";
 
 const VerifyAccount = () => {
-
   const [otp, setOtp] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -21,71 +20,60 @@ const VerifyAccount = () => {
 
   useEffect(() => {
     fetchDataFromApi("/api/logo").then((res) => {
-      localStorage.setItem('logo', res?.logo[0]?.logo)
-    })
-  }, [])
+      localStorage.setItem("logo", res?.logo[0]?.logo);
+    });
+  }, []);
 
   const handleOtpChange = (value) => {
     setOtp(value);
   };
 
-
   const verityOTP = (e) => {
     e.preventDefault();
 
-
     if (otp !== "") {
-      setIsLoading(true)
+      setIsLoading(true);
       const actionType = localStorage.getItem("actionType");
 
       if (actionType !== "forgot-password") {
-
-        postData("/api/user/verifyEmail", {
+        postData("/api/admin/verifyEmail", {
           email: localStorage.getItem("userEmail"),
-          otp: otp
+          otp: otp,
         }).then((res) => {
           if (res?.error === false) {
             context.alertBox("success", res?.message);
-            localStorage.removeItem("userEmail")
-            setIsLoading(false)
-            history("/login")
+            localStorage.removeItem("userEmail");
+            setIsLoading(false);
+            history("/login");
           } else {
             context.alertBox("error", res?.message);
-            setIsLoading(false)
+            setIsLoading(false);
           }
-        })
-      }
-
-      else {
-        postData("/api/user/verify-forgot-password-otp", {
+        });
+      } else {
+        postData("/api/admin/verify-forgot-password-otp", {
           email: localStorage.getItem("userEmail"),
-          otp: otp
+          otp: otp,
         }).then((res) => {
           if (res?.error === false) {
             context.alertBox("success", res?.message);
-            history("/change-password")
+            history("/change-password");
           } else {
             context.alertBox("error", res?.message);
-            setIsLoading(false)
+            setIsLoading(false);
           }
-        })
+        });
       }
-    }
-    else {
+    } else {
       context.alertBox("error", "Please enter OTP");
     }
-
-  }
-
+  };
 
   return (
     <section className="bg-white w-full h-[100vh]">
       <header className="w-full static lg:fixed top-0 left-0  px-4 py-3 flex items-center justify-center sm:justify-between z-50">
         <Link to="/">
-          <img
-            src={localStorage.getItem('logo')}
-            className="w-[200px]"
-          />
+          <img src={localStorage.getItem("logo")} className="w-[200px]" />
         </Link>
 
         <div className="hidden sm:flex items-center gap-0">
@@ -116,8 +104,12 @@ const VerifyAccount = () => {
         </h1>
 
         <br />
-        <p className="text-center text-[15px]">OTP send to  &nbsp;
-          <span className="text-primary font-bold text-[12px] sm:text-[14px]">{localStorage.getItem("userEmail")}</span></p>
+        <p className="text-center text-[15px]">
+          OTP send to &nbsp;
+          <span className="text-primary font-bold text-[12px] sm:text-[14px]">
+            {localStorage.getItem("userEmail")}
+          </span>
+        </p>
 
         <br />
 
@@ -130,20 +122,16 @@ const VerifyAccount = () => {
 
           <div className="w-[100%] px-3 sm:w-[300px] sm:px-0 m-auto">
             <Button type="submit" className="btn-blue w-full">
-
-              {
-                isLoading === true ? <CircularProgress color="inherit" />
-                  :
-                  'Verify OTP'
-              }
+              {isLoading === true ? (
+                <CircularProgress color="inherit" />
+              ) : (
+                "Verify OTP"
+              )}
             </Button>
           </div>
-
         </form>
 
         <br />
-
-
       </div>
     </section>
   );

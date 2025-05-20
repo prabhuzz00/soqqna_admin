@@ -62,7 +62,7 @@ const Login = () => {
       localStorage.setItem("userEmail", formFields.email);
       localStorage.setItem("actionType", "forgot-password");
 
-      postData("/api/user/forgot-password", {
+      postData("/api/admin/forgot-password", {
         email: formFields.email,
       }).then((res) => {
         if (res?.error === false) {
@@ -90,7 +90,7 @@ const Login = () => {
       return false;
     }
 
-    postData("/api/user/login", formFields, { withCredentials: true }).then(
+    postData("/api/admin/login", formFields, { withCredentials: true }).then(
       (res) => {
         if (res?.error !== true) {
           setIsLoading(false);
@@ -134,7 +134,7 @@ const Login = () => {
           role: "USER",
         };
 
-        postData("/api/user/authWithGoogle", fields).then((res) => {
+        postData("/api/admin/authWithGoogle", fields).then((res) => {
           if (res?.error !== true) {
             setLoadingGoogle(false);
             setIsLoading(false);

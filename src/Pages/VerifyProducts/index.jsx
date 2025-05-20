@@ -327,7 +327,7 @@ export const VerifiedProducts = () => {
   };
 
   const deleteProduct = (id) => {
-    if (context?.userData?.role === "ADMIN") {
+    if (context?.userData?.role === "SUPERADMIN") {
       deleteData(`/api/product/${id}`).then((res) => {
         getProducts();
         context.alertBox("success", "Product deleted");

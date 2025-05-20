@@ -66,7 +66,7 @@ export const EditSubCatBox = (props) => {
   };
 
   const deleteCat = (id) => {
-    if (context?.userData?.role === "ADMIN") {
+    if (context?.userData?.role === "SUPERADMIN") {
       deleteData(`/api/category/${id}`).then((res) => {
         context?.getCat();
       });

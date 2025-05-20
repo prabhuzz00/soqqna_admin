@@ -74,7 +74,7 @@ function App() {
   }, [windowWidth]);
 
   useEffect(() => {
-    if (userData?.role !== "ADMIN") {
+    if (userData?.role !== "SUPERADMIN") {
       const handleContextmenu = (e) => {
         e.preventDefault();
       };
@@ -1079,7 +1079,7 @@ function App() {
     if (token !== undefined && token !== null && token !== "") {
       setIsLogin(true);
 
-      fetchDataFromApi(`/api/user/user-details`).then((res) => {
+      fetchDataFromApi(`/api/admin/user-details`).then((res) => {
         setUserData(res.data);
         if (res?.response?.data?.message === "You have not login") {
           localStorage.removeItem("accessToken");

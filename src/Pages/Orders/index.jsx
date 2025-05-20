@@ -103,7 +103,7 @@ export const Orders = () => {
   }, [searchQuery]);
 
   const deleteOrder = (id) => {
-    if (context?.userData?.role === "ADMIN") {
+    if (context?.userData?.role === "SUPERADMIN") {
       deleteData(`/api/order/deleteOrder/${id}`).then((res) => {
         fetchDataFromApi(
           `/api/order/order-list?page=${pageOrder}&limit=5`

@@ -19,16 +19,15 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-import { MyContext } from '../../App';
+import { MyContext } from "../../App";
 import SearchBox from "../../Components/SearchBox";
 import { fetchDataFromApi } from "../../utils/api";
 import Products from "../Products";
 
-
 const Dashboard = () => {
   const [isOpenOrderdProduct, setIsOpenOrderdProduct] = useState(null);
 
-  const [productCat, setProductCat] = React.useState('');
+  const [productCat, setProductCat] = React.useState("");
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(50);
 
@@ -52,12 +51,10 @@ const Dashboard = () => {
 
   const context = useContext(MyContext);
 
-
-    useEffect(() => {
-      context?.setProgress(30);
-        getProducts(page, rowsPerPage);
-    }, [])
-
+  useEffect(() => {
+    context?.setProgress(30);
+    getProducts(page, rowsPerPage);
+  }, []);
 
   const isShowOrderdProduct = (index) => {
     if (isOpenOrderdProduct === index) {
@@ -67,78 +64,78 @@ const Dashboard = () => {
     }
   };
 
-
   useEffect(() => {
-
-
-    fetchDataFromApi(`/api/order/order-list?page=${pageOrder}&limit=5`).then((res) => {
-      if (res?.error === false) {
-        setOrdersData(res?.data)
+    fetchDataFromApi(`/api/order/order-list?page=${pageOrder}&limit=5`).then(
+      (res) => {
+        if (res?.error === false) {
+          setOrdersData(res?.data);
+        }
       }
-    })
+    );
     fetchDataFromApi(`/api/order/order-list`).then((res) => {
       if (res?.error === false) {
-        setTotalOrdersData(res)
+        setTotalOrdersData(res);
       }
-    })
+    });
     fetchDataFromApi(`/api/order/count`).then((res) => {
       if (res?.error === false) {
-        setOrdersCount(res?.count)
+        setOrdersCount(res?.count);
       }
-    })
-  }, [pageOrder])
-
+    });
+  }, [pageOrder]);
 
   useEffect(() => {
-
     // Filter orders based on search query
     if (orderSearchQuery !== "") {
-      const filteredOrders = totalOrdersData?.data?.filter((order) =>
-        order._id?.toLowerCase().includes(orderSearchQuery.toLowerCase()) ||
-        order?.userId?.name.toLowerCase().includes(orderSearchQuery.toLowerCase()) ||
-        order?.userId?.email.toLowerCase().includes(orderSearchQuery.toLowerCase()) ||
-        order?.createdAt.includes(orderSearchQuery)
+      const filteredOrders = totalOrdersData?.data?.filter(
+        (order) =>
+          order._id?.toLowerCase().includes(orderSearchQuery.toLowerCase()) ||
+          order?.userId?.name
+            .toLowerCase()
+            .includes(orderSearchQuery.toLowerCase()) ||
+          order?.userId?.email
+            .toLowerCase()
+            .includes(orderSearchQuery.toLowerCase()) ||
+          order?.createdAt.includes(orderSearchQuery)
       );
-      setOrdersData(filteredOrders)
+      setOrdersData(filteredOrders);
     } else {
-      fetchDataFromApi(`/api/order/order-list?page=${pageOrder}&limit=5`).then((res) => {
-        if (res?.error === false) {
-          setOrders(res)
-          setOrdersData(res?.data)
+      fetchDataFromApi(`/api/order/order-list?page=${pageOrder}&limit=5`).then(
+        (res) => {
+          if (res?.error === false) {
+            setOrders(res);
+            setOrdersData(res?.data);
+          }
         }
-      })
+      );
     }
-  }, [orderSearchQuery])
-
-
+  }, [orderSearchQuery]);
 
   useEffect(() => {
     getTotalSalesByYear();
 
-    fetchDataFromApi("/api/user/getAllUsers").then((res) => {
+    fetchDataFromApi("/api/admin/getAllUsers").then((res) => {
       if (res?.error === false) {
-        setUsers(res?.users)
+        setUsers(res?.users);
       }
-    })
+    });
 
-    fetchDataFromApi("/api/user/getAllReviews").then((res) => {
+    fetchDataFromApi("/api/admin/getAllReviews").then((res) => {
       if (res?.error === false) {
-        setAllReviews(res?.reviews)
+        setAllReviews(res?.reviews);
       }
-    })
-
-  }, [])
-
-
+    });
+  }, []);
 
   const getProducts = async (page, limit) => {
-         fetchDataFromApi(`/api/product/getAllProducts?page=${page + 1}&limit=${limit}`).then((res) => {
-             setProductData(res)
-             setProductTotalData(res)
-             context?.setProgress(100);
-         })
-     }
-
+    fetchDataFromApi(
+      `/api/product/getAllProducts?page=${page + 1}&limit=${limit}`
+    ).then((res) => {
+      setProductData(res);
+      setProductTotalData(res);
+      context?.setProgress(100);
+    });
+  };
 
   const getTotalUsersByYear = () => {
     fetchDataFromApi(`/api/order/users`).then((res) => {
@@ -156,8 +153,8 @@ const Dashboard = () => {
           index === self.findIndex((t) => t.name === obj.name)
       );
       setChartData(uniqueArr);
-    })
-  }
+    });
+  };
 
   const getTotalSalesByYear = () => {
     fetchDataFromApi(`/api/order/sales`).then((res) => {
@@ -176,9 +173,7 @@ const Dashboard = () => {
       );
       setChartData(uniqueArr);
     });
-  }
-
-
+  };
 
   return (
     <>
@@ -205,20 +200,29 @@ const Dashboard = () => {
         <img src="/shop-illustration.webp" className="w-[250px] hidden lg:block" />
       </div> */}
 
-      {
-        productData?.products?.length !== 0 && users?.length !== 0 && allReviews?.length !== 0 && <DashboardBoxes orders={ordersCount} products={productData?.products?.length} users={users?.length} reviews={allReviews?.length} category={context?.catData?.length} />
-      }
+      {productData?.products?.length !== 0 &&
+        users?.length !== 0 &&
+        allReviews?.length !== 0 && (
+          <DashboardBoxes
+            orders={ordersCount}
+            products={productData?.products?.length}
+            users={users?.length}
+            reviews={allReviews?.length}
+            category={context?.catData?.length}
+          />
+        )}
 
-      <Products/>
+      <Products />
 
       <div className="card my-4 shadow-md sm:rounded-lg bg-white">
         <div className="grid grid-cols-1 lg:grid-cols-2 px-5 py-5 flex-col sm:flex-row">
-          <h2 className="text-[18px] font-[600] text-left mb-2 lg:mb-0">Recent Orders</h2>
+          <h2 className="text-[18px] font-[600] text-left mb-2 lg:mb-0">
+            Recent Orders
+          </h2>
           <div className="ml-auto w-full">
             <SearchBox
               searchQuery={orderSearchQuery}
               setSearchQuery={setOrderSearchQuery}
-
               setPageOrder={setPageOrder}
             />
           </div>
@@ -267,9 +271,8 @@ const Dashboard = () => {
               </tr>
             </thead>
             <tbody>
-
-              {
-                ordersData?.length !== 0 && ordersData?.map((order, index) => {
+              {ordersData?.length !== 0 &&
+                ordersData?.map((order, index) => {
                   return (
                     <>
                       <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
@@ -278,44 +281,59 @@ const Dashboard = () => {
                             className="!w-[35px] !h-[35px] !min-w-[35px] !rounded-full !bg-[#f1f1f1]"
                             onClick={() => isShowOrderdProduct(index)}
                           >
-                            {
-                              isOpenOrderdProduct === index ? <FaAngleUp className="text-[16px] text-[rgba(0,0,0,0.7)]" /> : <FaAngleDown className="text-[16px] text-[rgba(0,0,0,0.7)]" />
-                            }
-
+                            {isOpenOrderdProduct === index ? (
+                              <FaAngleUp className="text-[16px] text-[rgba(0,0,0,0.7)]" />
+                            ) : (
+                              <FaAngleDown className="text-[16px] text-[rgba(0,0,0,0.7)]" />
+                            )}
                           </Button>
                         </td>
                         <td className="px-6 py-4 font-[500]">
-                          <span className="text-primary">
-                            {order?._id}
-                          </span>
+                          <span className="text-primary">{order?._id}</span>
                         </td>
 
                         <td className="px-6 py-4 font-[500]">
-                          <span className="text-primary whitespace-nowrap text-[13px]">{order?.paymentId ? order?.paymentId : 'CASH ON DELIVERY'}</span>
+                          <span className="text-primary whitespace-nowrap text-[13px]">
+                            {order?.paymentId
+                              ? order?.paymentId
+                              : "CASH ON DELIVERY"}
+                          </span>
                         </td>
 
                         <td className="px-6 py-4 font-[500] whitespace-nowrap">
                           {order?.userId?.name}
                         </td>
 
-                        <td className="px-6 py-4 font-[500]">{order?.delivery_address?.mobile}</td>
+                        <td className="px-6 py-4 font-[500]">
+                          {order?.delivery_address?.mobile}
+                        </td>
 
                         <td className="px-6 py-4 font-[500]">
-                          <span className='inline-block text-[13px] font-[500] p-1 bg-[#f1f1f1] rounded-md'>{order?.delivery_address?.addressType}</span>
+                          <span className="inline-block text-[13px] font-[500] p-1 bg-[#f1f1f1] rounded-md">
+                            {order?.delivery_address?.addressType}
+                          </span>
                           <span className="block w-[400px]">
-                            {order?.delivery_address?.
-                              address_line1 + " " +
-                              order?.delivery_address?.city + " " +
-                              order?.delivery_address?.landmark + " " +
-                              order?.delivery_address?.state + " " +
-                              order?.delivery_address?.country + ' ' + order?.delivery_address?.mobile
-                            }
+                            {order?.delivery_address?.address_line1 +
+                              " " +
+                              order?.delivery_address?.city +
+                              " " +
+                              order?.delivery_address?.landmark +
+                              " " +
+                              order?.delivery_address?.state +
+                              " " +
+                              order?.delivery_address?.country +
+                              " " +
+                              order?.delivery_address?.mobile}
                           </span>
                         </td>
 
-                        <td className="px-6 py-4 font-[500]">{order?.delivery_address?.pincode}</td>
+                        <td className="px-6 py-4 font-[500]">
+                          {order?.delivery_address?.pincode}
+                        </td>
 
-                        <td className="px-6 py-4 font-[500]">{order?.totalAmt}</td>
+                        <td className="px-6 py-4 font-[500]">
+                          {order?.totalAmt}
+                        </td>
 
                         <td className="px-6 py-4 font-[500]">
                           {order?.userId?.email}
@@ -381,40 +399,52 @@ const Dashboard = () => {
                                   </tr>
                                 </thead>
                                 <tbody>
-                                  {
-                                    order?.products?.map((item, index) => {
-                                      return (
-                                        <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                                          <td className="px-6 py-4 font-[500]">
-                                            <span className="text-gray-600">
-                                              {item?._id}
-                                            </span>
-                                          </td>
-                                          <td className="px-6 py-4 font-[500]">
-                                            <div className="w-[200px]">
-                                              {item?.productTitle}
-                                            </div>
-                                          </td>
+                                  {order?.products?.map((item, index) => {
+                                    return (
+                                      <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                                        <td className="px-6 py-4 font-[500]">
+                                          <span className="text-gray-600">
+                                            {item?._id}
+                                          </span>
+                                        </td>
+                                        <td className="px-6 py-4 font-[500]">
+                                          <div className="w-[200px]">
+                                            {item?.productTitle}
+                                          </div>
+                                        </td>
 
-                                          <td className="px-6 py-4 font-[500]">
-                                            <img
-                                              src={item?.image}
-                                              className="w-[40px] h-[40px] object-cover rounded-md"
-                                            />
-                                          </td>
+                                        <td className="px-6 py-4 font-[500]">
+                                          <img
+                                            src={item?.image}
+                                            className="w-[40px] h-[40px] object-cover rounded-md"
+                                          />
+                                        </td>
 
-                                          <td className="px-6 py-4 font-[500] whitespace-nowrap">
-                                            {item?.quantity}
-                                          </td>
+                                        <td className="px-6 py-4 font-[500] whitespace-nowrap">
+                                          {item?.quantity}
+                                        </td>
 
-                                          <td className="px-6 py-4 font-[500]">{item?.price?.toLocaleString('en-US', { style: 'currency', currency: 'INR' })}</td>
+                                        <td className="px-6 py-4 font-[500]">
+                                          {item?.price?.toLocaleString(
+                                            "en-US",
+                                            {
+                                              style: "currency",
+                                              currency: "INR",
+                                            }
+                                          )}
+                                        </td>
 
-                                          <td className="px-6 py-4 font-[500]">{(item?.price * item?.quantity)?.toLocaleString('en-US', { style: 'currency', currency: 'INR' })}</td>
-                                        </tr>
-                                      )
-                                    })
-                                  }
-
+                                        <td className="px-6 py-4 font-[500]">
+                                          {(
+                                            item?.price * item?.quantity
+                                          )?.toLocaleString("en-US", {
+                                            style: "currency",
+                                            currency: "INR",
+                                          })}
+                                        </td>
+                                      </tr>
+                                    );
+                                  })}
 
                                   <tr>
                                     <td
@@ -429,30 +459,24 @@ const Dashboard = () => {
                         </tr>
                       )}
                     </>
-                  )
-                })
-
-              }
-
+                  );
+                })}
             </tbody>
           </table>
         </div>
 
-
-        {
-          orders?.totalPages > 1 &&
+        {orders?.totalPages > 1 && (
           <div className="flex items-center justify-center mt-10 pb-5">
             <Pagination
-              showFirstButton showLastButton
+              showFirstButton
+              showLastButton
               count={orders?.totalPages}
               page={pageOrder}
               onChange={(e, value) => setPageOrder(value)}
             />
           </div>
-        }
-
+        )}
       </div>
-
 
       <div className="card my-4 shadow-md sm:rounded-lg bg-white">
         <div className="flex items-center justify-between px-5 py-5 pb-0">
@@ -460,22 +484,30 @@ const Dashboard = () => {
         </div>
 
         <div className="flex items-center gap-5 px-5 py-5 pt-1">
-          <span className="flex items-center gap-1 text-[15px] cursor-pointer" onClick={getTotalUsersByYear}>
-            <span className="block w-[8px] h-[8px] rounded-full bg-primary "
-            ></span>
+          <span
+            className="flex items-center gap-1 text-[15px] cursor-pointer"
+            onClick={getTotalUsersByYear}
+          >
+            <span className="block w-[8px] h-[8px] rounded-full bg-primary "></span>
             Total Users
           </span>
 
-          <span className="flex items-center gap-1 text-[15px] cursor-pointer" onClick={getTotalSalesByYear}>
-            <span className="block w-[8px] h-[8px] rounded-full bg-green-600  "
-            ></span>
+          <span
+            className="flex items-center gap-1 text-[15px] cursor-pointer"
+            onClick={getTotalSalesByYear}
+          >
+            <span className="block w-[8px] h-[8px] rounded-full bg-green-600  "></span>
             Total Sales
           </span>
         </div>
 
-        {chartData?.length !== 0 &&
+        {chartData?.length !== 0 && (
           <BarChart
-            width={context?.windowWidth > 920 ? (context?.windowWidth - 300) : (context?.windowWidth-50)}
+            width={
+              context?.windowWidth > 920
+                ? context?.windowWidth - 300
+                : context?.windowWidth - 50
+            }
             height={500}
             data={chartData}
             margin={{
@@ -515,9 +547,8 @@ const Dashboard = () => {
             />
             <Bar dataKey="TotalSales" stackId="a" fill="#16a34a" />
             <Bar dataKey="TotalUsers" stackId="b" fill="#0858f7" />
-
           </BarChart>
-        }
+        )}
       </div>
     </>
   );
