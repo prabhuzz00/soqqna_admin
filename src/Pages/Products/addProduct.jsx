@@ -673,81 +673,106 @@ const AddProduct = () => {
           <h3 className="font-bold text-lg mb-2">Product Variations</h3>
           {variations.map((variation, index) => (
             <div key={index} className="border p-4 mb-4 bg-white rounded-md">
-              <div className="mb-2">
+              <div className="grid grid-cols-1 gap-2 mb-2">
                 <label className="font-medium">Color Label</label>
-                <input
-                  type="text"
+                {/* Dropdown for color label */}
+                <select
                   value={variation.color.label}
                   onChange={(e) =>
                     handleVariationChange(index, "label", e.target.value)
                   }
-                  className="input-style"
-                />
+                  className="w-full h-[40px] border border-[rgba(0,0,0,0.2)] focus:outline-none focus:border-[rgba(0,0,0,0.4)] rounded-sm p-3 text-sm"
+                >
+                  <option value="">Select Color</option>
+                  {productRamsData.map((colorOption) => (
+                    <option key={colorOption._id} value={colorOption.name}>
+                      {colorOption.name}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               <div className="mb-2">
                 <label className="font-medium">Color Images</label>
-                <UploadBox
-                  multiple={true}
-                  name="colorImages"
-                  url="/api/product/uploadColorImages"
-                  setPreviewsFun={(uploadedImages) => {
-                    // This updates the correct variation's color images
-                    setVariations((prevVariations) =>
-                      prevVariations.map((variation, i) =>
-                        i === index
-                          ? {
-                              ...variation,
-                              color: {
-                                ...variation.color,
-                                images: [
-                                  ...(variation.color.images || []),
-                                  ...uploadedImages,
-                                ],
-                              },
-                            }
-                          : variation
-                      )
-                    );
-                  }}
-                />
+                <div className="grid grid-cols-6 gap-2 mb-2">
+                  <UploadBox
+                    multiple={true}
+                    name="colorImages"
+                    url="/api/product/uploadColorImages"
+                    setPreviewsFun={(uploadedImages) => {
+                      // This updates the correct variation's color images
+                      setVariations((prevVariations) =>
+                        prevVariations.map((variation, i) =>
+                          i === index
+                            ? {
+                                ...variation,
+                                color: {
+                                  ...variation.color,
+                                  images: [
+                                    ...(variation.color.images || []),
+                                    ...uploadedImages,
+                                  ],
+                                },
+                              }
+                            : variation
+                        )
+                      );
+                    }}
+                  />
 
-                {/* Image Preview — also in ProductForm */}
-                <div className="flex flex-wrap mt-2">
-                  {variations[index]?.color?.images?.map((img, i) => (
-                    <div
-                      key={i}
-                      className="relative mr-2 mb-2"
-                      style={{ width: "80px", height: "80px" }}
-                    >
-                      <img
-                        src={img}
-                        alt={`variation-${index}-img-${i}`}
-                        className="w-full h-full object-cover rounded-md"
-                      />
-                      <button
-                        onClick={() => removeColorImage(index, img)}
-                        className="absolute -top-2 -right-2 bg-red-700 text-white rounded-full w-5 h-5 flex items-center justify-center text-sm z-10"
+                  {/* Image Preview — also in ProductForm */}
+                  <div className="flex flex-wrap mt-2">
+                    {variations[index]?.color?.images?.map((img, i) => (
+                      <div
+                        key={i}
+                        className="relative mr-2 mb-2"
+                        style={{ width: "80px", height: "80px" }}
                       >
-                        ×
-                      </button>
-                    </div>
-                  ))}
+                        <img
+                          src={img}
+                          alt={`variation-${index}-img-${i}`}
+                          className="w-full h-full object-cover rounded-md"
+                        />
+                        <button
+                          onClick={() => removeColorImage(index, img)}
+                          className="absolute -top-2 -right-2 bg-red-700 text-white rounded-full w-5 h-5 flex items-center justify-center text-sm z-10"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
 
               <div className="mb-2">
                 <label className="font-medium">Sizes</label>
                 {variation.sizes.map((size, sIndex) => (
-                  <div key={sIndex} className="grid grid-cols-3 gap-2 mb-2">
-                    <input
+                  <div key={sIndex} className="grid grid-cols-4 gap-2 mb-2">
+                    {/* <input
                       placeholder="Label"
                       value={size.label}
                       onChange={(e) =>
                         handleSizeChange(index, sIndex, "label", e.target.value)
                       }
-                      className="input-style"
-                    />
+                      className="w-full h-[40px] border border-[rgba(0,0,0,0.2)] focus:outline-none focus:border-[rgba(0,0,0,0.4)] rounded-sm p-3 text-sm"
+                    /> */}
+                    {/* Dropdown for size label */}
+                    <select
+                      value={size.label}
+                      onChange={(e) =>
+                        handleSizeChange(index, sIndex, "label", e.target.value)
+                      }
+                      className="w-full h-[40px] border border-[rgba(0,0,0,0.2)] focus:outline-none focus:border-[rgba(0,0,0,0.4)] rounded-sm p-3 text-sm"
+                    >
+                      <option value="">Select size</option>
+                      {productSizeData.map((sizeOption) => (
+                        <option key={sizeOption._id} value={sizeOption.name}>
+                          {sizeOption.name}
+                        </option>
+                      ))}
+                    </select>
+
                     <input
                       type="number"
                       placeholder="Price"
@@ -755,7 +780,7 @@ const AddProduct = () => {
                       onChange={(e) =>
                         handleSizeChange(index, sIndex, "price", e.target.value)
                       }
-                      className="input-style"
+                      className="w-full h-[40px] border border-[rgba(0,0,0,0.2)] focus:outline-none focus:border-[rgba(0,0,0,0.4)] rounded-sm p-3 text-sm"
                     />
                     <input
                       type="number"
@@ -769,14 +794,21 @@ const AddProduct = () => {
                           e.target.value
                         )
                       }
-                      className="input-style"
+                      className="w-full h-[40px] border border-[rgba(0,0,0,0.2)] focus:outline-none focus:border-[rgba(0,0,0,0.4)] rounded-sm p-3 text-sm"
                     />
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveSize(index, sIndex)}
+                      className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded"
+                    >
+                      - Remove size
+                    </button>
                   </div>
                 ))}
                 <button
                   type="button"
                   onClick={() => handleAddSize(index)}
-                  className="btn-sm"
+                  className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
                 >
                   + Add Size
                 </button>
@@ -785,7 +817,7 @@ const AddProduct = () => {
               <button
                 type="button"
                 onClick={() => handleRemoveVariation(index)}
-                className="btn-red mt-2"
+                className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded"
               >
                 Remove Variation
               </button>
@@ -795,7 +827,7 @@ const AddProduct = () => {
           <button
             type="button"
             onClick={handleAddVariation}
-            className="btn-blue mt-4"
+            className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
           >
             + Add Variation
           </button>
