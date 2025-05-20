@@ -10,7 +10,7 @@ import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import Checkbox from "@mui/material/Checkbox";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import SearchBox from "../../Components/SearchBox";
 import { MyContext } from "../../App";
 import { MdOutlineMarkEmailRead } from "react-icons/md";
@@ -67,6 +67,7 @@ export const Users = () => {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
+  const navigate = useNavigate();
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -205,6 +206,12 @@ export const Users = () => {
           <div className="col w-[40%]">
             <h2 className="text-[18px] font-[600]">Users List</h2>
           </div>
+          <button
+            className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+            onClick={() => navigate("/users/addusers")}
+          >
+            Add Users
+          </button>
 
           <div className="col w-[40%] ml-auto flex items-center gap-3">
             {sortedIds?.length !== 0 && (
