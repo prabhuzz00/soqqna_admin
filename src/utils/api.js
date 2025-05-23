@@ -1,21 +1,18 @@
 import axios from "axios";
 const apiUrl = import.meta.env.VITE_API_URL;
-
-export const postData = async (url, formData) => {
+export const postData = async (url, formData, method = "POST") => {
   try {
     const response = await fetch(apiUrl + url, {
-      method: "POST",
+      method,
       headers: {
-        Authorization: `Bearer ${localStorage.getItem("accessToken")}`, // Include your API key in the Authorization header
-        "Content-Type": "application/json", // Adjust the content type as needed
+        Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        "Content-Type": "application/json",
       },
-
       body: JSON.stringify(formData),
     });
 
     if (response.ok) {
       const data = await response.json();
-      //console.log(data)
       return data;
     } else {
       const errorData = await response.json();
@@ -23,6 +20,7 @@ export const postData = async (url, formData) => {
     }
   } catch (error) {
     console.error("Error:", error);
+    return { error: "An unexpected error occurred." };
   }
 };
 

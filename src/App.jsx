@@ -46,6 +46,7 @@ import IncompleteOrders from "./Pages/IncompleteOrder";
 import OrdersReturn from "./Pages/OrderReturn";
 import Withdrawal from "./Pages/VerifyWithdraw";
 import AddUsers from "./Pages/AddUsers";
+import CouponList from "./Pages/Coupons/CouponList";
 
 const MyContext = createContext();
 function App() {
@@ -576,6 +577,39 @@ function App() {
                 style={{ width: isSidebarOpen === false ? "100%" : "80%" }}
               >
                 <AddUsers />
+              </div>
+            </div>
+          </section>
+        </>
+      ),
+    },
+
+    {
+      path: "/coupons",
+      exact: true,
+      element: (
+        <>
+          <section className="main">
+            <Header />
+            <div className="contentMain flex">
+              <div
+                className={`overflow-hidden sidebarWrapper ${
+                  isSidebarOpen === true
+                    ? windowWidth < 992
+                      ? `w-[${sidebarWidth / 1.5}%]`
+                      : `w-[20%]`
+                    : "w-[0px] opacity-0 invisible"
+                } transition-all`}
+              >
+                <Sidebar />
+              </div>
+              <div
+                className={`contentRight overflow-hidden py-4 px-5 ${
+                  isSidebarOpen === true && windowWidth < 992 && "opacity-0"
+                }  transition-all`}
+                style={{ width: isSidebarOpen === false ? "100%" : "80%" }}
+              >
+                <CouponList />
               </div>
             </div>
           </section>
