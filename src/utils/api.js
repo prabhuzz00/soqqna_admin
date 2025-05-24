@@ -1,9 +1,9 @@
 import axios from "axios";
 const apiUrl = import.meta.env.VITE_API_URL;
-export const postData = async (url, formData, method = "POST") => {
+export const postData = async (url, formData) => {
   try {
     const response = await fetch(apiUrl + url, {
-      method,
+      method: "POST",
       headers: {
         Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         "Content-Type": "application/json",
@@ -200,4 +200,28 @@ export const deleteMultipleData = async (url, data) => {
   };
   const { res } = await axios.delete(apiUrl + url, data, params);
   return res;
+};
+
+export const postData2 = async (url, formData, method = "POST") => {
+  try {
+    const response = await fetch(apiUrl + url, {
+      method,
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      return data;
+    } else {
+      const errorData = await response.json();
+      return errorData;
+    }
+  } catch (error) {
+    console.error("Error:", error);
+    return { error: "An unexpected error occurred." };
+  }
 };

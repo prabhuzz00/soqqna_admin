@@ -1,25 +1,31 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Button } from "@mui/material";
 import { FaCloudUploadAlt } from "react-icons/fa";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
-import { useContext } from "react";
 import { MyContext } from "../../App";
 import CircularProgress from "@mui/material/CircularProgress";
-import { postData } from "../../utils/api";
+import { postData, deleteImages } from "../../utils/api";
 import { useNavigate } from "react-router-dom";
+import UploadBox from "../../Components/UploadBox";
+import { LazyLoadImage } from "react-lazy-load-image-component";
+import "react-lazy-load-image-component/src/effects/blur.css";
+import { IoMdClose } from "react-icons/io";
 
 const AddSubCategory = () => {
   const [productCat, setProductCat] = useState("");
   const [productCat2, setProductCat2] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isLoading2, setIsLoading2] = useState(false);
+  const [previews, setPreviews] = useState([]);
+  const [previews2, setPreviews2] = useState([]);
 
   const [formFields, setFormFields] = useState({
     name: "",
     arName: "",
     parentCatName: null,
     parentId: null,
+    images: [],
   });
 
   const [formFields2, setFormFields2] = useState({
@@ -27,6 +33,7 @@ const AddSubCategory = () => {
     arName: "",
     parentCatName: null,
     parentId: null,
+    images: [],
   });
 
   const context = useContext(MyContext);
@@ -52,10 +59,6 @@ const AddSubCategory = () => {
 
   const onChangeInput = (e) => {
     const { name, value } = e.target;
-
-    const catId = productCat;
-    setProductCat(catId);
-
     setFormFields(() => {
       return {
         ...formFields,
@@ -66,9 +69,6 @@ const AddSubCategory = () => {
 
   const onChangeInput2 = (e) => {
     const { name, value } = e.target;
-    const catId = productCat2;
-    setProductCat2(catId);
-
     setFormFields2(() => {
       return {
         ...formFields2,
@@ -77,9 +77,57 @@ const AddSubCategory = () => {
     });
   };
 
+  const setPreviewsFun = (previewsArr) => {
+    const imgArr = [...previews];
+    for (let i = 0; i < previewsArr.length; i++) {
+      imgArr.push(previewsArr[i]);
+    }
+    setPreviews([]);
+    setTimeout(() => {
+      setPreviews(imgArr);
+      formFields.images = imgArr;
+    }, 10);
+  };
+
+  const setPreviewsFun2 = (previewsArr) => {
+    const imgArr = [...previews2];
+    for (let i = 0; i < previewsArr.length; i++) {
+      imgArr.push(previewsArr[i]);
+    }
+    setPreviews2([]);
+    setTimeout(() => {
+      setPreviews2(imgArr);
+      formFields2.images = imgArr;
+    }, 10);
+  };
+
+  const removeImg = (image, index) => {
+    const imageArr = [...previews];
+    deleteImages(`/api/category/deteleImage?img=${image}`).then((res) => {
+      imageArr.splice(index, 1);
+      setPreviews([]);
+      setTimeout(() => {
+        setPreviews(imageArr);
+        formFields.images = imageArr;
+      }, 100);
+    });
+  };
+
+  const removeImg2 = (image, index) => {
+    const imageArr = [...previews2];
+    deleteImages(`/api/category/deteleImage?img=${image}`).then((res) => {
+      imageArr.splice(index, 1);
+      setPreviews2([]);
+      setTimeout(() => {
+        setPreviews2(imageArr);
+        formFields2.images = imageArr;
+      }, 100);
+    });
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-
+    context?.setProgress(50);
     setIsLoading(true);
 
     if (formFields.name === "") {
@@ -94,6 +142,12 @@ const AddSubCategory = () => {
       return false;
     }
 
+    if (previews?.length === 0) {
+      context.alertBox("error", "Please select category image");
+      setIsLoading(false);
+      return false;
+    }
+
     postData("/api/category/create", formFields).then((res) => {
       setTimeout(() => {
         setIsLoading(false);
@@ -102,16 +156,15 @@ const AddSubCategory = () => {
         });
         context?.getCat();
         history("/subCategory/list");
+        context?.setProgress(100);
       }, 2500);
     });
   };
 
   const handleSubmit2 = (e) => {
     e.preventDefault();
-
+    context?.setProgress(50);
     setIsLoading2(true);
-
-    console.log(formFields2);
 
     if (formFields2.name === "") {
       context.alertBox("error", "Please enter category name");
@@ -125,6 +178,12 @@ const AddSubCategory = () => {
       return false;
     }
 
+    if (previews2?.length === 0) {
+      context.alertBox("error", "Please select category image");
+      setIsLoading2(false);
+      return false;
+    }
+
     postData("/api/category/create", formFields2).then((res) => {
       setTimeout(() => {
         setIsLoading2(false);
@@ -132,12 +191,14 @@ const AddSubCategory = () => {
           open: false,
         });
         context?.getCat();
+        history("/subCategory/list");
+        context?.setProgress(100);
       }, 2500);
     });
   };
 
   return (
-    <section className="p-5 bg-gray-50 grid grid-cols-1 md:grid-cols-2  gap-10">
+    <section className="p-5 bg-gray-50 grid grid-cols-1 md:grid-cols-2 gap-10">
       <form className="form py-1 p-1 md:p-8 md:py-1" onSubmit={handleSubmit}>
         <h4 className="font-[600]">Add Sub Category</h4>
         <div className="scroll max-h-[72vh] overflow-y-scroll pr-4 pt-4">
@@ -156,20 +217,17 @@ const AddSubCategory = () => {
                 onChange={handleChangeProductCat}
               >
                 {context?.catData?.length !== 0 &&
-                  context?.catData?.map((item, index) => {
-                    return (
-                      <MenuItem
-                        key={index}
-                        value={item?._id}
-                        onClick={selecteCatFun(item?.name)}
-                      >
-                        {item?.name}
-                      </MenuItem>
-                    );
-                  })}
+                  context?.catData?.map((item, index) => (
+                    <MenuItem
+                      key={index}
+                      value={item?._id}
+                      onClick={() => selecteCatFun(item?.name)}
+                    >
+                      {item?.name}
+                    </MenuItem>
+                  ))}
               </Select>
             </div>
-
             <div className="col">
               <h3 className="text-[14px] font-[500] mb-1 text-black">
                 Sub Category Name
@@ -184,7 +242,7 @@ const AddSubCategory = () => {
             </div>
             <div className="col">
               <h3 className="text-[14px] font-[500] mb-1 text-black">
-                Sub Category Arbic Name
+                Sub Category Arabic Name
               </h3>
               <input
                 type="text"
@@ -194,14 +252,39 @@ const AddSubCategory = () => {
                 onChange={onChangeInput}
               />
             </div>
+            <div className="col">
+              <h3 className="text-[14px] font-[500] mb-2 text-black">
+                Sub Category Image
+              </h3>
+              <div className="grid grid-cols-2 md:grid-cols-7 gap-4">
+                {previews?.length !== 0 &&
+                  previews?.map((image, index) => (
+                    <div className="uploadBoxWrapper mr-3 relative" key={index}>
+                      <span
+                        className="absolute w-[20px] h-[20px] rounded-full overflow-hidden bg-red-700 -top-[5px] -right-[5px] flex items-center justify-center z-50 cursor-pointer"
+                        onClick={() => removeImg(image, index)}
+                      >
+                        <IoMdClose className="text-white text-[17px]" />
+                      </span>
+                      <div className="uploadBox p-0 rounded-md overflow-hidden border border-dashed border-[rgba(0,0,0,0.3)] h-[150px] w-[100%] bg-gray-100 cursor-pointer hover:bg-gray-200 flex items-center justify-center flex-col relative">
+                        <img src={image} className="w-100" />
+                      </div>
+                    </div>
+                  ))}
+                <UploadBox
+                  multiple={true}
+                  name="images"
+                  url="/api/category/uploadImages"
+                  setPreviewsFun={setPreviewsFun}
+                />
+              </div>
+            </div>
           </div>
-
-          <br />
         </div>
-
+        <br />
         <div className="w-[250px]">
           <Button type="submit" className="btn-blue btn-lg w-full flex gap-2">
-            {isLoading === true ? (
+            {isLoading ? (
               <CircularProgress color="inherit" />
             ) : (
               <>
@@ -214,7 +297,7 @@ const AddSubCategory = () => {
       </form>
 
       <form className="form py-1 p-1 md:p-8 md:py-1" onSubmit={handleSubmit2}>
-        <h4 className="font-[600]">Add Third Lavel Category</h4>
+        <h4 className="font-[600]">Add Third Level Category</h4>
         <div className="scroll max-h-[72vh] overflow-y-scroll pr-4 pt-4">
           <div className="grid grid-cols-1 md:grid-cols-1 mb-3 gap-5">
             <div className="col">
@@ -223,7 +306,7 @@ const AddSubCategory = () => {
               </h3>
               <Select
                 labelId="demo-simple-select-label"
-                id="productCatDrop"
+                id="productCatDrop2"
                 size="small"
                 className="w-full"
                 value={productCat2}
@@ -231,28 +314,24 @@ const AddSubCategory = () => {
                 onChange={handleChangeProductCat2}
               >
                 {context?.catData?.length !== 0 &&
-                  context?.catData?.map((item, index) => {
-                    return (
+                  context?.catData?.map(
+                    (item, index) =>
                       item?.children?.length !== 0 &&
-                      item?.children?.map((item2, index) => {
-                        return (
-                          <MenuItem
-                            key={index}
-                            value={item2?._id}
-                            onClick={selecteCatFun2(item2?.name)}
-                          >
-                            {item2?.name}
-                          </MenuItem>
-                        );
-                      })
-                    );
-                  })}
+                      item?.children?.map((item2, index2) => (
+                        <MenuItem
+                          key={index2}
+                          value={item2?._id}
+                          onClick={() => selecteCatFun2(item2?.name)}
+                        >
+                          {item2?.name}
+                        </MenuItem>
+                      ))
+                  )}
               </Select>
             </div>
-
             <div className="col">
               <h3 className="text-[14px] font-[500] mb-1 text-black">
-                Sub Category Name
+                Third Level Category Name
               </h3>
               <input
                 type="text"
@@ -264,7 +343,7 @@ const AddSubCategory = () => {
             </div>
             <div className="col">
               <h3 className="text-[14px] font-[500] mb-1 text-black">
-                Sub Category Arbic Name
+                Third Level Category Arabic Name
               </h3>
               <input
                 type="text"
@@ -274,14 +353,39 @@ const AddSubCategory = () => {
                 onChange={onChangeInput2}
               />
             </div>
+            <div className="col">
+              <h3 className="text-[14px] font-[500] mb-2 text-black">
+                Third Level Category Image
+              </h3>
+              <div className="grid grid-cols-2 md:grid-cols-7 gap-4">
+                {previews2?.length !== 0 &&
+                  previews2?.map((image, index) => (
+                    <div className="uploadBoxWrapper mr-3 relative" key={index}>
+                      <span
+                        className="absolute w-[20px] h-[20px] rounded-full overflow-hidden bg-red-700 -top-[5px] -right-[5px] flex items-center justify-center z-50 cursor-pointer"
+                        onClick={() => removeImg2(image, index)}
+                      >
+                        <IoMdClose className="text-white text-[17px]" />
+                      </span>
+                      <div className="uploadBox p-0 rounded-md overflow-hidden border border-dashed border-[rgba(0,0,0,0.3)] h-[150px] w-[100%] bg-gray-100 cursor-pointer hover:bg-gray-200 flex items-center justify-center flex-col relative">
+                        <img src={image} className="w-100" />
+                      </div>
+                    </div>
+                  ))}
+                <UploadBox
+                  multiple={true}
+                  name="images"
+                  url="/api/category/uploadImages"
+                  setPreviewsFun={setPreviewsFun2}
+                />
+              </div>
+            </div>
           </div>
-
-          <br />
         </div>
-
+        <br />
         <div className="w-[250px]">
           <Button type="submit" className="btn-blue btn-lg w-full flex gap-2">
-            {isLoading2 === true ? (
+            {isLoading2 ? (
               <CircularProgress color="inherit" />
             ) : (
               <>

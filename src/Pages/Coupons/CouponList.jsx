@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { deleteData, fetchDataFromApi, postData } from "../../utils/api";
+import { deleteData, fetchDataFromApi, postData2 } from "../../utils/api";
 
 export default function CouponList() {
   const [coupons, setCoupons] = useState([]);
@@ -61,7 +61,7 @@ export default function CouponList() {
     const method = editingCouponId ? "PUT" : "POST";
 
     try {
-      const response = await postData(url, formData, method);
+      const response = await postData2(url, formData, method);
       if (response.error) {
         setFormError(response.error);
       } else {
