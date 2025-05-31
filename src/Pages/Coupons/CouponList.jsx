@@ -16,6 +16,7 @@ export default function CouponList() {
     maxDiscountAmount: "",
     expiryDate: "",
     usageLimit: "",
+    maxUserUsage: "", // New field
   });
   const [formError, setFormError] = useState("");
   const [editingCouponId, setEditingCouponId] = useState(null);
@@ -82,6 +83,7 @@ export default function CouponList() {
       maxDiscountAmount: coupon.maxDiscountAmount,
       expiryDate: coupon.expiryDate.split("T")[0],
       usageLimit: coupon.usageLimit,
+      maxUserUsage: coupon.maxUserUsage || "", // Populate maxUserUsage
     });
     setEditingCouponId(coupon._id);
     setIsModalOpen(true);
@@ -109,6 +111,7 @@ export default function CouponList() {
       maxDiscountAmount: "",
       expiryDate: "",
       usageLimit: "",
+      maxUserUsage: "",
     });
   };
 
@@ -137,6 +140,7 @@ export default function CouponList() {
               <th className="py-2 px-4 border-b text-left">Max Discount</th>
               <th className="py-2 px-4 border-b text-left">Expiry Date</th>
               <th className="py-2 px-4 border-b text-left">Usage</th>
+              <th className="py-2 px-4 border-b text-left">Max Per User</th>
               <th className="py-2 px-4 border-b text-left">Status</th>
               <th className="py-2 px-4 border-b text-left">Actions</th>
             </tr>
@@ -170,6 +174,9 @@ export default function CouponList() {
                   </td>
                   <td className="py-2 px-4 border-b">
                     {coupon.usedCount}/{coupon.usageLimit || "∞"}
+                  </td>
+                  <td className="py-2 px-4 border-b">
+                    {coupon.maxUserUsage || "∞"}
                   </td>
                   <td className="py-2 px-4 border-b">
                     <span
@@ -316,6 +323,20 @@ export default function CouponList() {
                   onChange={handleInputChange}
                   className="w-full border p-2 rounded"
                   min="1"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium">
+                  Max Usage Per User
+                </label>
+                <input
+                  type="number"
+                  name="maxUserUsage"
+                  value={formData.maxUserUsage}
+                  onChange={handleInputChange}
+                  className="w-full border p-2 rounded"
+                  min="1"
+                  placeholder="Leave blank for no limit"
                 />
               </div>
               <div className="flex justify-end space-x-2">

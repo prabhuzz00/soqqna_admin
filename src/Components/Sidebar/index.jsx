@@ -456,7 +456,7 @@ const Sidebar = () => {
                     onClick={() => {
                       context?.windowWidth < 992 &&
                         context?.setisSidebarOpen(false);
-                      setSubmenuIndex(null);
+                      setSubmenuIndex(5);
                     }}
                   >
                     <Button className="!text-[rgba(255,255,255,0.8)] !font-[500] items-center !py-2 hover:!bg-[#ffffff] hover:!text-[#000000] !capitalize !justify-start !w-full !text-[13px] !pl-9 flex gap-3">
@@ -475,7 +475,7 @@ const Sidebar = () => {
                       });
                       context?.windowWidth < 992 &&
                         context?.setisSidebarOpen(false);
-                      setSubmenuIndex(null);
+                      setSubmenuIndex(5);
                     }}
                   >
                     <span className="block w-[5px] h-[5px] rounded-full bg-[rgba(0,0,0,0.2)]"></span>
@@ -489,7 +489,7 @@ const Sidebar = () => {
                     onClick={() => {
                       context?.windowWidth < 992 &&
                         context?.setisSidebarOpen(false);
-                      setSubmenuIndex(null);
+                      setSubmenuIndex(5);
                     }}
                   >
                     <Button className="!text-[rgba(255,255,255,0.8)] !font-[500] items-center !py-2 hover:!bg-[#ffffff] hover:!text-[#000000] !capitalize !justify-start !w-full !text-[13px] !pl-9 flex gap-3">
@@ -508,7 +508,7 @@ const Sidebar = () => {
                       });
                       context?.windowWidth < 992 &&
                         context?.setisSidebarOpen(false);
-                      setSubmenuIndex(null);
+                      setSubmenuIndex(5);
                     }}
                   >
                     <span className="block w-[5px] h-[5px] rounded-full bg-[rgba(0,0,0,0.2)]"></span>
@@ -543,7 +543,7 @@ const Sidebar = () => {
                     onClick={() => {
                       context?.windowWidth < 992 &&
                         context?.setisSidebarOpen(false);
-                      setSubmenuIndex(null);
+                      setSubmenuIndex(6);
                     }}
                   >
                     <Button className="!text-[rgba(255,255,255,0.8)] !font-[500] items-center !py-2 hover:!bg-[#ffffff] hover:!text-[#000000] !capitalize !justify-start !w-full !text-[13px] !pl-9 flex gap-3">
@@ -562,7 +562,7 @@ const Sidebar = () => {
                       });
                       context?.windowWidth < 992 &&
                         context?.setisSidebarOpen(false);
-                      setSubmenuIndex(null);
+                      setSubmenuIndex(6);
                     }}
                   >
                     <span className="block w-[5px] h-[5px] rounded-full bg-[rgba(0,0,0,0.2)]"></span>
@@ -595,7 +595,7 @@ const Sidebar = () => {
                     onClick={() => {
                       context?.windowWidth < 992 &&
                         context?.setisSidebarOpen(false);
-                      setSubmenuIndex(null);
+                      setSubmenuIndex(7);
                     }}
                   >
                     <Button className="!text-[rgba(255,255,255,0.8)] !font-[500] items-center !py-2 hover:!bg-[#ffffff] hover:!text-[#000000] !capitalize !justify-start !w-full !text-[13px] !pl-9 flex gap-3">
@@ -610,7 +610,7 @@ const Sidebar = () => {
                     onClick={() => {
                       context?.windowWidth < 992 &&
                         context?.setisSidebarOpen(false);
-                      setSubmenuIndex(null);
+                      setSubmenuIndex(7);
                     }}
                   >
                     <Button className="!text-[rgba(255,255,255,0.8)] !font-[500] items-center !py-2 hover:!bg-[#ffffff] hover:!text-[#000000] !capitalize !justify-start !w-full !text-[13px] !pl-9 flex gap-3">
@@ -625,7 +625,7 @@ const Sidebar = () => {
                     onClick={() => {
                       context?.windowWidth < 992 &&
                         context?.setisSidebarOpen(false);
-                      setSubmenuIndex(null);
+                      setSubmenuIndex(7);
                     }}
                   >
                     <Button className="!text-[rgba(255,255,255,0.8)] !font-[500] items-center !py-2 hover:!bg-[#ffffff] hover:!text-[#000000] !capitalize !justify-start !w-full !text-[13px] !pl-9 flex gap-3">
@@ -640,7 +640,7 @@ const Sidebar = () => {
                     onClick={() => {
                       context?.windowWidth < 992 &&
                         context?.setisSidebarOpen(false);
-                      setSubmenuIndex(null);
+                      setSubmenuIndex(7);
                     }}
                   >
                     <Button className="!text-[rgba(255,255,255,0.8)] !font-[500] items-center !py-2 hover:!bg-[#ffffff] hover:!text-[#000000] !capitalize !justify-start !w-full !text-[13px] !pl-9 flex gap-3">
@@ -653,17 +653,53 @@ const Sidebar = () => {
             </Collapse>
           </li>
           <li>
-            <Link
-              to="/coupons"
-              onClick={() => {
-                context?.windowWidth < 992 && context?.setisSidebarOpen(false);
-                setSubmenuIndex(null);
-              }}
+            <Button
+              className="w-full !capitalize !justify-start flex gap-3 text-[14px] !text-[rgba(255,255,255,0.8)] !font-[500] items-center !py-2 hover:!bg-[#ffffff] hover:!text-[#000000]"
+              onClick={() => isOpenSubMenu(8)}
             >
-              <Button className="w-full !capitalize !justify-start flex gap-3 text-[14px] !text-[rgba(255,255,255,0.8)] !font-[500] items-center !py-2 hover:!bg-[#ffffff] hover:!text-[#000000]">
-                <IoLogoBuffer className="text-[20px]" /> <span>Coupons</span>
-              </Button>
-            </Link>
+              <FaRegImage className="text-[18px]" /> <span>Coupons</span>
+              <span className="ml-auto w-[30px] h-[30px] flex items-center justify-center">
+                <FaAngleDown
+                  className={`transition-all ${
+                    submenuIndex === 8 ? "rotate-180" : ""
+                  }`}
+                />
+              </span>
+            </Button>
+            <Collapse isOpened={submenuIndex === 8 ? true : false}>
+              <ul className="w-full">
+                <li className="w-full">
+                  <Link
+                    to="/coupons"
+                    onClick={() => {
+                      context?.windowWidth < 992 &&
+                        context?.setisSidebarOpen(false);
+                      setSubmenuIndex(8);
+                    }}
+                  >
+                    <Button className="!text-[rgba(255,255,255,0.8)] !font-[500] items-center !py-2 hover:!bg-[#ffffff] hover:!text-[#000000] !capitalize !justify-start !w-full !text-[13px] !pl-9 flex gap-3">
+                      <span className="block w-[5px] h-[5px] rounded-full bg-[rgba(0,0,0,0.2)]"></span>{" "}
+                      Coupon List
+                    </Button>
+                  </Link>
+                </li>
+                <li className="w-full">
+                  <Link
+                    to="/coupon-summary"
+                    onClick={() => {
+                      context?.windowWidth < 992 &&
+                        context?.setisSidebarOpen(false);
+                      setSubmenuIndex(8);
+                    }}
+                  >
+                    <Button className="!text-[rgba(255,255,255,0.8)] !font-[500] items-center !py-2 hover:!bg-[#ffffff] hover:!text-[#000000] !capitalize !justify-start !w-full !text-[13px] !pl-9 flex gap-3">
+                      <span className="block w-[5px] h-[5px] rounded-full bg-[rgba(0,0,0,0.2)]"></span>{" "}
+                      Coupon Summary
+                    </Button>
+                  </Link>
+                </li>
+              </ul>
+            </Collapse>
           </li>
 
           <li>
