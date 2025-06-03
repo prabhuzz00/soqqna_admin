@@ -702,7 +702,7 @@ const Sidebar = () => {
             </Collapse>
           </li>
 
-          <li>
+          {/* <li>
             <Link
               to="/logo/manage"
               onClick={() => {
@@ -715,6 +715,56 @@ const Sidebar = () => {
                 <span>Site Setting</span>
               </Button>
             </Link>
+          </li> */}
+
+          <li>
+            <Button
+              className="w-full !capitalize !justify-start flex gap-3 text-[14px] !text-[rgba(255,255,255,0.8)] !font-[500] items-center !py-2 hover:!bg-[#ffffff] hover:!text-[#000000]"
+              onClick={() => isOpenSubMenu(9)}
+            >
+              <FaRegImage className="text-[18px]" /> <span>Site Settings</span>
+              <span className="ml-auto w-[30px] h-[30px] flex items-center justify-center">
+                <FaAngleDown
+                  className={`transition-all ${
+                    submenuIndex === 8 ? "rotate-180" : ""
+                  }`}
+                />
+              </span>
+            </Button>
+            <Collapse isOpened={submenuIndex === 9 ? true : false}>
+              <ul className="w-full">
+                <li className="w-full">
+                  <Link
+                    to="/logo/manage"
+                    onClick={() => {
+                      context?.windowWidth < 992 &&
+                        context?.setisSidebarOpen(false);
+                      setSubmenuIndex(9);
+                    }}
+                  >
+                    <Button className="!text-[rgba(255,255,255,0.8)] !font-[500] items-center !py-2 hover:!bg-[#ffffff] hover:!text-[#000000] !capitalize !justify-start !w-full !text-[13px] !pl-9 flex gap-3">
+                      <span className="block w-[5px] h-[5px] rounded-full bg-[rgba(0,0,0,0.2)]"></span>{" "}
+                      Manage Logo
+                    </Button>
+                  </Link>
+                </li>
+                <li className="w-full">
+                  <Link
+                    to="/"
+                    onClick={() => {
+                      context?.windowWidth < 992 &&
+                        context?.setisSidebarOpen(false);
+                      setSubmenuIndex(9);
+                    }}
+                  >
+                    <Button className="!text-[rgba(255,255,255,0.8)] !font-[500] items-center !py-2 hover:!bg-[#ffffff] hover:!text-[#000000] !capitalize !justify-start !w-full !text-[13px] !pl-9 flex gap-3">
+                      <span className="block w-[5px] h-[5px] rounded-full bg-[rgba(0,0,0,0.2)]"></span>{" "}
+                      Site Details
+                    </Button>
+                  </Link>
+                </li>
+              </ul>
+            </Collapse>
           </li>
 
           <li>
