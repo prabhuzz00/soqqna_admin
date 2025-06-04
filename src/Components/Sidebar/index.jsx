@@ -405,6 +405,20 @@ const Sidebar = () => {
           </li>
           <li>
             <Link
+              to="/shippingcost"
+              onClick={() => {
+                context?.windowWidth < 992 && context?.setisSidebarOpen(false);
+                setSubmenuIndex(null);
+              }}
+            >
+              <Button className="w-full !capitalize !justify-start flex gap-3 text-[14px] !text-[rgba(255,255,255,0.8)] !font-[500] items-center !py-2 hover:!bg-[#ffffff] hover:!text-[#000000]">
+                <IoBagCheckOutline className="text-[20px]" />{" "}
+                <span>Shipping Cost</span>
+              </Button>
+            </Link>
+          </li>
+          <li>
+            <Link
               to="/order-returns"
               onClick={() => {
                 context?.windowWidth < 992 && context?.setisSidebarOpen(false);
@@ -750,7 +764,7 @@ const Sidebar = () => {
                 </li>
                 <li className="w-full">
                   <Link
-                    to="/"
+                    to="/site-settings/details"
                     onClick={() => {
                       context?.windowWidth < 992 &&
                         context?.setisSidebarOpen(false);

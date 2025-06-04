@@ -48,6 +48,8 @@ import Withdrawal from "./Pages/VerifyWithdraw";
 import AddUsers from "./Pages/AddUsers";
 import CouponList from "./Pages/Coupons/CouponList";
 import CouponSummary from "./Pages/Coupons/CouponSummary";
+import SiteSettingForm from "./Pages/Site-Setting";
+import ShippingCostForm from "./Pages/ShippingCost";
 
 const MyContext = createContext();
 function App() {
@@ -1158,6 +1160,66 @@ function App() {
                 style={{ width: isSidebarOpen === false ? "100%" : "80%" }}
               >
                 <ManageLogo />
+              </div>
+            </div>
+          </section>
+        </>
+      ),
+    },
+    {
+      path: "/site-settings/details",
+      exact: true,
+      element: (
+        <>
+          <section className="main">
+            <Header />
+            <div className="contentMain flex">
+              <div
+                className={`overflow-hidden sidebarWrapper ${isSidebarOpen === true
+                    ? windowWidth < 992
+                      ? `w-[${sidebarWidth / 1.5}%]`
+                      : `w-[20%]`
+                    : "w-[0px] opacity-0 invisible"
+                  } transition-all`}
+              >
+                <Sidebar />
+              </div>
+              <div
+                className={`contentRight overflow-hidden py-4 px-5 ${isSidebarOpen === true && windowWidth < 992 && "opacity-0"
+                  }  transition-all`}
+                style={{ width: isSidebarOpen === false ? "100%" : "80%" }}
+              >
+                <SiteSettingForm/>
+              </div>
+            </div>
+          </section>
+        </>
+      ),
+    },
+    {
+      path: "/shippingcost",
+      exact: true,
+      element: (
+        <>
+          <section className="main">
+            <Header />
+            <div className="contentMain flex">
+              <div
+                className={`overflow-hidden sidebarWrapper ${isSidebarOpen === true
+                  ? windowWidth < 992
+                    ? `w-[${sidebarWidth / 1.5}%]`
+                    : `w-[20%]`
+                  : "w-[0px] opacity-0 invisible"
+                  } transition-all`}
+              >
+                <Sidebar />
+              </div>
+              <div
+                className={`contentRight overflow-hidden py-4 px-5 ${isSidebarOpen === true && windowWidth < 992 && "opacity-0"
+                  }  transition-all`}
+                style={{ width: isSidebarOpen === false ? "100%" : "80%" }}
+              >
+                <ShippingCostForm/>
               </div>
             </div>
           </section>
