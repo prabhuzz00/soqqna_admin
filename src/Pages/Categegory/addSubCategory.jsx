@@ -26,6 +26,7 @@ const AddSubCategory = () => {
     parentCatName: null,
     parentId: null,
     images: [],
+    isAdminCategory: false
   });
 
   const [formFields2, setFormFields2] = useState({
@@ -34,6 +35,7 @@ const AddSubCategory = () => {
     parentCatName: null,
     parentId: null,
     images: [],
+    isAdminCategory: false
   });
 
   const context = useContext(MyContext);
@@ -58,23 +60,19 @@ const AddSubCategory = () => {
   };
 
   const onChangeInput = (e) => {
-    const { name, value } = e.target;
-    setFormFields(() => {
-      return {
-        ...formFields,
-        [name]: value,
-      };
-    });
+    const { name, value, type, checked } = e.target;
+    setFormFields((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
   };
 
   const onChangeInput2 = (e) => {
-    const { name, value } = e.target;
-    setFormFields2(() => {
-      return {
-        ...formFields2,
-        [name]: value,
-      };
-    });
+    const { name, value, type, checked } = e.target;
+    setFormFields2((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
   };
 
   const setPreviewsFun = (previewsArr) => {
@@ -252,6 +250,19 @@ const AddSubCategory = () => {
                 onChange={onChangeInput}
               />
             </div>
+            <div className="col mt-2">
+              <label className="flex items-center space-x-2 text-[14px] font-[500] text-black">
+                <input
+                  type="checkbox"
+                  name="isAdminCategory"
+                  checked={formFields.isAdminCategory}
+                  onChange={onChangeInput}
+                  className="w-[16px] h-[16px] accent-blue-600"
+                />
+                <span>Is Admin Category</span>
+              </label>
+            </div>
+
             <div className="col">
               <h3 className="text-[14px] font-[500] mb-2 text-black">
                 Sub Category Image
@@ -352,6 +363,18 @@ const AddSubCategory = () => {
                 value={formFields2.arName}
                 onChange={onChangeInput2}
               />
+            </div>
+            <div className="col mt-2">
+              <label className="flex items-center space-x-2 text-[14px] font-[500] text-black">
+                <input
+                  type="checkbox"
+                  name="isAdminCategory"
+                  checked={formFields2.isAdminCategory}
+                  onChange={onChangeInput2}
+                  className="w-[16px] h-[16px] accent-blue-600"
+                />
+                <span>Is Admin Category</span>
+              </label>
             </div>
             <div className="col">
               <h3 className="text-[14px] font-[500] mb-2 text-black">

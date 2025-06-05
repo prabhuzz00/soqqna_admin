@@ -20,6 +20,7 @@ const EditCategory = () => {
     name: "",
     arName: "",
     images: [],
+    isAdminCategory: false,
   });
 
   const [previews, setPreviews] = useState([]);
@@ -34,19 +35,19 @@ const EditCategory = () => {
       console.log(res?.category);
       formFields.name = res?.category?.name;
       formFields.arName = res?.category?.arName;
+      formFields.isAdminCategory = res?.category?.isAdminCategory || false;
       setPreviews(res?.category?.images);
+      setFormFields({ ...formFields });
     });
   }, []);
 
   const onChangeInput = (e) => {
-    const { name, value } = e.target;
-    setFormFields(() => {
-      return {
-        ...formFields,
-        [name]: value,
-      };
-    });
-    formFields.images = previews;
+    const { name, value, type, checked } = e.target;
+    setFormFields((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+      images: previews,
+    }));
   };
 
   const setPreviewsFun = (previewsArr) => {
@@ -139,6 +140,19 @@ const EditCategory = () => {
                 onChange={onChangeInput}
               />
             </div>
+            <div className="col w-full md:w-[25%] mt-3">
+              <label className="flex items-center space-x-2 text-[14px] font-[500] text-black">
+                <input
+                  type="checkbox"
+                  name="isAdminCategory"
+                  checked={formFields.isAdminCategory}
+                  onChange={onChangeInput}
+                  className="w-[16px] h-[16px] accent-blue-600"
+                />
+                <span>Is Admin Category</span>
+              </label>
+            </div>
+
           </div>
 
           <br />

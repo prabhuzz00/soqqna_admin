@@ -17,6 +17,7 @@ import Progress from "../../Components/ProgressBar";
 import { AiOutlineEdit } from "react-icons/ai";
 import { FaRegEye } from "react-icons/fa6";
 import { GoTrash } from "react-icons/go";
+import { MdLocalPrintshop } from "react-icons/md";
 import SearchBox from "../../Components/SearchBox";
 import { MyContext } from "../../App";
 import {
@@ -92,6 +93,10 @@ export const Products = () => {
 
   const [photos, setPhotos] = useState([]);
   const [open, setOpen] = useState(false);
+
+  const [openPrintDialog, setOpenPrintDialog] = useState(false);
+  const [barcodeToPrint, setBarcodeToPrint] = useState(null);
+  const [copyCount, setCopyCount] = useState(1);
 
   const context = useContext(MyContext);
 
@@ -633,6 +638,17 @@ export const Products = () => {
                           >
                             <GoTrash className="text-[rgba(0,0,0,0.7)] text-[18px] " />
                           </Button>
+                          <Button
+                            className="!w-[35px] !h-[35px] bg-[#f1f1f1] !border !border-[rgba(0,0,0,0.4)] !rounded-full hover:!bg-[#f1f1f1] !min-w-[35px]"
+                            onClick={() => {
+                              setBarcodeToPrint(product?.barcode);
+                              setOpenPrintDialog(true);
+                            }}
+                            title="Print Barcode"
+                          >
+                            <MdLocalPrintshop className="text-[rgba(0,0,0,0.7)] text-[18px] " />
+                          </Button>
+
                         </div>
                       </TableCell>
                     </TableRow>
@@ -664,6 +680,107 @@ export const Products = () => {
       </div>
 
       <Lightbox open={open} close={() => setOpen(false)} slides={photos} />
+
+      {openPrintDialog && (
+        <div className="fixed top-0 left-0 w-full h-full bg-[#00000055] z-50 flex justify-center items-center">
+          <div className="bg-white rounded-lg p-6 shadow-lg w-[400px]">
+            <h3 className="text-[18px] font-semibold mb-4">Print Barcode</h3>
+            <label className="text-sm">Number of Copies:</label>
+            <input
+              type="number"
+              min={1}
+              value={copyCount}
+              onChange={(e) => setCopyCount(parseInt(e.target.value))}
+              className="border px-3 py-2 rounded w-full mt-2 mb-4"
+            />
+            <div className="flex justify-end gap-3">
+              <Button
+                variant="contained"
+                color="error"
+                onClick={() => setOpenPrintDialog(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => {
+                  setOpenPrintDialog(false);
+
+                  setTimeout(() => {
+                    const printWindow = window.open("", "_blank");
+
+                    if (!printWindow) {
+                      alert("Popup blocked. Please allow popups for this site.");
+                      return;
+                    }
+
+                    const htmlContent = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>Print Barcode</title>
+          <style>
+            @media print {
+              body {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+              }
+              .barcode-container {
+                margin: 10px;
+                text-align: center;
+              }
+            }
+          </style>
+        </head>
+        <body>
+          ${Array.from({ length: copyCount })
+                        .map(
+                          (_, i) => `<div class="barcode-container">
+                  <svg id="barcode-${i}"></svg>
+                </div>`
+                        )
+                        .join("")}
+
+          <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+          <script>
+            window.onload = function () {
+              const total = ${copyCount};
+              for (let i = 0; i < total; i++) {
+                JsBarcode("#barcode-" + i, "${barcodeToPrint}", {
+                  format: "CODE128",
+                  width: 2,
+                  height: 60,
+                  displayValue: true,
+                  fontSize: 14
+                });
+              }
+              setTimeout(() => {
+                window.print();
+                window.onafterprint = () => {
+                  window.close();
+                };
+              }, 500);
+            };
+          </script>
+        </body>
+        </html>
+      `;
+
+                    printWindow.document.write(htmlContent);
+                    printWindow.document.close();
+                  }, 100);
+                }}
+              >
+                Print
+              </Button>
+
+            </div>
+          </div>
+        </div>
+      )}
+
     </>
   );
 };

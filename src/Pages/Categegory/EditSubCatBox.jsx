@@ -23,6 +23,7 @@ export const EditSubCatBox = (props) => {
     parentCatName: null,
     parentId: null,
     images: [],
+    isAdminCategory: false,
   });
 
   const context = useContext(MyContext);
@@ -34,18 +35,20 @@ export const EditSubCatBox = (props) => {
       parentCatName: props?.selectedCatName || null,
       parentId: props?.selectedCat || null,
       images: props?.images || [],
+      isAdminCategory: props?.isAdminCategory || false,
     });
     setSelectVal(props?.selectedCat || "");
     setPreviews(props?.images || []);
   }, [props]);
 
   const onChangeInput = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type, checked } = e.target;
     setFormFields((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: type === "checkbox" ? checked : value,
     }));
   };
+  
 
   const handleChange = (event) => {
     setSelectVal(event.target.value);
@@ -191,6 +194,19 @@ export const EditSubCatBox = (props) => {
                 onChange={onChangeInput}
               />
             </div>
+            <div>
+              <label className="flex items-center space-x-2 text-[14px] font-[500] text-black mt-1">
+                <input
+                  type="checkbox"
+                  name="isAdminCategory"
+                  checked={formFields.isAdminCategory}
+                  onChange={onChangeInput}
+                  className="w-[16px] h-[16px] accent-blue-600"
+                />
+                <span>Is Admin Category</span>
+              </label>
+            </div>
+
           </div>
           <div>
             <h3 className="text-[14px] font-[500] mb-2 text-black">
