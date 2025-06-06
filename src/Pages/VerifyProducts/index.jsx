@@ -113,6 +113,9 @@ export const VerifiedProducts = () => {
   const [photos, setPhotos] = useState([]);
   const [open, setOpen] = useState(false);
 
+  const [openRejectDialog, setOpenRejectDialog] = useState(false);
+  const [rejectionReason, setRejectionReason] = useState("");
+
   const context = useContext(MyContext);
 
   useEffect(() => {
@@ -354,6 +357,44 @@ export const VerifiedProducts = () => {
     } catch (error) {
       context.alertBox("error", "Error deleting items.");
     }
+  };
+
+  const handleRejectClick = (id) => {
+    setSelectedProductId(id);
+    setOpenRejectDialog(true);
+  };
+
+  const handleRejectDialogClose = () => {
+    setOpenRejectDialog(false);
+    setRejectionReason("");
+    setSelectedProductId(null);
+  };
+
+  const rejectProduct = () => {
+    if (rejectionReason.trim() === "") {
+      context.alertBox("error", "Please provide a reason for rejection");
+      return;
+    }
+    setIsloading(true);
+    patchDataLatest(`/api/product/reject/${selectedProductId}`, {
+      reason: rejectionReason,
+    })
+      .then((res) => {
+        if (res.error) {
+          context.alertBox("error", res.message);
+        } else {
+          context.alertBox("success", "Product rejected successfully");
+          getProducts(page, rowsPerPage);
+        }
+        handleRejectDialogClose();
+        setIsloading(false);
+      })
+      .catch((error) => {
+        context.alertBox("error", "Failed to reject product");
+        console.error("Reject product error:", error);
+        handleRejectDialogClose();
+        setIsloading(false);
+      });
   };
 
   const verifyProduct = () => {
@@ -686,6 +727,15 @@ export const VerifiedProducts = () => {
                             Verify
                           </Button>
 
+                          <Button
+                            onClick={() => handleRejectClick(product._id)}
+                            variant="outlined"
+                            color="error"
+                            size="small"
+                          >
+                            Reject
+                          </Button>
+
                           <Link to={`/product/${product?._id}`}>
                             <Button className="!w-[35px] !h-[35px] bg-[#f1f1f1] !border !border-[rgba(0,0,0,0.4)] !rounded-full hover:!bg-[#f1f1f1] !min-w-[35px]">
                               <FaRegEye className="text-[rgba(0,0,0,0.7)] text-[18px] " />
@@ -746,6 +796,34 @@ export const VerifiedProducts = () => {
           </Button>
           <Button onClick={verifyProduct} color="primary" autoFocus>
             OK
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog
+        open={openRejectDialog}
+        onClose={handleRejectDialogClose}
+        aria-labelledby="reject-dialog-title"
+        aria-describedby="reject-dialog-description"
+      >
+        <DialogTitle id="reject-dialog-title">Reject Product</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="reject-dialog-description">
+            Please provide a reason for rejecting this product:
+          </DialogContentText>
+          <textarea
+            value={rejectionReason}
+            onChange={(e) => setRejectionReason(e.target.value)}
+            placeholder="Enter rejection reason"
+            rows={4}
+            className="w-full border border-gray-300 p-2 mt-2 rounded"
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleRejectDialogClose} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={rejectProduct} color="error" autoFocus>
+            Reject
           </Button>
         </DialogActions>
       </Dialog>
