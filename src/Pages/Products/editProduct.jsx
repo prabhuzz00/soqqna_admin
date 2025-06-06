@@ -162,6 +162,24 @@ const EditProduct = () => {
     }
   }, [formFields.price, formFields.oldPrice]);
 
+  useEffect(() => {
+    const totalStock = variations.reduce((total, variation) => {
+      return (
+        total +
+        variation.sizes.reduce((sum, size) => {
+          const stock = parseInt(size.countInStock);
+          return sum + (isNaN(stock) ? 0 : stock);
+        }, 0)
+      );
+    }, 0);
+
+    setFormFields((prev) => ({
+      ...prev,
+      countInStock: totalStock,
+    }));
+  }, [variations]);
+  
+
   // Variation handlers
   const handleAddVariation = () => {
     setVariations([
@@ -655,6 +673,7 @@ const EditProduct = () => {
                 name="countInStock"
                 value={formFields.countInStock}
                 onChange={onChangeInput}
+                readOnly
               />
             </div>
 

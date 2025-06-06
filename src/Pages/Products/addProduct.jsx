@@ -107,6 +107,24 @@ const AddProduct = () => {
     }
   }, [formFields.price, formFields.oldPrice]);
 
+  //generate stock
+  useEffect(() => {
+    const totalStock = variations.reduce((total, variation) => {
+      return (
+        total +
+        variation.sizes.reduce((sum, size) => {
+          const stock = parseInt(size.countInStock);
+          return sum + (isNaN(stock) ? 0 : stock);
+        }, 0)
+      );
+    }, 0);
+
+    setFormFields((prev) => ({
+      ...prev,
+      countInStock: totalStock,
+    }));
+  }, [variations]);
+  
   //generate barcode
   useEffect(() => {
     const generateBarcode = () => {
@@ -611,6 +629,7 @@ const AddProduct = () => {
                 name="countInStock"
                 value={formFields.countInStock}
                 onChange={onChangeInput}
+                readOnly
               />
             </div>
 
