@@ -753,7 +753,7 @@ const Sidebar = () => {
               <span className="ml-auto w-[30px] h-[30px] flex items-center justify-center">
                 <FaAngleDown
                   className={`transition-all ${
-                    submenuIndex === 8 ? "rotate-180" : ""
+                    submenuIndex === 9 ? "rotate-180" : ""
                   }`}
                 />
               </span>
@@ -787,6 +787,56 @@ const Sidebar = () => {
                     <Button className="!text-[rgba(255,255,255,0.8)] !font-[500] items-center !py-2 hover:!bg-[#ffffff] hover:!text-[#000000] !capitalize !justify-start !w-full !text-[13px] !pl-9 flex gap-3">
                       <span className="block w-[5px] h-[5px] rounded-full bg-[rgba(0,0,0,0.2)]"></span>{" "}
                       Site Details
+                    </Button>
+                  </Link>
+                </li>
+              </ul>
+            </Collapse>
+          </li>
+
+          <li>
+            <Button
+              className="w-full !capitalize !justify-start flex gap-3 text-[14px] !text-[rgba(255,255,255,0.8)] !font-[500] items-center !py-2 hover:!bg-[#ffffff] hover:!text-[#000000]"
+              onClick={() => isOpenSubMenu(10)}
+            >
+              <FaRegImage className="text-[18px]" /> <span>Delivery Boy</span>
+              <span className="ml-auto w-[30px] h-[30px] flex items-center justify-center">
+                <FaAngleDown
+                  className={`transition-all ${
+                    submenuIndex === 10 ? "rotate-180" : ""
+                  }`}
+                />
+              </span>
+            </Button>
+            <Collapse isOpened={submenuIndex === 10 ? true : false}>
+              <ul className="w-full">
+                <li className="w-full">
+                  <Link
+                    to="/deliveryboy/create"
+                    onClick={() => {
+                      context?.windowWidth < 992 &&
+                        context?.setisSidebarOpen(false);
+                      setSubmenuIndex(10);
+                    }}
+                  >
+                    <Button className="!text-[rgba(255,255,255,0.8)] !font-[500] items-center !py-2 hover:!bg-[#ffffff] hover:!text-[#000000] !capitalize !justify-start !w-full !text-[13px] !pl-9 flex gap-3">
+                      <span className="block w-[5px] h-[5px] rounded-full bg-[rgba(0,0,0,0.2)]"></span>{" "}
+                      Create
+                    </Button>
+                  </Link>
+                </li>
+                <li className="w-full">
+                  <Link
+                    to="/deliveryboy/assign"
+                    onClick={() => {
+                      context?.windowWidth < 992 &&
+                        context?.setisSidebarOpen(false);
+                      setSubmenuIndex(10);
+                    }}
+                  >
+                    <Button className="!text-[rgba(255,255,255,0.8)] !font-[500] items-center !py-2 hover:!bg-[#ffffff] hover:!text-[#000000] !capitalize !justify-start !w-full !text-[13px] !pl-9 flex gap-3">
+                      <span className="block w-[5px] h-[5px] rounded-full bg-[rgba(0,0,0,0.2)]"></span>{" "}
+                      Assign Orders
                     </Button>
                   </Link>
                 </li>
