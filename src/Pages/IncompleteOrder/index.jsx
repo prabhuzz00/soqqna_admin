@@ -33,47 +33,6 @@ export const IncompleteOrders = () => {
     }
   };
 
-  // const handleChange = (event, id) => {
-  //   setOrderStatus(event.target.value);
-
-  //   const obj = {
-  //     id: id,
-  //     order_status: event.target.value,
-  //   };
-
-  //   editData(`/api/order/order-status/${id}`, obj).then((res) => {
-  //     if (res?.data?.error === false) {
-  //       context.alertBox("success", res?.data?.message);
-  //     }
-  //   });
-  // };
-  // const handleChange = (event, id) => {
-  //   const newStatus = event.target.value;
-  //   setOrderStatus(newStatus);
-
-  //   const obj = {
-  //     id: id,
-  //     order_status: newStatus,
-  //   };
-
-  //   editData(`/api/order/order-status/${id}`, obj).then((res) => {
-  //     if (res?.data?.error === false) {
-  //       // Show success alert
-  //       context.alertBox("success", res?.data?.message);
-
-  //       // Update the local state
-  //       const updatedOrders = ordersData.map((order) => {
-  //         if (order._id === id) {
-  //           return { ...order, order_status: newStatus };
-  //         }
-  //         return order;
-  //       });
-
-  //       setOrdersData(updatedOrders);
-  //     }
-  //   });
-  // };
-
   const handleChange = (event, id) => {
     const newStatus = event.target.value;
     setOrderStatus(newStatus);
@@ -159,6 +118,49 @@ export const IncompleteOrders = () => {
       });
     } else {
       context.alertBox("error", "Only admin can delete data");
+    }
+  };
+
+  const printLabelAndMarkReceived = async (orderId) => {
+    try {
+      // 1️⃣ Download the shipping label (PDF)
+      const shippingLabelUrl = `${
+        import.meta.env.VITE_API_URL
+      }/api/order/shipping-label/${orderId}`;
+      const response = await fetch(shippingLabelUrl, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
+      });
+      const blob = await response.blob();
+
+      const link = document.createElement("a");
+      link.href = window.URL.createObjectURL(blob);
+      link.download = `shipping-label-${orderId}.pdf`;
+      link.click();
+
+      // 2️⃣ Update order status to "Received"
+      const obj = {
+        id: orderId,
+        order_status: "Received",
+      };
+      const res = await editData(`/api/order/order-status/${orderId}`, obj);
+      if (res?.data?.error === false) {
+        context.alertBox("success", "Order marked as Received!");
+        fetchDataFromApi(
+          `/api/order/incomplete-order-list?page=${pageOrder}&limit=5`
+        ).then((res) => {
+          if (res?.error === false) {
+            setOrdersData(res?.data);
+            context?.setProgress(100);
+          }
+        });
+      } else {
+        context.alertBox("error", "Failed to update order status.");
+      }
+    } catch (error) {
+      console.error("Error printing shipping label:", error);
+      context.alertBox("error", "Error printing shipping label.");
     }
   };
 
@@ -332,6 +334,15 @@ export const IncompleteOrders = () => {
                           size="small"
                         >
                           Delete
+                        </Button>
+
+                        <Button
+                          onClick={() => printLabelAndMarkReceived(order._id)}
+                          variant="contained"
+                          color="primary"
+                          size="small"
+                        >
+                          Print Label
                         </Button>
                       </td>
                     </tr>

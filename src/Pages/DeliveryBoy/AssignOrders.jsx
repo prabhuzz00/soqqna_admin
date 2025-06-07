@@ -23,7 +23,7 @@ import { MyContext } from "../../App";
 import { fetchDataFromApi, editDataCommon } from "../../utils/api";
 
 /* ---------- tweak here if your endpoint is different ---------- */
-const PENDING_ORDERS_URL = "/api/order/incomplete-order-list";
+const PENDING_ORDERS_URL = "/api/order/recived-order-list";
 
 const AssignOrders = () => {
   const { alertBox } = useContext(MyContext);
@@ -184,8 +184,8 @@ const AssignOrders = () => {
                   />
                 </TableCell>
                 <TableCell>Order&nbsp;#</TableCell>
-                <TableCell>Customer</TableCell>
-                <TableCell>Total&nbsp;(₹)</TableCell>
+                <TableCell>Address</TableCell>
+                <TableCell>Total&nbsp;($)</TableCell>
                 <TableCell>Date</TableCell>
               </TableRow>
             </TableHead>
@@ -198,10 +198,20 @@ const AssignOrders = () => {
                       onChange={() => toggleOne(o._id)}
                     />
                   </TableCell>
-                  <TableCell>{o.orderNo || o._id.slice(-6)}</TableCell>
-                  <TableCell>{o.customerName || "—"}</TableCell>
+                  <TableCell>{o.orderNo || o._id.slice(-10)}</TableCell>
+                  <TableCell>
+                    {" "}
+                    {o?.delivery_address?.address_line1 +
+                      " " +
+                      o?.delivery_address?.city +
+                      " " +
+                      o?.delivery_address?.landmark +
+                      " " +
+                      o?.delivery_address?.state}
+                  </TableCell>
                   <TableCell>{o.totalAmt?.toLocaleString()}</TableCell>
-                  <TableCell>(o.createdAt).format("DD-MMM-YYYY")</TableCell>
+                  {/* <TableCell>(o.createdAt).format("DD-MMM-YYYY")</TableCell> */}
+                  <TableCell>{o.createdAt?.split("T")[0]}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
