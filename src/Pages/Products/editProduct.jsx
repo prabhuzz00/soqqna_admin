@@ -12,6 +12,13 @@ import { useNavigate } from "react-router-dom";
 import CircularProgress from "@mui/material/CircularProgress";
 import Switch from "@mui/material/Switch";
 
+const generateRandomBarcode = () => {
+  const timestamp = Date.now().toString(); // 13 digits
+  const randomPart = Math.floor(
+    100000000 + Math.random() * 900000000
+  ).toString(); // 9 digits
+  return (timestamp + randomPart).slice(0, 20); // 20‑digit string
+};
 const label = { inputProps: { "aria-label": "Switch demo" } };
 
 const EditProduct = () => {
@@ -59,7 +66,7 @@ const EditProduct = () => {
   const [variations, setVariations] = useState([
     {
       color: { label: "", images: [] },
-      sizes: [{ label: "", price: "", countInStock: "" }],
+      sizes: [{ label: "", price: "", countInStock: "", vbarcode: "" }],
     },
   ]);
 
@@ -140,7 +147,7 @@ const EditProduct = () => {
           product?.variation || [
             {
               color: { label: "", images: [] },
-              sizes: [{ label: "", price: "", countInStock: "" }],
+              sizes: [{ label: "", price: "", countInStock: "", vbarcode: "" }],
             },
           ]
         );
@@ -178,7 +185,6 @@ const EditProduct = () => {
       countInStock: totalStock,
     }));
   }, [variations]);
-  
 
   // Variation handlers
   const handleAddVariation = () => {
@@ -186,7 +192,14 @@ const EditProduct = () => {
       ...variations,
       {
         color: { label: "", images: [] },
-        sizes: [{ label: "", price: "", countInStock: "" }],
+        sizes: [
+          {
+            label: "",
+            price: "",
+            countInStock: "",
+            vbarcode: generateRandomBarcode(),
+          },
+        ],
       },
     ]);
   };
@@ -209,7 +222,12 @@ const EditProduct = () => {
 
   const handleAddSize = (vIndex) => {
     const updated = [...variations];
-    updated[vIndex].sizes.push({ label: "", price: "", countInStock: "" });
+    updated[vIndex].sizes.push({
+      label: "",
+      price: "",
+      countInStock: "",
+      vbarcode: generateRandomBarcode(),
+    });
     setVariations(updated);
   };
 

@@ -14,6 +14,13 @@ import { useNavigate } from "react-router-dom";
 import CircularProgress from "@mui/material/CircularProgress";
 import Switch from "@mui/material/Switch";
 
+const generateRandomBarcode = () => {
+  const timestamp = Date.now().toString(); // 13 digits
+  const randomPart = Math.floor(
+    100000000 + Math.random() * 900000000
+  ).toString(); // 9 digits
+  return (timestamp + randomPart).slice(0, 20); // 20‑digit string
+};
 const label = { inputProps: { "aria-label": "Switch demo" } };
 
 const AddProduct = () => {
@@ -61,7 +68,14 @@ const AddProduct = () => {
   const [variations, setVariations] = useState([
     {
       color: { label: "", images: [] },
-      sizes: [{ label: "", price: "", countInStock: "" }],
+      sizes: [
+        {
+          label: "",
+          price: "",
+          countInStock: "",
+          vbarcode: generateRandomBarcode(),
+        },
+      ],
     },
   ]);
 
@@ -124,7 +138,7 @@ const AddProduct = () => {
       countInStock: totalStock,
     }));
   }, [variations]);
-  
+
   //generate barcode
   useEffect(() => {
     const generateBarcode = () => {
@@ -150,7 +164,14 @@ const AddProduct = () => {
       ...variations,
       {
         color: { label: "", images: [] },
-        sizes: [{ label: "", price: "", countInStock: "" }],
+        sizes: [
+          {
+            label: "",
+            price: "",
+            countInStock: "",
+            vbarcode: generateRandomBarcode(),
+          },
+        ],
       },
     ]);
   };
@@ -173,7 +194,12 @@ const AddProduct = () => {
 
   const handleAddSize = (vIndex) => {
     const updated = [...variations];
-    updated[vIndex].sizes.push({ label: "", price: "", countInStock: "" });
+    updated[vIndex].sizes.push({
+      label: "",
+      price: "",
+      countInStock: "",
+      vbarcode: generateRandomBarcode(),
+    });
     setVariations(updated);
   };
 
@@ -768,14 +794,6 @@ const AddProduct = () => {
                 <label className="font-medium">Sizes</label>
                 {variation.sizes.map((size, sIndex) => (
                   <div key={sIndex} className="grid grid-cols-4 gap-2 mb-2">
-                    {/* <input
-                      placeholder="Label"
-                      value={size.label}
-                      onChange={(e) =>
-                        handleSizeChange(index, sIndex, "label", e.target.value)
-                      }
-                      className="w-full h-[40px] border border-[rgba(0,0,0,0.2)] focus:outline-none focus:border-[rgba(0,0,0,0.4)] rounded-sm p-3 text-sm"
-                    /> */}
                     {/* Dropdown for size label */}
                     <select
                       value={size.label}
