@@ -49,6 +49,7 @@ const EditProduct = () => {
     vendorId: null,
     barcode: "",
     tags: [],
+    isReturn: false,
   });
 
   const [productCat, setProductCat] = useState("");
@@ -62,6 +63,7 @@ const EditProduct = () => {
   const [previews, setPreviews] = useState([]);
   const [bannerPreviews, setBannerPreviews] = useState([]);
   const [checkedSwitch, setCheckedSwitch] = useState(false);
+  const [productIsReturn, setProductIsReturn] = useState("");
 
   const [variations, setVariations] = useState([
     {
@@ -134,8 +136,10 @@ const EditProduct = () => {
           vendorId: product?.vendorId || null,
           barcode: product?.barcode || "",
           tags: product?.tags || [],
+          isReturn: product?.isReturn || false
         });
 
+        setProductIsReturn(product?.isReturn || false);
         setProductCat(product?.catId || "");
         setProductSubCat(product?.subCatId || "");
         setProductThirdLavelCat(product?.thirdsubCatId || "");
@@ -206,6 +210,12 @@ const EditProduct = () => {
 
   const handleRemoveVariation = (index) => {
     setVariations(variations.filter((_, i) => i !== index));
+  };
+
+  const handleChangeProductIsReturn = (event) => {
+    console.log("im isreturned", event.target.value)
+    setProductIsReturn(event.target.value);
+    formFields.isReturn = event.target.value;
   };
 
   const handleVariationChange = (index, field, value) => {
@@ -454,10 +464,17 @@ const EditProduct = () => {
       return false;
     }
 
+    if (formFields?.isReturn === "") {
+      context.alertBox("error", "Please select IsReturn option");
+      return false;
+    }
+
     const productData = {
       ...formFields,
       variation: variations,
     };
+
+    console.log("im form", formFields)
 
     setIsLoading(true);
 
@@ -652,6 +669,24 @@ const EditProduct = () => {
 
             <div className="col">
               <h3 className="text-[14px] font-[500] mb-1 text-black">
+                Is Return?
+              </h3>
+              <Select
+                labelId="demo-simple-select-label"
+                id="productIsReturnDrop"
+                size="small"
+                className="w-full"
+                value={productIsReturn}
+                label="IsReturn"
+                onChange={handleChangeProductIsReturn}
+              >
+                <MenuItem value={true}>True</MenuItem>
+                <MenuItem value={false}>False</MenuItem>
+              </Select>
+            </div>
+
+            <div className="col">
+              <h3 className="text-[14px] font-[500] mb-1 text-black">
                 Product Old Price
               </h3>
               <input
@@ -782,15 +817,15 @@ const EditProduct = () => {
                         prevVariations.map((variation, i) =>
                           i === index
                             ? {
-                                ...variation,
-                                color: {
-                                  ...variation.color,
-                                  images: [
-                                    ...(variation.color.images || []),
-                                    ...uploadedImages,
-                                  ],
-                                },
-                              }
+                              ...variation,
+                              color: {
+                                ...variation.color,
+                                images: [
+                                  ...(variation.color.images || []),
+                                  ...uploadedImages,
+                                ],
+                              },
+                            }
                             : variation
                         )
                       );

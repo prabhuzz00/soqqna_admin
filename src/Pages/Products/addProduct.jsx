@@ -51,6 +51,7 @@ const AddProduct = () => {
     vendorId: null,
     barcode: "",
     tags: [],
+    isReturn: false,
   });
 
   const [productCat, setProductCat] = React.useState("");
@@ -64,6 +65,7 @@ const AddProduct = () => {
   const [productSizeData, setProductSizeData] = React.useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [productThirdLavelCat, setProductThirdLavelCat] = useState("");
+  const [productIsReturn, setProductIsReturn] = React.useState("");
 
   const [variations, setVariations] = useState([
     {
@@ -178,6 +180,11 @@ const AddProduct = () => {
 
   const handleRemoveVariation = (index) => {
     setVariations(variations.filter((_, i) => i !== index));
+  };
+
+  const handleChangeProductIsReturn = (event) => {
+    setProductIsReturn(event.target.value);
+    formFields.isReturn = event.target.value;
   };
 
   const handleVariationChange = (index, field, value) => {
@@ -404,6 +411,11 @@ const AddProduct = () => {
       return false;
     }
 
+    if (formFields?.isReturn === "") {
+      context.alertBox("error", "Please select IsReturn option");
+      return false;
+    }
+
     if (previews?.length === 0) {
       context.alertBox("error", "Please select product images");
       return false;
@@ -514,6 +526,7 @@ const AddProduct = () => {
                   {context?.catData?.map((cat, index) => {
                     return (
                       <MenuItem
+                        key={cat?._id}
                         value={cat?._id}
                         onClick={() => selectCatByName(cat?.name)}
                       >
@@ -546,6 +559,7 @@ const AddProduct = () => {
                       cat?.children?.map((subCat, index_) => {
                         return (
                           <MenuItem
+                            key={subCat?._id}
                             value={subCat?._id}
                             onClick={() => selectSubCatByName(subCat?.name)}
                           >
@@ -612,6 +626,24 @@ const AddProduct = () => {
                 value={formFields.price}
                 onChange={onChangeInput}
               />
+            </div>
+
+            <div className="col">
+              <h3 className="text-[14px] font-[500] mb-1 text-black">
+                Is Return?
+              </h3>
+              <Select
+                labelId="demo-simple-select-label"
+                id="productIsReturnDrop"
+                size="small"
+                className="w-full"
+                value={productIsReturn}
+                label="IsReturn"
+                onChange={handleChangeProductIsReturn}
+              >
+                <MenuItem value={true}>True</MenuItem>
+                <MenuItem value={false}>False</MenuItem>
+              </Select>
             </div>
 
             <div className="col">
