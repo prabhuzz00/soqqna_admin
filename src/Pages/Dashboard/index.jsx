@@ -429,7 +429,7 @@ const Dashboard = () => {
                                             "en-US",
                                             {
                                               style: "currency",
-                                              currency: "INR",
+                                              currency: "USD",
                                             }
                                           )}
                                         </td>
@@ -439,7 +439,7 @@ const Dashboard = () => {
                                             item?.price * item?.quantity
                                           )?.toLocaleString("en-US", {
                                             style: "currency",
-                                            currency: "INR",
+                                            currency: "USD",
                                           })}
                                         </td>
                                       </tr>

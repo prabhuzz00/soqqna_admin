@@ -658,13 +658,13 @@ export const VerifiedProducts = () => {
                           <span className="oldPrice line-through leading-3 text-gray-500 text-[14px] font-[500]">
                             {product?.price?.toLocaleString("en-US", {
                               style: "currency",
-                              currency: "INR",
+                              currency: "USD",
                             })}
                           </span>
                           <span className="price text-primary text-[14px]  font-[600]">
                             {product?.oldPrice?.toLocaleString("en-US", {
                               style: "currency",
-                              currency: "INR",
+                              currency: "USD",
                             })}
                           </span>
                         </div>

@@ -366,7 +366,7 @@ export const OrdersReturn = () => {
                                       <td className="px-6 py-4 font-[500]">
                                         {item?.price?.toLocaleString("en-US", {
                                           style: "currency",
-                                          currency: "INR",
+                                          currency: "USD",
                                         })}
                                       </td>
 
@@ -375,7 +375,7 @@ export const OrdersReturn = () => {
                                           item?.price * item?.quantity
                                         )?.toLocaleString("en-US", {
                                           style: "currency",
-                                          currency: "INR",
+                                          currency: "USD",
                                         })}
                                       </td>
                                     </tr>
