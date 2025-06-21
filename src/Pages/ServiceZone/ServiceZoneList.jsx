@@ -33,8 +33,8 @@ const ServiceZoneList = () => {
 
   const fetchZones = async () => {
     try {
-      const data = await fetchDataFromApi("/api/service-zones");
-      setZones(data);
+      const res = await fetchDataFromApi("/api/service-zones?admin=true");
+      setZones(res.data);
     } catch (error) {
       console.error(error);
       alert("Failed to fetch service zones.");

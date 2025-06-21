@@ -388,20 +388,7 @@ const Sidebar = () => {
               </Button>
             </Link>
           </li>
-          <li>
-            <Link
-              to="/"
-              onClick={() => {
-                context?.windowWidth < 992 && context?.setisSidebarOpen(false);
-                setSubmenuIndex(null);
-              }}
-            >
-              <Button className="w-full !capitalize !justify-start flex gap-3 text-[14px] !text-[rgba(255,255,255,0.8)] !font-[500] items-center !py-2 hover:!bg-[#ffffff] hover:!text-[#000000]">
-                <IoBagCheckOutline className="text-[20px]" />{" "}
-                <span>Invoices</span>
-              </Button>
-            </Link>
-          </li>
+
           <li>
             <Link
               to="/incomplete-orders"
@@ -413,6 +400,20 @@ const Sidebar = () => {
               <Button className="w-full !capitalize !justify-start flex gap-3 text-[14px] !text-[rgba(255,255,255,0.8)] !font-[500] items-center !py-2 hover:!bg-[#ffffff] hover:!text-[#000000]">
                 <IoBagCheckOutline className="text-[20px]" />{" "}
                 <span>Incomplete Orders</span>
+              </Button>
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/delivered-orders"
+              onClick={() => {
+                context?.windowWidth < 992 && context?.setisSidebarOpen(false);
+                setSubmenuIndex(null);
+              }}
+            >
+              <Button className="w-full !capitalize !justify-start flex gap-3 text-[14px] !text-[rgba(255,255,255,0.8)] !font-[500] items-center !py-2 hover:!bg-[#ffffff] hover:!text-[#000000]">
+                <IoBagCheckOutline className="text-[20px]" />{" "}
+                <span>Delivered Orders</span>
               </Button>
             </Link>
           </li>
