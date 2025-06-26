@@ -80,19 +80,23 @@ const Sidebar = () => {
               </Button>
             </Link>
           </li>
-          <li>
-            <Link
-              to="/reports"
-              onClick={() => {
-                context?.windowWidth < 992 && context?.setisSidebarOpen(false);
-                setSubmenuIndex(null);
-              }}
-            >
-              <Button className="w-full !capitalize !justify-start flex gap-3 text-[14px] !text-[rgba(255,255,255,0.8)] !font-[500] items-center !py-2 hover:!bg-[#ffffff] hover:!text-[#000000]">
-                <RxDashboard className="text-[18px]" /> <span>Reports</span>
-              </Button>
-            </Link>
-          </li>
+
+          {context?.userData?.role === "SUPERADMIN" && (
+            <li>
+              <Link
+                to="/reports"
+                onClick={() => {
+                  context?.windowWidth < 992 &&
+                    context?.setisSidebarOpen(false);
+                  setSubmenuIndex(null);
+                }}
+              >
+                <Button className="w-full !capitalize !justify-start flex gap-3 text-[14px] !text-[rgba(255,255,255,0.8)] !font-[500] items-center !py-2 hover:!bg-[#ffffff] hover:!text-[#000000]">
+                  <RxDashboard className="text-[18px]" /> <span>Reports</span>
+                </Button>
+              </Link>
+            </li>
+          )}
 
           <li>
             <Button
@@ -264,19 +268,6 @@ const Sidebar = () => {
                     </Button>
                   </Link>
                 </li>
-                {/* <li className="w-full">
-                  <Button className="!text-[rgba(0,0,0,0.7)] !capitalize !justify-start !w-full !text-[13px] !font-[500] !pl-9 flex gap-3" onClick={() => {
-                    context.setIsOpenFullScreenPanel({
-                      open: true,
-                      model: "Add Product"
-                    })
-                    context?.windowWidth < 992 && context?.setisSidebarOpen(false)
-                    setSubmenuIndex(null)
-                  }}>
-                    <span className="block w-[5px] h-[5px] rounded-full bg-[rgba(0,0,0,0.2)]"></span>
-                    Product Upload
-                  </Button>
-                </li> */}
 
                 <li className="w-full">
                   <Link
@@ -460,19 +451,22 @@ const Sidebar = () => {
             </Link>
           </li>
 
-          <li>
-            <Link
-              to="/users"
-              onClick={() => {
-                context?.windowWidth < 992 && context?.setisSidebarOpen(false);
-                setSubmenuIndex(null);
-              }}
-            >
-              <Button className="w-full !capitalize !justify-start flex gap-3 text-[14px] !text-[rgba(255,255,255,0.8)] !font-[500] items-center !py-2 hover:!bg-[#ffffff] hover:!text-[#000000]">
-                <FiUsers className="text-[18px]" /> <span>Users</span>
-              </Button>
-            </Link>
-          </li>
+          {context?.userData?.role === "SUPERADMIN" && (
+            <li>
+              <Link
+                to="/users"
+                onClick={() => {
+                  context?.windowWidth < 992 &&
+                    context?.setisSidebarOpen(false);
+                  setSubmenuIndex(null);
+                }}
+              >
+                <Button className="w-full !capitalize !justify-start flex gap-3 text-[14px] !text-[rgba(255,255,255,0.8)] !font-[500] items-center !py-2 hover:!bg-[#ffffff] hover:!text-[#000000]">
+                  <FiUsers className="text-[18px]" /> <span>Users</span>
+                </Button>
+              </Link>
+            </li>
+          )}
 
           <li>
             <Button

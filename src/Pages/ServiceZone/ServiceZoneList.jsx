@@ -12,6 +12,8 @@ import {
   DialogActions,
   TextField,
   IconButton,
+  FormControlLabel,
+  Checkbox,
 } from "@mui/material";
 import { AiOutlineEdit } from "react-icons/ai";
 
@@ -30,6 +32,7 @@ const ServiceZoneList = () => {
   const [editingZone, setEditingZone] = useState(null);
   const [city, setCity] = useState("");
   const [areas, setAreas] = useState("");
+  const [doorStep, setDoorStep] = useState(false);
 
   const fetchZones = async () => {
     try {
@@ -49,6 +52,7 @@ const ServiceZoneList = () => {
     setEditingZone(zone);
     setCity(zone ? zone.city : "");
     setAreas(zone ? zone.areas.map((a) => a.name).join(", ") : "");
+    setDoorStep(zone ? zone.doorStepService : false);
     setOpen(true);
   };
 
@@ -61,7 +65,7 @@ const ServiceZoneList = () => {
 
   const handleSave = async () => {
     const areaList = areas.split(",").map((a) => ({ name: a.trim() }));
-    const payload = { city, areas: areaList };
+    const payload = { city, areas: areaList, doorStepService: doorStep };
 
     try {
       if (editingZone) {
@@ -144,6 +148,17 @@ const ServiceZoneList = () => {
             onChange={(e) => setAreas(e.target.value)}
             fullWidth
             margin="normal"
+          />
+
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={doorStep}
+                onChange={(e) => setDoorStep(e.target.checked)}
+                color="primary"
+              />
+            }
+            label="Door Step Service"
           />
         </DialogContent>
         <DialogActions>

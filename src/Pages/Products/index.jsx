@@ -441,20 +441,30 @@ const Products = () => {
     }
   };
 
-  const deleteMultipleProduct = () => {
+  const deleteMultipleProduct = async () => {
+    if (context?.userData?.role !== "SUPERADMIN") {
+      context.alertBox("error", "Only admin can delete data");
+      return;
+    }
+
     if (sortedIds.length === 0) {
       context.alertBox("error", "Please select items to delete.");
       return;
     }
 
+    const confirmDelete = window.confirm(
+      `Are you sure you want to delete ${sortedIds.length} selected product(s)?`
+    );
+    if (!confirmDelete) return;
+
     try {
-      deleteMultipleData(`/api/product/deleteMultiple`, {
+      const res = await deleteMultipleData(`/api/product/deleteMultiple`, {
         data: { ids: sortedIds },
-      }).then((res) => {
-        getProducts();
-        context.alertBox("success", "Product deleted");
-        setSortedIds([]);
       });
+
+      getProducts();
+      context.alertBox("success", "Products deleted");
+      setSortedIds([]);
     } catch (error) {
       context.alertBox("error", "Error deleting items.");
     }
