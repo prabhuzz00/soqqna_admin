@@ -1,6 +1,13 @@
 // components/UnverifiedVendors.jsx
 import React, { useContext, useState, useEffect } from "react";
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+} from "@mui/material";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -17,7 +24,11 @@ import { SlCalender } from "react-icons/sl";
 import { AiOutlineEdit } from "react-icons/ai";
 import { GoTrash } from "react-icons/go";
 import { MdOutlinePowerSettingsNew } from "react-icons/md";
-import { fetchDataFromApi, patchDataLatest, deleteDataCommon } from "../../utils/api";
+import {
+  fetchDataFromApi,
+  patchDataLatest,
+  deleteDataCommon,
+} from "../../utils/api";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useNavigate } from "react-router-dom";
 import { FaCheckDouble } from "react-icons/fa6";
@@ -65,16 +76,20 @@ const UnverifiedVendors = () => {
 
   const getVendors = (page, limit) => {
     setIsLoading(true);
-    fetchDataFromApi(`/api/vendor/list?page=${page + 1}&limit=${limit}&isVerified=false`).then((res) => {
-      console.log("Fetched unverified vendors:", res);
-      setVendorData(res);
-      setVendorTotalData(res);
-      setIsLoading(false);
-    }).catch((error) => {
-      console.error("Fetch unverified vendors error:", error);
-      context.alertBox("error", "Failed to fetch vendors");
-      setIsLoading(false);
-    });
+    fetchDataFromApi(
+      `/api/vendor/list?page=${page + 1}&limit=${limit}&isVerified=false`
+    )
+      .then((res) => {
+        console.log("Fetched unverified vendors:", res);
+        setVendorData(res);
+        setVendorTotalData(res);
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        console.error("Fetch unverified vendors error:", error);
+        context.alertBox("error", "Failed to fetch vendors");
+        setIsLoading(false);
+      });
   };
 
   useEffect(() => {
@@ -82,7 +97,9 @@ const UnverifiedVendors = () => {
       const filteredItems = vendorTotalData?.vendors?.filter(
         (vendor) =>
           vendor.storeName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          vendor.emailAddress.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          vendor.emailAddress
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase()) ||
           vendor.createdAt.toLowerCase().includes(searchQuery.toLowerCase())
       );
       setVendorData({
@@ -100,7 +117,9 @@ const UnverifiedVendors = () => {
   }, [searchQuery]);
 
   const handleEditClick = (id) => {
-    navigate(`/vendors/edit/${id}`, { state: { from: "/vendors/unverified-vendors" } });
+    navigate(`/vendors/edit/${id}`, {
+      state: { from: "/vendors/unverified-vendors" },
+    });
   };
 
   const handleVerifyClick = (id) => {
@@ -137,59 +156,77 @@ const UnverifiedVendors = () => {
 
   const verifyVendor = () => {
     setIsLoading(true);
-    patchDataLatest(`/api/vendor/verify/${selectedVendorId}`).then((res) => {
-      if (res.error) {
-        context.alertBox("error", res.message);
-      } else {
-        context.alertBox("success", "Vendor verified successfully");
-        getVendors(page, rowsPerPage);
-      }
-      handleVerifyDialogClose();
-      setIsLoading(false);
-    }).catch((error) => {
-      context.alertBox("error", "Failed to verify vendor");
-      console.error("Verify vendor error:", error);
-      handleVerifyDialogClose();
-      setIsLoading(false);
-    });
+    patchDataLatest(`/api/vendor/verify/${selectedVendorId}`)
+      .then((res) => {
+        if (res.error) {
+          context.alertBox("error", res.message);
+        } else {
+          context.alertBox("success", "Vendor verified successfully");
+          getVendors(page, rowsPerPage);
+        }
+        handleVerifyDialogClose();
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        context.alertBox("error", "Failed to verify vendor");
+        console.error("Verify vendor error:", error);
+        handleVerifyDialogClose();
+        setIsLoading(false);
+      });
   };
 
   const deleteVendor = () => {
+    if (context?.userData?.role !== "SUPERADMIN") {
+      context.alertBox("error", "Only SUPERADMIN can delete a vendor.");
+      return;
+    }
+
     setIsLoading(true);
-    deleteDataCommon(`/api/vendor/${selectedVendorId}`).then((res) => {
-      if (res.error) {
-        context.alertBox("error", res.message);
-      } else {
-        context.alertBox("success", "Vendor deleted successfully");
-        getVendors(page, rowsPerPage);
-      }
-      handleDeleteDialogClose();
-      setIsLoading(false);
-    }).catch((error) => {
-      context.alertBox("error", "Failed to delete vendor");
-      console.error("Delete vendor error:", error);
-      handleDeleteDialogClose();
-      setIsLoading(false);
-    });
+    deleteDataCommon(`/api/vendor/${selectedVendorId}`)
+      .then((res) => {
+        if (res.error) {
+          context.alertBox("error", res.message);
+        } else {
+          context.alertBox("success", "Vendor deleted successfully");
+          getVendors(page, rowsPerPage);
+        }
+        handleDeleteDialogClose();
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        context.alertBox("error", "Failed to delete vendor");
+        console.error("Delete vendor error:", error);
+        handleDeleteDialogClose();
+        setIsLoading(false);
+      });
   };
 
   const updateVendorStatus = () => {
+    if (context?.userData?.role !== "SUPERADMIN") {
+      context.alertBox(
+        "error",
+        "Only SUPERADMIN can Change status of a vendor."
+      );
+      return;
+    }
     setIsLoading(true);
-    patchDataLatest(`/api/vendor/status/${selectedVendorId}`).then((res) => {
-      if (res.error) {
-        context.alertBox("error", res.message);
-      } else {
-        context.alertBox("success", res.message);
-        getVendors(page, rowsPerPage);
-      }
-      handleStatusDialogClose();
-      setIsLoading(false);
-    }).catch((error) => {
-      context.alertBox("error", "Failed to update vendor status");
-      console.error("Update status error:", error);
-      handleStatusDialogClose();
-      setIsLoading(false);
-    });
+    patchDataLatest(`/api/vendor/status/${selectedVendorId}`)
+      .then((res) => {
+        if (res.error) {
+          context.alertBox("error", res.message);
+        } else {
+          context.alertBox("success", res.message);
+          getVendors(page, rowsPerPage);
+        }
+        handleStatusDialogClose();
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        context.alertBox("error", "Failed to update vendor status");
+        console.error("Update status error:", error);
+        handleStatusDialogClose();
+        setIsLoading(false);
+      });
   };
 
   return (
@@ -199,7 +236,10 @@ const UnverifiedVendors = () => {
           <h2 className="text-[18px] font-[600]">Unverified Vendors List</h2>
         </div>
         <div className="col w-[40%] ml-auto flex items-center gap-3">
-          <SearchBox searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+          <SearchBox
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+          />
         </div>
       </div>
 
@@ -237,7 +277,9 @@ const UnverifiedVendors = () => {
                     <Checkbox {...label} size="small" />
                   </TableCell>
                   <TableCell style={{ minWidth: columns[0].minWidth }}>
-                    <span className="font-[600]">{page * rowsPerPage + index + 1}</span>
+                    <span className="font-[600]">
+                      {page * rowsPerPage + index + 1}
+                    </span>
                   </TableCell>
                   <TableCell style={{ minWidth: columns[1].minWidth }}>
                     <div className="flex items-center gap-4 w-[300px]">
@@ -273,7 +315,9 @@ const UnverifiedVendors = () => {
                   <TableCell style={{ minWidth: columns[4].minWidth }}>
                     <span
                       className="inline-block py-1 px-4 rounded-full text-[11px] capitalize font-[500] text-white"
-                      style={{ backgroundColor: vendor.status ? '#22c55e' : '#ef4444' }}
+                      style={{
+                        backgroundColor: vendor.status ? "#22c55e" : "#ef4444",
+                      }}
                     >
                       {vendor.status ? "Active" : "Inactive"}
                     </span>
@@ -294,7 +338,7 @@ const UnverifiedVendors = () => {
                       >
                         <AiOutlineEdit className="text-[rgba(0,0,0,0.7)] text-[20px]" />
                       </Button>
-                      <Button                        
+                      <Button
                         onClick={() => handleVerifyClick(vendor._id)}
                         variant="outlined"
                         color="success"
@@ -304,9 +348,15 @@ const UnverifiedVendors = () => {
                       </Button>
                       <Button
                         className="!w-[35px] !h-[35px] bg-[#f1f1f1] !border !border-[rgba(0,0,0,0.4)] !rounded-full hover:!bg-[#f1f1f1] !min-w-[35px]"
-                        onClick={() => handleStatusClick(vendor._id, vendor.status)}
+                        onClick={() =>
+                          handleStatusClick(vendor._id, vendor.status)
+                        }
                         disabled={isLoading}
-                        title={vendor.status ? "Deactivate Vendor" : "Activate Vendor"}
+                        title={
+                          vendor.status
+                            ? "Deactivate Vendor"
+                            : "Activate Vendor"
+                        }
                       >
                         <MdOutlinePowerSettingsNew className="text-[rgba(0,0,0,0.7)] text-[20px]" />
                       </Button>
