@@ -56,6 +56,7 @@ export const OrdersReturn = () => {
       if (res?.error === false) {
         setOrdersData(res?.data);
         context?.setProgress(100);
+        
       }
     });
     // fetchDataFromApi(`/api/order/order-list`).then((res) => {
@@ -248,13 +249,28 @@ export const OrdersReturn = () => {
                           {order?.userId?._id}
                         </span>
                       </td>
-                      <td className="px-6 py-4 font-[500]">
+                      {/* <td className="px-6 py-4 font-[500]">
                         <span className="text-red-500">
                           {order?.order_status !== null
                             ? "RETURNED"
                             : orderStatus}
                         </span>
+                      </td> */}
+                      <td className="px-6 py-4 font-[500]">
+                        <select
+                          className="border border-gray-300 rounded px-2 py-1 text-sm text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                          value={order?.order_status !== null
+                            ? order?.order_status
+                            : orderStatus}
+                          onChange={(e) => handleChange(e, order?._id)}
+                        >
+                          <option value="pending">Pending</option>
+                          <option value="out for pickup">Out for Pickup</option>
+                          <option value="pickedup">Picked Up</option>
+                          <option value="returned">Returned</option>
+                        </select>
                       </td>
+
 
                       {/* <td className="px-6 py-4 font-[500]">
                         <Select
