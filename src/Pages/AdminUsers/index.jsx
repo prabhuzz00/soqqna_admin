@@ -51,7 +51,7 @@ const columns = [
   },
 ];
 
-export const Users = () => {
+export const AdminUsers = () => {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(25);
   const [userData, setUserData] = useState([]);
@@ -81,7 +81,7 @@ export const Users = () => {
     setIsloading(true);
     setPage(page);
     fetchDataFromApi(
-      `/api/user/getAllUsers?page=${page + 1}&limit=${limit}`
+      `/api/admin/getAllUsers?page=${page + 1}&limit=${limit}`
     ).then((res) => {
       setUserData(res);
       setUserTotalData(res);
@@ -174,7 +174,7 @@ export const Users = () => {
       }
 
       try {
-          deleteMultipleData(`/api/user/deleteMultiple`, {
+        deleteMultipleData(`/api/admin/deleteMultiple`, {
           data: { ids: sortedIds },
         }).then((res) => {
           getUsers(page, rowsPerPage);
@@ -191,7 +191,7 @@ export const Users = () => {
 
   const deleteUser = (id) => {
     if (context?.userData?.role === "SUPERADMIN") {
-        deleteData(`/api/user/deleteUser/${id}`).then((res) => {
+      deleteData(`/api/admin/deleteUser/${id}`).then((res) => {
         getUsers(page, rowsPerPage);
       });
     } else {
@@ -204,14 +204,14 @@ export const Users = () => {
       <div className="card my-2 pt-5 shadow-md sm:rounded-lg bg-white">
         <div className="flex items-center w-full px-5 pb-4 justify-beetween">
           <div className="col w-[40%]">
-            <h2 className="text-[18px] font-[600]">Users List</h2>
+            <h2 className="text-[18px] font-[600]">Admin Users List</h2>
           </div>
-          {/* <button
+          <button
             className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
             onClick={() => navigate("/users/addusers")}
           >
             Add User
-          </button> */}
+          </button>
 
           <div className="col w-[40%] ml-auto flex items-center gap-3">
             {sortedIds?.length !== 0 && (
@@ -379,4 +379,4 @@ export const Users = () => {
   );
 };
 
-export default Users;
+export default AdminUsers;

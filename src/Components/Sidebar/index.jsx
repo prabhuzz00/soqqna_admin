@@ -454,7 +454,7 @@ const Sidebar = () => {
           {context?.userData?.role === "SUPERADMIN" && (
             <li>
               <Link
-                to="/users"
+                to="/admin-users"
                 onClick={() => {
                   context?.windowWidth < 992 &&
                     context?.setisSidebarOpen(false);
@@ -462,12 +462,26 @@ const Sidebar = () => {
                 }}
               >
                 <Button className="w-full !capitalize !justify-start flex gap-3 text-[14px] !text-[rgba(255,255,255,0.8)] !font-[500] items-center !py-2 hover:!bg-[#ffffff] hover:!text-[#000000]">
-                  <FiUsers className="text-[18px]" /> <span>Users</span>
+                  <FiUsers className="text-[18px]" /> <span>Admin Users</span>
                 </Button>
               </Link>
             </li>
           )}
 
+<li>
+            <Link
+              to="/users"
+              onClick={() => {
+                context?.windowWidth < 992 &&
+                  context?.setisSidebarOpen(false);
+                setSubmenuIndex(null);
+              }}
+            >
+              <Button className="w-full !capitalize !justify-start flex gap-3 text-[14px] !text-[rgba(255,255,255,0.8)] !font-[500] items-center !py-2 hover:!bg-[#ffffff] hover:!text-[#000000]">
+                <FiUsers className="text-[18px]" /> <span>Users</span>
+              </Button>
+            </Link>
+          </li>
           <li>
             <Button
               className="w-full !capitalize !justify-start flex gap-3 text-[14px] !text-[rgba(255,255,255,0.8)] !font-[500] items-center !py-2 hover:!bg-[#ffffff] hover:!text-[#000000]"

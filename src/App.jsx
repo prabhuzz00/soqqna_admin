@@ -13,8 +13,10 @@ import Products from "./Pages/Products";
 import HomeSliderBanners from "./Pages/HomeSliderBanners";
 import CategoryList from "./Pages/Categegory";
 import SubCategoryList from "./Pages/Categegory/subCatList";
-import Users from "./Pages/Users";
+import AdminUsers from "./Pages/AdminUsers";
+import Users from "./Pages/Users"
 import Orders from "./Pages/Orders";
+import OrderDetails from "./Pages/Orders/orderDetail";
 import ForgotPassword from "./Pages/ForgotPassword";
 import VerifyAccount from "./Pages/VerifyAccount";
 import ChangePassword from "./Pages/ChangePassword";
@@ -463,7 +465,7 @@ function App() {
       ),
     },
     {
-      path: "/users",
+      path: "/admin-users",
       exact: true,
       element: (
         <>
@@ -485,6 +487,36 @@ function App() {
                 className={`contentRight overflow-hidden py-4 px-5 ${
                   isSidebarOpen === true && windowWidth < 992 && "opacity-0"
                 }  transition-all`}
+                style={{ width: isSidebarOpen === false ? "100%" : "80%" }}
+              >
+                <AdminUsers />
+              </div>
+            </div>
+          </section>
+        </>
+      ),
+    },
+    {
+      path: "/users",
+      exact: true,
+      element: (
+        <>
+          <section className="main">
+            <Header />
+            <div className="contentMain flex">
+              <div
+                className={`overflow-hidden sidebarWrapper ${isSidebarOpen === true
+                    ? windowWidth < 992
+                      ? `w-[${sidebarWidth / 1.5}%]`
+                      : `w-[20%]`
+                    : "w-[0px] opacity-0 invisible"
+                  } transition-all`}
+              >
+                <Sidebar />
+              </div>
+              <div
+                className={`contentRight overflow-hidden py-4 px-5 ${isSidebarOpen === true && windowWidth < 992 && "opacity-0"
+                  }  transition-all`}
                 style={{ width: isSidebarOpen === false ? "100%" : "80%" }}
               >
                 <Users />
@@ -520,6 +552,36 @@ function App() {
                 style={{ width: isSidebarOpen === false ? "100%" : "80%" }}
               >
                 <Orders />
+              </div>
+            </div>
+          </section>
+        </>
+      ),
+    },
+    {
+      path: "/orders/:id",
+      exact: true,
+      element: (
+        <>
+          <section className="main">
+            <Header />
+            <div className="contentMain flex">
+              <div
+                className={`overflow-hidden sidebarWrapper ${isSidebarOpen === true
+                    ? windowWidth < 992
+                      ? `w-[${sidebarWidth / 1.5}%]`
+                      : `w-[20%]`
+                    : "w-[0px] opacity-0 invisible"
+                  } transition-all`}
+              >
+                <Sidebar />
+              </div>
+              <div
+                className={`contentRight overflow-hidden py-4 px-5 ${isSidebarOpen === true && windowWidth < 992 && "opacity-0"
+                  }  transition-all`}
+                style={{ width: isSidebarOpen === false ? "100%" : "80%" }}
+              >
+                <OrderDetails />
               </div>
             </div>
           </section>

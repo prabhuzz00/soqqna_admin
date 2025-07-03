@@ -6,12 +6,13 @@ import SearchBox from "../../Components/SearchBox";
 import { FaAngleUp } from "react-icons/fa6";
 import { deleteData, editData, fetchDataFromApi } from "../../utils/api";
 import Pagination from "@mui/material/Pagination";
-
+import dayjs from "dayjs";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import { useContext } from "react";
 
 import { MyContext } from "../../App.jsx";
+import { Link } from "react-router-dom";
 
 export const Orders = () => {
   const [isOpenOrderdProduct, setIsOpenOrderdProduct] = useState(null);
@@ -205,7 +206,9 @@ export const Orders = () => {
                         </Button>
                       </td>
                       <td className="px-6 py-4 font-[500]">
+                      <Link to={`/orders/${order?._id}`}>
                         <span className="text-primary">{order?._id}</span>
+                      </Link>
                       </td>
 
                       <td className="px-6 py-4 font-[500]">
@@ -286,7 +289,8 @@ export const Orders = () => {
                         </Select>
                       </td>
                       <td className="px-6 py-4 font-[500] whitespace-nowrap">
-                        {order?.createdAt?.split("T")[0]}
+                        {/* {order?.createdAt?.split("T")[0]} */}
+                        {dayjs(order?.createdAt).format('DD-MM-YYYY HH:mm:ss')}
                       </td>
                       <td className="px-6 py-4 font-[500] whitespace-nowrap">
                         <Button

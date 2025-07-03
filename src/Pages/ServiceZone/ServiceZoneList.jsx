@@ -64,7 +64,7 @@ const ServiceZoneList = () => {
   };
 
   const handleSave = async () => {
-    const areaList = areas.split(",").map((a) => ({ name: a.trim() }));
+    const areaList = areas ? areas.split(",").map((a) => ({ name: a.trim() })) : [];
     const payload = { city, areas: areaList, doorStepService: doorStep };
 
     try {
