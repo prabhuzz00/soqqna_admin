@@ -201,9 +201,7 @@ export const IncompleteOrders = () => {
               <th scope="col" className="px-6 py-3 whitespace-nowrap">
                 Address
               </th>
-              <th scope="col" className="px-6 py-3 whitespace-nowrap">
-                Pincode
-              </th>
+
               <th scope="col" className="px-6 py-3 whitespace-nowrap">
                 Total Amount
               </th>
@@ -271,16 +269,10 @@ export const IncompleteOrders = () => {
                             " " +
                             order?.delivery_address?.city +
                             " " +
-                            order?.delivery_address?.landmark +
+                            order?.delivery_address?.area +
                             " " +
-                            order?.delivery_address?.state +
-                            " " +
-                            order?.delivery_address?.country}
+                            order?.delivery_address?.landmark}
                         </span>
-                      </td>
-
-                      <td className="px-6 py-4 font-[500]">
-                        {order?.delivery_address?.pincode}
                       </td>
 
                       <td className="px-6 py-4 font-[500]">
@@ -403,7 +395,7 @@ export const IncompleteOrders = () => {
                                       </td>
                                       <td className="px-6 py-4 font-[500]">
                                         <div className="w-[200px]">
-                                          {item?.productTitle}
+                                          {item?.name}
                                         </div>
                                       </td>
 

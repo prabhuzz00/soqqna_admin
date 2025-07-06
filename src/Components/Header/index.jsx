@@ -136,11 +136,11 @@ const Header = () => {
         </div>
 
         <div className="part2  flex items-center justify-end gap-5">
-          <IconButton aria-label="cart">
+          {/* <IconButton aria-label="cart">
             <StyledBadge badgeContent={4} color="secondary">
               <FaRegBell />
             </StyledBadge>
-          </IconButton>
+          </IconButton> */}
 
           {context.isLogin === true ? (
             <div className="relative">

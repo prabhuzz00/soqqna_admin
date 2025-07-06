@@ -308,7 +308,7 @@ export const DeliveredOrders = () => {
                                       </td>
                                       <td className="px-6 py-4 font-[500]">
                                         <div className="w-[200px]">
-                                          {item?.productTitle}
+                                          {item?.name}
                                         </div>
                                       </td>
 

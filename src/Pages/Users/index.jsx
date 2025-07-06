@@ -29,11 +29,11 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
 const columns = [
   { id: "user", label: "USER", minWidth: 80 },
-  {
-    id: "userPh",
-    label: "USER PHONE NO",
-    minWidth: 130,
-  },
+  // {
+  //   id: "userPh",
+  //   label: "USER PHONE NO",
+  //   minWidth: 130,
+  // },
   {
     id: "verifyemail",
     label: "Email Verify",
@@ -174,7 +174,7 @@ export const Users = () => {
       }
 
       try {
-          deleteMultipleData(`/api/user/deleteMultiple`, {
+        deleteMultipleData(`/api/user/deleteMultiple`, {
           data: { ids: sortedIds },
         }).then((res) => {
           getUsers(page, rowsPerPage);
@@ -191,7 +191,7 @@ export const Users = () => {
 
   const deleteUser = (id) => {
     if (context?.userData?.role === "SUPERADMIN") {
-        deleteData(`/api/user/deleteUser/${id}`).then((res) => {
+      deleteData(`/api/user/deleteUser/${id}`).then((res) => {
         getUsers(page, rowsPerPage);
       });
     } else {
@@ -307,13 +307,13 @@ export const Users = () => {
                         </div>
                       </TableCell>
 
-                      <TableCell style={{ minWidth: columns.minWidth }}>
+                      {/* <TableCell style={{ minWidth: columns.minWidth }}>
                         <span className="flex items-center gap-2">
                           {" "}
                           <MdLocalPhone />{" "}
                           {user?.mobile === null ? "NONE" : user?.mobile}
                         </span>
-                      </TableCell>
+                      </TableCell> */}
 
                       <TableCell style={{ minWidth: columns.minWidth }}>
                         {user?.verify_email === false ? (

@@ -164,9 +164,7 @@ export const Orders = () => {
               <th scope="col" className="px-6 py-3 whitespace-nowrap">
                 Address
               </th>
-              <th scope="col" className="px-6 py-3 whitespace-nowrap">
-                Pincode
-              </th>
+
               <th scope="col" className="px-6 py-3 whitespace-nowrap">
                 Total Amount
               </th>
@@ -206,9 +204,9 @@ export const Orders = () => {
                         </Button>
                       </td>
                       <td className="px-6 py-4 font-[500]">
-                      <Link to={`/orders/${order?._id}`}>
-                        <span className="text-primary">{order?._id}</span>
-                      </Link>
+                        <Link to={`/orders/${order?._id}`}>
+                          <span className="text-primary">{order?._id}</span>
+                        </Link>
                       </td>
 
                       <td className="px-6 py-4 font-[500]">
@@ -236,16 +234,10 @@ export const Orders = () => {
                             " " +
                             order?.delivery_address?.city +
                             " " +
-                            order?.delivery_address?.landmark +
+                            order?.delivery_address?.area +
                             " " +
-                            order?.delivery_address?.state +
-                            " " +
-                            order?.delivery_address?.country}
+                            order?.delivery_address?.landmark}
                         </span>
-                      </td>
-
-                      <td className="px-6 py-4 font-[500]">
-                        {order?.delivery_address?.pincode}
                       </td>
 
                       <td className="px-6 py-4 font-[500]">
@@ -290,7 +282,7 @@ export const Orders = () => {
                       </td>
                       <td className="px-6 py-4 font-[500] whitespace-nowrap">
                         {/* {order?.createdAt?.split("T")[0]} */}
-                        {dayjs(order?.createdAt).format('DD-MM-YYYY HH:mm:ss')}
+                        {dayjs(order?.createdAt).format("DD-MM-YYYY HH:mm:ss")}
                       </td>
                       <td className="px-6 py-4 font-[500] whitespace-nowrap">
                         <Button
@@ -360,7 +352,7 @@ export const Orders = () => {
                                       </td>
                                       <td className="px-6 py-4 font-[500]">
                                         <div className="w-[200px]">
-                                          {item?.productTitle}
+                                          {item?.name}
                                         </div>
                                       </td>
 

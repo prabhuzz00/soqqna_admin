@@ -56,7 +56,6 @@ export const OrdersReturn = () => {
       if (res?.error === false) {
         setOrdersData(res?.data);
         context?.setProgress(100);
-        
       }
     });
     // fetchDataFromApi(`/api/order/order-list`).then((res) => {
@@ -154,9 +153,7 @@ export const OrdersReturn = () => {
               <th scope="col" className="px-6 py-3 whitespace-nowrap">
                 Address
               </th>
-              <th scope="col" className="px-6 py-3 whitespace-nowrap">
-                Pincode
-              </th>
+
               <th scope="col" className="px-6 py-3 whitespace-nowrap">
                 Total Amount
               </th>
@@ -224,11 +221,9 @@ export const OrdersReturn = () => {
                             " " +
                             order?.delivery_address?.city +
                             " " +
-                            order?.delivery_address?.landmark +
+                            order?.delivery_address?.area +
                             " " +
-                            order?.delivery_address?.state +
-                            " " +
-                            order?.delivery_address?.country}
+                            order?.delivery_address?.landmark}
                         </span>
                       </td>
 
@@ -249,19 +244,15 @@ export const OrdersReturn = () => {
                           {order?.userId?._id}
                         </span>
                       </td>
-                      {/* <td className="px-6 py-4 font-[500]">
-                        <span className="text-red-500">
-                          {order?.order_status !== null
-                            ? "RETURNED"
-                            : orderStatus}
-                        </span>
-                      </td> */}
+
                       <td className="px-6 py-4 font-[500]">
                         <select
                           className="border border-gray-300 rounded px-2 py-1 text-sm text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                          value={order?.order_status !== null
-                            ? order?.order_status
-                            : orderStatus}
+                          value={
+                            order?.order_status !== null
+                              ? order?.order_status
+                              : orderStatus
+                          }
                           onChange={(e) => handleChange(e, order?._id)}
                         >
                           <option value="pending">Pending</option>
@@ -271,28 +262,6 @@ export const OrdersReturn = () => {
                         </select>
                       </td>
 
-
-                      {/* <td className="px-6 py-4 font-[500]">
-                        <Select
-                          labelId="demo-simple-select-helper-label"
-                          id="demo-simple-select-helper"
-                          value={
-                            order?.order_status !== null
-                              ? order?.order_status
-                              : orderStatus
-                          }
-                          label="Status"
-                          size="small"
-                          style={{ zoom: "80%" }}
-                          className="w-full"
-                          onChange={(e) => handleChange(e, order?._id)}
-                        >
-                          <MenuItem value={"pending"}>Pending</MenuItem>
-                          <MenuItem value={"confirm"}>Confirm</MenuItem>
-                          <MenuItem value={"delivered"}>Delivered</MenuItem>
-                          <MenuItem value={"canceled"}>Canceled</MenuItem>
-                        </Select>
-                      </td> */}
                       <td className="px-6 py-4 font-[500] whitespace-nowrap">
                         {order?.createdAt?.split("T")[0]}
                       </td>
@@ -364,7 +333,7 @@ export const OrdersReturn = () => {
                                       </td>
                                       <td className="px-6 py-4 font-[500]">
                                         <div className="w-[200px]">
-                                          {item?.productTitle}
+                                          {item?.name}
                                         </div>
                                       </td>
 
