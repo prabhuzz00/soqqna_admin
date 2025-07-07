@@ -708,13 +708,13 @@ const Products = () => {
                       <TableCell>
                         <div className="flex flex-col gap-1">
                           <span className="line-through text-gray-500 text-[14px]">
-                            {product.price.toLocaleString("en-US", {
+                            {product.oldPrice.toLocaleString("en-US", {
                               style: "currency",
                               currency: "USD",
                             })}
                           </span>
                           <span className="text-primary font-[600] text-[14px]">
-                            {product.oldPrice.toLocaleString("en-US", {
+                            {product.price.toLocaleString("en-US", {
                               style: "currency",
                               currency: "USD",
                             })}
