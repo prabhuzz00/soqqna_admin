@@ -300,7 +300,7 @@ export const Users = () => {
                                 <span>
                                   <MdOutlineMarkEmailRead size={15} />{" "}
                                 </span>
-                                {user?.email?.substr(0, 5) + "***"}
+                                {user?.email}
                               </span>
                             </div>
                           </div>
