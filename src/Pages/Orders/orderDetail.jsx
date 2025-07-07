@@ -224,20 +224,23 @@ const OrderDetails = () => {
       {/* Delivery Address */}
       {order.delivery_address && (
         <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-          <h3 className="text-[16px] font-[600] mb-4 flex items-center gap-2">
-            <MdLocationOn className="opacity-65" /> Delivery Address
-          </h3>
+          {order.delivery_address?.addressType !== "PickupPoint" ? (
+            <h3 className="text-[16px] font-[600] mb-4 flex items-center gap-2">
+              <MdLocationOn className="opacity-65" /> Delivery Address
+            </h3>
+          ) : (
+            <h3 className="text-[16px] font-[600] mb-4 flex items-center gap-2">
+              <MdLocationOn className="opacity-65" /> Pickup Point
+            </h3>
+          )}
 
           <div className="text-[14px] space-y-1">
-            <p>{order.delivery_address.addressLine1}</p>
-            {order.delivery_address.addressLine2 && (
-              <p>{order.delivery_address.addressLine2}</p>
-            )}
+            <p>Street: {order.delivery_address.address_line1}</p>
             <p>
-              {order.delivery_address.city}, {order.delivery_address.state}{" "}
-              {order.delivery_address.pincode}
+              City: {order.delivery_address.city}, Area:{" "}
+              {order.delivery_address.area}
             </p>
-            <p>{order.delivery_address.country}</p>
+            <p>Landamrk: {order.delivery_address.landmark}</p>
             {order.delivery_address.mobile && (
               <p className="font-[500]">
                 Mobile: {order.delivery_address.mobile}
@@ -280,6 +283,17 @@ const OrderDetails = () => {
                     <p>Color: {product.selectedColor}</p>
                   )}
                   {product.size && <p>Size: {product.size}</p>}
+                  {product.barcode && (
+                    <p>
+                      Barcode:
+                      <Barcode
+                        value={product.barcode}
+                        width={1}
+                        height={50}
+                        fontSize={14}
+                      />
+                    </p>
+                  )}
                 </div>
               </div>
 
