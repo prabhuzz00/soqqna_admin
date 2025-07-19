@@ -209,6 +209,7 @@ const Login = () => {
               value={formFields.password}
               onChange={onChangeInput}
               disabled={isLoading}
+              autoComplete="off"
               className="w-full bg-transparent border-b-2 border-white/30 focus:border-indigo-300 text-white placeholder-white/50 focus:outline-none py-2 transition-all duration-300"
               placeholder="Enter your password"
             />

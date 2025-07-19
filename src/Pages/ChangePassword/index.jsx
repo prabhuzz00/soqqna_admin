@@ -26,6 +26,10 @@ const ChangePassword = () => {
   const context = useContext(MyContext);
   const history = useNavigate();
 
+  const isStrongPassword = (password) => {
+    return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/.test(password);
+  };
+
   useEffect(() => {
     fetchDataFromApi("/api/logo").then((res) => {
       localStorage.setItem("logo", res?.logo[0]?.logo);
@@ -65,6 +69,15 @@ const ChangePassword = () => {
       context.alertBox("error", "Password and confirm password not match");
       setIsLoading(false);
       return false;
+    }
+
+    if (!isStrongPassword(formFields.newPassword)) {
+      context.alertBox(
+        "error",
+        "Password must be at least 8 characters long and include uppercase, lowercase, number, and special character"
+      );
+      setIsLoading(false);
+      return;
     }
 
     postData(`/api/admin/reset-password`, formFields).then((res) => {
@@ -127,6 +140,7 @@ const ChangePassword = () => {
                 name="newPassword"
                 value={formFields.newPassword}
                 disabled={isLoading === true ? true : false}
+                autoComplete="off"
                 onChange={onChangeInput}
               />
               <Button
@@ -151,6 +165,7 @@ const ChangePassword = () => {
                 name="confirmPassword"
                 value={formFields.confirmPassword}
                 disabled={isLoading === true ? true : false}
+                autoComplete="off"
                 onChange={onChangeInput}
               />
               <Button
