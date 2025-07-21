@@ -14,6 +14,7 @@ import { MyContext } from "../../App";
 import { SiBloglovin } from "react-icons/si";
 import { fetchDataFromApi } from "../../utils/api";
 import { IoLogoBuffer } from "react-icons/io";
+import { BsCashCoin } from "react-icons/bs";
 
 const Sidebar = () => {
   const [submenuIndex, setSubmenuIndex] = useState(null);
@@ -417,8 +418,22 @@ const Sidebar = () => {
               }}
             >
               <Button className="w-full !capitalize !justify-start flex gap-3 text-[14px] !text-[rgba(255,255,255,0.8)] !font-[500] items-center !py-2 hover:!bg-[#ffffff] hover:!text-[#000000]">
-                <IoBagCheckOutline className="text-[20px]" />{" "}
+                <BsCashCoin className="text-[20px]" />{" "}
                 <span>Shipping Cost</span>
+              </Button>
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/exchange-rate"
+              onClick={() => {
+                context?.windowWidth < 992 && context?.setisSidebarOpen(false);
+                setSubmenuIndex(null);
+              }}
+            >
+              <Button className="w-full !capitalize !justify-start flex gap-3 text-[14px] !text-[rgba(255,255,255,0.8)] !font-[500] items-center !py-2 hover:!bg-[#ffffff] hover:!text-[#000000]">
+                <BsCashCoin className="text-[20px]" />{" "}
+                <span>Exchange Rate</span>
               </Button>
             </Link>
           </li>
