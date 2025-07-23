@@ -423,6 +423,7 @@ const Sidebar = () => {
               </Button>
             </Link>
           </li>
+          {/* currency exchange rate is here */}
           <li>
             <Link
               to="/exchange-rate"
