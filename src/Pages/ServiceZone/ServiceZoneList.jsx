@@ -31,8 +31,7 @@ const ServiceZoneList = () => {
   const [open, setOpen] = useState(false);
   const [editingZone, setEditingZone] = useState(null);
   const [city, setCity] = useState("");
-  const [areas, setAreas] = useState("");
-  const [doorStep, setDoorStep] = useState(false);
+  const [areaInputs, setAreaInputs] = useState([{ name: "", doorStep: false }]);
 
   const fetchZones = async () => {
     try {
@@ -51,8 +50,18 @@ const ServiceZoneList = () => {
   const handleOpen = (zone = null) => {
     setEditingZone(zone);
     setCity(zone ? zone.city : "");
-    setAreas(zone ? zone.areas.map((a) => a.name).join(", ") : "");
-    setDoorStep(zone ? zone.doorStepService : false);
+
+    if (zone && Array.isArray(zone.areas)) {
+      setAreaInputs(
+        zone.areas.map((a) => ({
+          name: a.name || "",
+          doorStep: a.doorStep || false,
+        }))
+      );
+    } else {
+      setAreaInputs([{ name: "", doorStep: false }]);
+    }
+
     setOpen(true);
   };
 
@@ -60,23 +69,49 @@ const ServiceZoneList = () => {
     setOpen(false);
     setEditingZone(null);
     setCity("");
-    setAreas("");
+    setAreaInputs([{ name: "", doorStep: false }]);
+  };
+
+  const addArea = () => {
+    setAreaInputs([...areaInputs, { name: "", doorStep: false }]);
+  };
+
+  const removeArea = (index) => {
+    const updated = [...areaInputs];
+    updated.splice(index, 1);
+    setAreaInputs(updated);
+  };
+
+  const handleAreaChange = (index, field, value) => {
+    const updated = [...areaInputs];
+    updated[index][field] = value;
+    setAreaInputs(updated);
   };
 
   const handleSave = async () => {
-    const areaList = areas ? areas.split(",").map((a) => ({ name: a.trim() })) : [];
-    const payload = { city, areas: areaList, doorStepService: doorStep };
+    const cleanedAreas = areaInputs
+      .filter((a) => a.name.trim() !== "")
+      .map((a) => ({
+        name: a.name.trim(),
+        doorStep: a.doorStep,
+      }));
+
+    const payload = {
+      city: city.trim(),
+      areas: cleanedAreas,
+    };
 
     try {
       if (editingZone) {
-        // Update
+        // Update existing zone
         await editDataCommon(`/api/service-zones/${editingZone._id}`, payload);
       } else {
-        // Create
+        // Create new zone
         await postData("/api/service-zones", payload);
       }
-      fetchZones();
-      handleClose();
+
+      fetchZones(); // Refresh list
+      handleClose(); // Close modal
     } catch (error) {
       console.error(error);
       alert("Failed to save zone.");
@@ -114,7 +149,16 @@ const ServiceZoneList = () => {
           {zones.map((zone) => (
             <TableRow key={zone._id}>
               <TableCell>{zone.city}</TableCell>
-              <TableCell>{zone.areas.map((a) => a.name).join(", ")}</TableCell>
+              <TableCell>
+                <ul style={{ paddingLeft: 16 }}>
+                  {zone.areas.map((a, i) => (
+                    <li key={i}>
+                      {a.name} {a.doorStep ? "(🚚 Doorstep)" : ""}
+                    </li>
+                  ))}
+                </ul>
+              </TableCell>
+
               <TableCell>
                 <IconButton onClick={() => handleOpen(zone)} color="primary">
                   <AiOutlineEdit size={20} />
@@ -142,24 +186,48 @@ const ServiceZoneList = () => {
             fullWidth
             margin="normal"
           />
-          <TextField
-            label="Areas (comma separated)"
-            value={areas}
-            onChange={(e) => setAreas(e.target.value)}
-            fullWidth
-            margin="normal"
-          />
-
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={doorStep}
-                onChange={(e) => setDoorStep(e.target.checked)}
-                color="primary"
+          {areaInputs.map((area, index) => (
+            <div
+              key={index}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 10,
+                marginBottom: 10,
+              }}
+            >
+              <TextField
+                label={`Area ${index + 1}`}
+                value={area.name}
+                onChange={(e) =>
+                  handleAreaChange(index, "name", e.target.value)
+                }
+                style={{ flex: 1 }}
               />
-            }
-            label="Door Step Service"
-          />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={area.doorStep}
+                    onChange={(e) =>
+                      handleAreaChange(index, "doorStep", e.target.checked)
+                    }
+                    color="primary"
+                  />
+                }
+                label="Doorstep"
+              />
+              <Button
+                variant="outlined"
+                color="secondary"
+                onClick={() => removeArea(index)}
+              >
+                Remove
+              </Button>
+            </div>
+          ))}
+          <Button onClick={addArea} variant="outlined" color="primary">
+            + Add Area
+          </Button>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
