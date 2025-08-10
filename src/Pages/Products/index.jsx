@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import {
   Button,
   Checkbox,
@@ -39,6 +39,8 @@ import {
   deleteData,
   deleteMultipleData,
 } from "../../utils/api";
+import { MdQrCodeScanner } from "react-icons/md";
+import { Html5Qrcode, Html5QrcodeSupportedFormats } from "html5-qrcode";
 
 const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
@@ -80,6 +82,9 @@ const Products = () => {
   const [copyCount, setCopyCount] = useState(1);
 
   const [openRowId, setOpenRowId] = useState(null); // track dropdown row
+  const [isScannerOpen, setIsScannerOpen] = useState(false);
+  const [scannerError, setScannerError] = useState("");
+  const [isScanning, setIsScanning] = useState(false);
 
   const context = useContext(MyContext);
 
@@ -100,39 +105,7 @@ const Products = () => {
                 <TableCell sx={{ fontWeight: 600 }}>Action</TableCell>
               </TableRow>
             </TableHead>
-            {/* <TableBody>
-              {variation.map((v, i) =>
-                v.sizes.map((s, j) => (
-                  <TableRow key={`${i}-${j}`}>
-                    <TableCell>{v.color.label}</TableCell>
-                    <TableCell>{s.label}</TableCell>
-                    <TableCell>₹{s.price.toLocaleString()}</TableCell>
-                    <TableCell>{s.countInStock}</TableCell>
-                    <TableCell>
-                      <Barcode
-                        value={s.vbarcode}
-                        width={1}
-                        height={40}
-                        fontSize={12}
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <div>
-                        <Button
-                          className="!min-w-[35px] !w-[35px] !h-[35px] bg-[#f1f1f1] !border !border-[rgba(0,0,0,0.4)] !rounded-full"
-                          onClick={() => {
-                            setBarcodeToPrint(s.vbarcode);
-                            setOpenPrintDialog(true);
-                          }}
-                        >
-                          <MdLocalPrintshop className="text-[rgba(0,0,0,0.7)] text-[18px]" />
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
-            </TableBody> */}
+
             <TableBody>
               {(variation || [])
                 .filter(Boolean) // drop null / undefined entries
@@ -185,31 +158,6 @@ const Products = () => {
     getProducts(page, rowsPerPage);
   }, [context?.isOpenFullScreenPanel, page, rowsPerPage]);
 
-  // useEffect(() => {
-  //   // Filter orders based on search query
-  //   if (searchQuery !== "") {
-  //     const filteredOrders = productTotalData?.totalProducts?.filter(
-  //       (product) =>
-  //         product._id?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-  //         product?.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-  //         product?.catName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-  //         product?.subCat?.includes(searchQuery) ||
-  //         product?.barcode?.includes(searchQuery) ||
-  //         product?.variation?.sizes?.vbarcode.includes(searchQuery)
-  //     );
-  //     setProductData({
-  //       error: false,
-  //       success: true,
-  //       products: filteredOrders,
-  //       total: filteredOrders?.length,
-  //       page: parseInt(page),
-  //       totalPages: Math.ceil(filteredOrders?.length / rowsPerPage),
-  //       totalCount: productData?.totalCount,
-  //     });
-  //   } else {
-  //     getProducts(page, rowsPerPage);
-  //   }
-  // }, [searchQuery]);
 
   useEffect(() => {
     if (!searchQuery) {
@@ -475,6 +423,282 @@ const Products = () => {
     setPage(newPage);
   };
 
+  const BarcodeScanner = () => {
+    const scannerRef = useRef(null);
+    const html5QrCode = useRef(null);
+    const scannedRef = useRef(false);
+
+    useEffect(() => {
+      if (isScannerOpen) {
+        scannedRef.current = false;
+        html5QrCode.current = new Html5Qrcode("scanner-container");
+
+        const qrboxSize = window.innerWidth < 768 ? { width: 200, height: 80 } : { width: 250, height: 100 };
+
+        const config = {
+          fps: 10,
+          qrbox: qrboxSize,
+          formatsToSupport: [
+            Html5QrcodeSupportedFormats.CODE_128,
+            Html5QrcodeSupportedFormats.EAN_13,
+            Html5QrcodeSupportedFormats.EAN_8,
+            Html5QrcodeSupportedFormats.UPC_A,
+            Html5QrcodeSupportedFormats.UPC_E,
+            Html5QrcodeSupportedFormats.CODE_39,
+            Html5QrcodeSupportedFormats.CODE_93,
+          ],
+          rememberLastUsedCamera: true,
+          aspectRatio: 4 / 3,
+        };
+
+        // const onScanSuccess = (decodedText) => {
+        //   if (scannedRef.current) return;
+        //   scannedRef.current = true;
+        //   console.log("Barcode detected:", decodedText);
+        //   setSearchQuery(decodedText);
+        //   context.alertBox("success", `Barcode detected: ${decodedText}`);
+        //   if (html5QrCode.current && html5QrCode.current.isScanning) {
+        //     html5QrCode.current.stop()
+        //       .then(() => {
+        //         html5QrCode.current.clear();
+        //         setIsScannerOpen(false);
+        //       })
+        //       .catch((err) => console.error("Stop error:", err));
+        //   } else {
+        //     setIsScannerOpen(false);
+        //   }
+        // };
+        const onScanSuccess = (decodedText) => {
+  if (scannedRef.current) return;
+  scannedRef.current = true;
+  console.log("Barcode detected:", decodedText);
+  setSearchQuery(decodedText);
+  context.alertBox("success", `Barcode detected: ${decodedText}`);
+  
+  // Properly stop and clear the scanner
+  if (html5QrCode.current && html5QrCode.current.isScanning) {
+    html5QrCode.current.stop()
+      .then(() => {
+        html5QrCode.current.clear();
+        setIsScanning(false);
+        setIsScannerOpen(false);
+      })
+      .catch((err) => {
+        console.error("Stop error:", err);
+        // Force close even if stop fails
+        setIsScanning(false);
+        setIsScannerOpen(false);
+      });
+  } else {
+    setIsScanning(false);
+    setIsScannerOpen(false);
+  }
+};
+
+        html5QrCode.current
+          .start(
+            { facingMode: "environment" },
+            config,
+            onScanSuccess,
+            (errorMessage) => {
+              // Suppress continuous scan errors
+            }
+          )
+          .then(() => {
+            console.log("Scanner started successfully");
+            setIsScanning(true);
+          })
+          .catch((err) => {
+            console.error("Failed to start scanner:", err);
+            let errorMsg = "Failed to start camera. Please check permissions and try again.";
+            if (err.name === "NotAllowedError") {
+              errorMsg = "Camera permission denied. Please allow camera access in your browser settings.";
+            } else if (err.name === "NotFoundError") {
+              errorMsg = "No camera found on this device.";
+            } else if (err.name === "NotReadableError") {
+              errorMsg = "Camera is being used by another application. Please close it and try again.";
+            }
+            setScannerError(errorMsg);
+          });
+      }
+
+      return () => {
+  if (html5QrCode.current) {
+    if (html5QrCode.current.isScanning) {
+      html5QrCode.current
+        .stop()
+        .then(() => {
+          html5QrCode.current.clear();
+          html5QrCode.current = null; // Add this line
+          console.log("Scanner stopped and cleared");
+          setIsScanning(false);
+        })
+        .catch((err) => {
+          console.error("Failed to stop scanner:", err);
+          html5QrCode.current = null; // Add this line even on error
+          setIsScanning(false);
+        });
+    } else {
+      html5QrCode.current.clear();
+      html5QrCode.current = null; // Add this line
+    }
+  }
+};
+    }, [isScannerOpen]);
+
+    const handleRetry = () => {
+      setScannerError("");
+      scannedRef.current = false;
+      if (html5QrCode.current) {
+        if (html5QrCode.current.isScanning) {
+          html5QrCode.current.stop().catch(console.error);
+        }
+        const qrboxSize = window.innerWidth < 768 ? { width: 200, height: 80 } : { width: 250, height: 100 };
+        const config = {
+          fps: 10,
+          qrbox: qrboxSize,
+          formatsToSupport: [
+            Html5QrcodeSupportedFormats.CODE_128,
+            Html5QrcodeSupportedFormats.EAN_13,
+            Html5QrcodeSupportedFormats.EAN_8,
+            Html5QrcodeSupportedFormats.UPC_A,
+            Html5QrcodeSupportedFormats.UPC_E,
+            Html5QrcodeSupportedFormats.CODE_39,
+            Html5QrcodeSupportedFormats.CODE_93,
+          ],
+          rememberLastUsedCamera: true,
+          aspectRatio: 4 / 3,
+        };
+        const onScanSuccess = (decodedText) => {
+          if (scannedRef.current) return;
+          scannedRef.current = true;
+          console.log("Barcode detected:", decodedText);
+          setSearchQuery(decodedText);
+          context.alertBox("success", `Barcode detected: ${decodedText}`);
+          if (html5QrCode.current && html5QrCode.current.isScanning) {
+            html5QrCode.current.stop()
+              .then(() => {
+                html5QrCode.current.clear();
+                setIsScannerOpen(false);
+              })
+              .catch((err) => console.error("Stop error:", err));
+          } else {
+            setIsScannerOpen(false);
+          }
+        };
+        html5QrCode.current.start(
+          { facingMode: "environment" },
+          config,
+          onScanSuccess,
+          (errorMessage) => { }
+        ).then(() => {
+          setIsScanning(true);
+        }).catch((err) => {
+          setScannerError(getScannerError(err));
+        });
+      }
+    };
+
+    const handleClose = () => {
+  if (html5QrCode.current && html5QrCode.current.isScanning) {
+    html5QrCode.current.stop()
+      .then(() => {
+        html5QrCode.current.clear();
+        html5QrCode.current = null; // Add this line
+        setIsScannerOpen(false);
+        setScannerError("");
+        setIsScanning(false);
+      })
+      .catch((err) => {
+        console.error("Error stopping scanner:", err);
+        // Force close even if stop fails
+        html5QrCode.current = null; // Add this line
+        setIsScannerOpen(false);
+        setScannerError("");
+        setIsScanning(false);
+      });
+  } else {
+    setIsScannerOpen(false);
+    setScannerError("");
+    setIsScanning(false);
+  }
+};
+
+    // Update the scanner container style for responsiveness
+    return (
+      <div className="fixed top-0 left-0 w-full h-full bg-[#000000dd] z-50 flex flex-col justify-center items-center">
+        <div className="bg-white rounded-lg p-4 shadow-lg max-w-md w-full mx-4">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-lg font-semibold">Scan Barcode</h3>
+            <Button
+              onClick={handleClose}
+              className="!min-w-[30px] !w-[30px] !h-[30px] !text-gray-600"
+            >
+              ✕
+            </Button>
+          </div>
+
+          {scannerError ? (
+            <div className="text-center p-4">
+              <div className="text-red-500 mb-4 text-sm">
+                {scannerError}
+              </div>
+              <div className="flex gap-2 justify-center">
+                <Button
+                  variant="outlined"
+                  size="small"
+                  onClick={handleRetry}
+                  className="!text-blue-600 !border-blue-600"
+                >
+                  Try Again
+                </Button>
+                <Button
+                  variant="outlined"
+                  size="small"
+                  onClick={handleClose}
+                  className="!text-gray-600 !border-gray-400"
+                >
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <div className="relative">
+              <div
+                id="scanner-container"
+                ref={scannerRef}
+                className="w-full bg-black rounded-lg overflow-hidden relative"
+                style={{
+                  position: 'relative',
+                  width: '100%',
+                  height: '50vh',
+                  minHeight: '256px',
+                  maxHeight: '400px'
+                }}
+              >
+                {!isScanning && (
+                  <div className="absolute inset-0 flex items-center justify-center text-white z-10">
+                    <CircularProgress size={24} style={{ color: 'white' }} />
+                    <span className="ml-2">Starting camera...</span>
+                  </div>
+                )}
+              </div>
+
+              {isScanning && (
+                <div className="absolute inset-0 pointer-events-none z-20 flex justify-center items-center">
+                  <div className="w-[80%] max-w-[250px] h-20 border-2 border-green-500 bg-transparent rounded"></div>
+                </div>
+              )}
+
+              <p className="text-center mt-2 text-sm text-gray-600">
+                {isScanning ? "Position barcode in the frame" : "Initializing camera..."}
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
   // ───────────────────────────── Render ──────────────────────────────
   return (
     <>
@@ -492,6 +716,14 @@ const Products = () => {
               Delete
             </Button>
           )}
+          <Button
+            className="btn-blue !text-white btn-sm flex items-center gap-2"
+            onClick={() => setIsScannerOpen(true)}
+            title="Scan Barcode"
+          >
+            <MdQrCodeScanner className="text-[18px]" />
+            Scan
+          </Button>
           <Button
             className="btn-blue !text-white btn-sm"
             onClick={() =>
@@ -601,6 +833,8 @@ const Products = () => {
                 searchQuery={searchQuery}
                 setSearchQuery={setSearchQuery}
                 setPageOrder={setPageOrder}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
           </div>
@@ -881,12 +1115,12 @@ const Products = () => {
         </head>
         <body>
           ${Array.from({ length: copyCount })
-            .map(
-              (_, i) => `<div class="barcode-container">
+                        .map(
+                          (_, i) => `<div class="barcode-container">
                   <svg id="barcode-${i}"></svg>
                 </div>`
-            )
-            .join("")}
+                        )
+                        .join("")}
 
           <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
           <script>
@@ -924,6 +1158,9 @@ const Products = () => {
           </div>
         </div>
       )}
+
+
+      {isScannerOpen && <BarcodeScanner />}
     </>
   );
 };
