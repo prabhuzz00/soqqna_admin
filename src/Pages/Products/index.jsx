@@ -1620,23 +1620,6 @@ const Products = () => {
           aspectRatio: 4 / 3,
         };
 
-        // const onScanSuccess = (decodedText) => {
-        //   if (scannedRef.current) return;
-        //   scannedRef.current = true;
-        //   console.log("Barcode detected:", decodedText);
-        //   setSearchQuery(decodedText);
-        //   context.alertBox("success", `Barcode detected: ${decodedText}`);
-        //   if (html5QrCode.current && html5QrCode.current.isScanning) {
-        //     html5QrCode.current.stop()
-        //       .then(() => {
-        //         html5QrCode.current.clear();
-        //         setIsScannerOpen(false);
-        //       })
-        //       .catch((err) => console.error("Stop error:", err));
-        //   } else {
-        //     setIsScannerOpen(false);
-        //   }
-        // };
         const onScanSuccess = (decodedText) => {
           if (scannedRef.current) return;
           scannedRef.current = true;
@@ -1652,6 +1635,7 @@ const Products = () => {
                 html5QrCode.current.clear();
                 setIsScanning(false);
                 setIsScannerOpen(false);
+                html5QrCode.current = null;
               })
               .catch((err) => {
                 console.error("Stop error:", err);
@@ -1757,6 +1741,9 @@ const Products = () => {
               .then(() => {
                 html5QrCode.current.clear();
                 setIsScannerOpen(false);
+                html5QrCode.current = null;
+                setScannerError("");
+                setIsScanning(false);
               })
               .catch((err) => console.error("Stop error:", err));
           } else {
