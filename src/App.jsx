@@ -14,7 +14,7 @@ import HomeSliderBanners from "./Pages/HomeSliderBanners";
 import CategoryList from "./Pages/Categegory";
 import SubCategoryList from "./Pages/Categegory/subCatList";
 import AdminUsers from "./Pages/AdminUsers";
-import Users from "./Pages/Users"
+import Users from "./Pages/Users";
 import Orders from "./Pages/Orders";
 import OrderDetails from "./Pages/Orders/orderDetail";
 import ForgotPassword from "./Pages/ForgotPassword";
@@ -506,18 +506,20 @@ function App() {
             <Header />
             <div className="contentMain flex">
               <div
-                className={`overflow-hidden sidebarWrapper ${isSidebarOpen === true
+                className={`overflow-hidden sidebarWrapper ${
+                  isSidebarOpen === true
                     ? windowWidth < 992
                       ? `w-[${sidebarWidth / 1.5}%]`
                       : `w-[20%]`
                     : "w-[0px] opacity-0 invisible"
-                  } transition-all`}
+                } transition-all`}
               >
                 <Sidebar />
               </div>
               <div
-                className={`contentRight overflow-hidden py-4 px-5 ${isSidebarOpen === true && windowWidth < 992 && "opacity-0"
-                  }  transition-all`}
+                className={`contentRight overflow-hidden py-4 px-5 ${
+                  isSidebarOpen === true && windowWidth < 992 && "opacity-0"
+                }  transition-all`}
                 style={{ width: isSidebarOpen === false ? "100%" : "80%" }}
               >
                 <Users />
@@ -568,18 +570,20 @@ function App() {
             <Header />
             <div className="contentMain flex">
               <div
-                className={`overflow-hidden sidebarWrapper ${isSidebarOpen === true
+                className={`overflow-hidden sidebarWrapper ${
+                  isSidebarOpen === true
                     ? windowWidth < 992
                       ? `w-[${sidebarWidth / 1.5}%]`
                       : `w-[20%]`
                     : "w-[0px] opacity-0 invisible"
-                  } transition-all`}
+                } transition-all`}
               >
                 <Sidebar />
               </div>
               <div
-                className={`contentRight overflow-hidden py-4 px-5 ${isSidebarOpen === true && windowWidth < 992 && "opacity-0"
-                  }  transition-all`}
+                className={`contentRight overflow-hidden py-4 px-5 ${
+                  isSidebarOpen === true && windowWidth < 992 && "opacity-0"
+                }  transition-all`}
                 style={{ width: isSidebarOpen === false ? "100%" : "80%" }}
               >
                 <OrderDetails />
@@ -663,21 +667,23 @@ function App() {
             <Header />
             <div className="contentMain flex">
               <div
-                className={`overflow-hidden sidebarWrapper ${isSidebarOpen === true
+                className={`overflow-hidden sidebarWrapper ${
+                  isSidebarOpen === true
                     ? windowWidth < 992
                       ? `w-[${sidebarWidth / 1.5}%]`
                       : `w-[20%]`
                     : "w-[0px] opacity-0 invisible"
-                  } transition-all`}
+                } transition-all`}
               >
                 <Sidebar />
               </div>
               <div
-                className={`contentRight overflow-hidden py-4 px-5 ${isSidebarOpen === true && windowWidth < 992 && "opacity-0"
-                  }  transition-all`}
+                className={`contentRight overflow-hidden py-4 px-5 ${
+                  isSidebarOpen === true && windowWidth < 992 && "opacity-0"
+                }  transition-all`}
                 style={{ width: isSidebarOpen === false ? "100%" : "80%" }}
               >
-                <CurrencyExchangeForm/>
+                <CurrencyExchangeForm />
               </div>
             </div>
           </section>
@@ -1572,6 +1578,7 @@ function App() {
     getBrand,
     windowWidth,
     setSidebarWidth,
+    setWindowWidth,
     sidebarWidth,
     setProgress,
     progress,
