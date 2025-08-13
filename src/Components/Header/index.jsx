@@ -121,7 +121,7 @@ const Header = () => {
                 <img
                   src="logo.svg"
                   className="w-[170px] md:w-[200px]"
-                  style="height: 50px;"
+                  style={{ height: "50px" }}
                 />
               </Link>
             </div>
