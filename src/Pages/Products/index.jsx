@@ -493,27 +493,7 @@ const Products = () => {
             setSearchQuery(decodedText);
             context.alertBox("success", `Barcode detected: ${decodedText}`);
 
-            if (html5QrCode.current && html5QrCode.current.isScanning) {
-              html5QrCode.current
-                .stop()
-                .then(() => {
-                  html5QrCode.current.clear();
-                  html5QrCode.current = null;
-                  setIsScanning(false);
-                  setIsScannerOpen(false);
-                  setScannerStarted(false);
-                })
-                .catch((err) => {
-                  console.error("Stop error:", err);
-                  setIsScanning(false);
-                  setIsScannerOpen(false);
-                  setScannerStarted(false);
-                });
-            } else {
-              setIsScanning(false);
-              setIsScannerOpen(false);
-              setScannerStarted(false);
-            }
+            handleClose(); // Always cleanup and close after scan
           };
 
           html5QrCode.current
@@ -532,17 +512,17 @@ const Products = () => {
                 "Failed to start camera. Please check permissions and try again."
               );
               setScannerStarted(false);
+              handleClose(); // Cleanup if camera fails
             });
 
-          // Fallback: If camera doesn't start in 10 seconds, show error
+          // Fallback: If camera doesn't start in 10 seconds, show error and cleanup
           timeoutId = setTimeout(() => {
             if (!scannerStarted) {
               setScannerError(
                 "Camera initialization timed out. Please close and try again."
               );
               setIsScanning(false);
-              // Try to cleanup if stuck
-              cleanupScanner(html5QrCode);
+              handleClose();
             }
           }, 10000);
         }
@@ -553,7 +533,6 @@ const Products = () => {
       return () => {
         isMounted = false;
         clearTimeout(timeoutId);
-        // Always cleanup on unmount/close
         cleanupScanner(html5QrCode);
         setIsScanning(false);
         setScannerStarted(false);
