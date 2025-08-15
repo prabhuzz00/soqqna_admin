@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Button,
   Checkbox,
@@ -40,13 +40,12 @@ import {
   deleteMultipleData,
 } from "../../utils/api";
 import { MdQrCodeScanner } from "react-icons/md";
-import { Html5Qrcode, Html5QrcodeSupportedFormats } from "html5-qrcode";
+import BarcodeScanner from "@/components/BarcodeScanner";
 
 const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
-// Column definitions for table header (checkbox column handled separately)
 const columns = [
-  { id: "expand", label: "", minWidth: 45 }, // caret dropdown
+  { id: "expand", label: "", minWidth: 45 },
   { id: "product", label: "PRODUCT", minWidth: 150 },
   { id: "category", label: "CATEGORY", minWidth: 100 },
   { id: "subcategory", label: "SUB CATEGORY", minWidth: 150 },
@@ -81,10 +80,8 @@ const Products = () => {
   const [barcodeToPrint, setBarcodeToPrint] = useState(null);
   const [copyCount, setCopyCount] = useState(1);
 
-  const [openRowId, setOpenRowId] = useState(null); // track dropdown row
+  const [openRowId, setOpenRowId] = useState(null);
   const [isScannerOpen, setIsScannerOpen] = useState(false);
-  const [scannerError, setScannerError] = useState("");
-  const [isScanning, setIsScanning] = useState(false);
 
   const context = useContext(MyContext);
 
@@ -105,48 +102,45 @@ const Products = () => {
                 <TableCell sx={{ fontWeight: 600 }}>Action</TableCell>
               </TableRow>
             </TableHead>
-
             <TableBody>
-              {(variation || [])
-                .filter(Boolean) // drop null / undefined entries
-                .flatMap((v, i) => {
-                  const sizes = Array.isArray(v?.sizes) ? v.sizes : [{}]; // at least one
-                  return sizes.map((s, j) => (
-                    <TableRow key={`${i}-${j}`}>
-                      <TableCell>{v?.color?.label ?? "—"}</TableCell>
-                      <TableCell>{s?.label ?? "—"}</TableCell>
-                      <TableCell>
-                        {s?.price !== undefined ? `₹${s.price}` : "—"}
-                      </TableCell>
-                      <TableCell>{s?.countInStock ?? "—"}</TableCell>
-                      <TableCell>
-                        {s?.vbarcode ? (
-                          <Barcode
-                            value={s.vbarcode}
-                            width={1}
-                            height={40}
-                            fontSize={12}
-                          />
-                        ) : (
-                          "—"
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        {s?.vbarcode && (
-                          <Button
-                            size="small"
-                            onClick={() => {
-                              setBarcodeToPrint(s.vbarcode);
-                              setOpenPrintDialog(true);
-                            }}
-                          >
-                            <MdLocalPrintshop />
-                          </Button>
-                        )}
-                      </TableCell>
-                    </TableRow>
-                  ));
-                })}
+              {(variation || []).filter(Boolean).flatMap((v, i) => {
+                const sizes = Array.isArray(v?.sizes) ? v.sizes : [{}];
+                return sizes.map((s, j) => (
+                  <TableRow key={`${i}-${j}`}>
+                    <TableCell>{v?.color?.label ?? "—"}</TableCell>
+                    <TableCell>{s?.label ?? "—"}</TableCell>
+                    <TableCell>
+                      {s?.price !== undefined ? `₹${s.price}` : "—"}
+                    </TableCell>
+                    <TableCell>{s?.countInStock ?? "—"}</TableCell>
+                    <TableCell>
+                      {s?.vbarcode ? (
+                        <Barcode
+                          value={s.vbarcode}
+                          width={1}
+                          height={40}
+                          fontSize={12}
+                        />
+                      ) : (
+                        "—"
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      {s?.vbarcode && (
+                        <Button
+                          size="small"
+                          onClick={() => {
+                            setBarcodeToPrint(s.vbarcode);
+                            setOpenPrintDialog(true);
+                          }}
+                        >
+                          <MdLocalPrintshop />
+                        </Button>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ));
+              })}
             </TableBody>
           </Table>
         )}
@@ -166,12 +160,11 @@ const Products = () => {
 
     const q = searchQuery.toLowerCase();
 
-    const list = productTotalData?.totalProducts?.length // full list if we have it
+    const list = productTotalData?.totalProducts?.length
       ? productTotalData.totalProducts
-      : productData.products ?? []; // fallback to current page
+      : productData.products ?? [];
 
     const filtered = list.filter((p) => {
-      /* top-level columns */
       const top =
         (p._id || "").toLowerCase().includes(q) ||
         (p.name || "").toLowerCase().includes(q) ||
@@ -179,7 +172,6 @@ const Products = () => {
         (p.subCat || "").toLowerCase().includes(q) ||
         (p.barcode || "").includes(q);
 
-      /* variation barcodes */
       const varMatch =
         Array.isArray(p.variation) &&
         p.variation.some(
@@ -201,11 +193,8 @@ const Products = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchQuery]);
 
-  // Handler to toggle all checkboxes
   const handleSelectAll = (e) => {
     const isChecked = e.target.checked;
-
-    // Update all items' checked status
     const updatedItems = productData?.products?.map((item) => ({
       ...item,
       checked: isChecked,
@@ -219,18 +208,14 @@ const Products = () => {
       totalPages: Math.ceil(updatedItems?.length / rowsPerPage),
       totalCount: productData?.totalCount,
     });
-
-    // Update the sorted IDs state
-    if (isChecked) {
-      const ids = updatedItems.map((item) => item._id).sort((a, b) => a - b);
-      setSortedIds(ids);
-    } else {
-      setSortedIds([]);
-    }
+    setSortedIds(
+      isChecked
+        ? updatedItems.map((item) => item._id).sort((a, b) => a - b)
+        : []
+    );
   };
 
-  // Handler to toggle individual checkboxes
-  const handleCheckboxChange = (e, id, index) => {
+  const handleCheckboxChange = (e, id) => {
     const updatedItems = productData?.products?.map((item) =>
       item._id === id ? { ...item, checked: !item.checked } : item
     );
@@ -243,8 +228,6 @@ const Products = () => {
       totalPages: Math.ceil(updatedItems?.length / rowsPerPage),
       totalCount: productData?.totalCount,
     });
-
-    // Update the sorted IDs state
     const selectedIds = updatedItems
       .filter((item) => item.checked)
       .map((item) => item._id)
@@ -258,18 +241,15 @@ const Products = () => {
       `/api/product/getAllProducts?page=${page + 1}&limit=${limit}`
     ).then((res) => {
       setProductData(res);
-
       setProductTotalData(res);
       setIsloading(false);
 
       let arr = [];
-
       for (let i = 0; i < res?.products?.length; i++) {
         arr.push({
           src: res?.products[i]?.images[0],
         });
       }
-
       setPhotos(arr);
     });
   };
@@ -293,7 +273,6 @@ const Products = () => {
             totalPages: Math.ceil(res?.products?.length / rowsPerPage),
             totalCount: res?.products?.length,
           });
-
           setTimeout(() => {
             setIsloading(false);
           }, 300);
@@ -348,7 +327,6 @@ const Products = () => {
       fetchDataFromApi(
         `/api/product/getAllProductsByThirdLavelCat/${event.target.value}`
       ).then((res) => {
-        console.log(res);
         if (res?.error === false) {
           setProductData({
             error: false,
@@ -393,22 +371,18 @@ const Products = () => {
       context.alertBox("error", "Only admin can delete data");
       return;
     }
-
     if (sortedIds.length === 0) {
       context.alertBox("error", "Please select items to delete.");
       return;
     }
-
     const confirmDelete = window.confirm(
       `Are you sure you want to delete ${sortedIds.length} selected product(s)?`
     );
     if (!confirmDelete) return;
-
     try {
       const res = await deleteMultipleData(`/api/product/deleteMultiple`, {
         data: { ids: sortedIds },
       });
-
       getProducts();
       context.alertBox("success", "Products deleted");
       setSortedIds([]);
@@ -422,226 +396,16 @@ const Products = () => {
     setPage(newPage);
   };
 
-  const cleanupScanner = async (html5QrCodeRef) => {
-    if (html5QrCodeRef.current) {
-      if (html5QrCodeRef.current.isScanning) {
-        try {
-          await html5QrCodeRef.current.stop();
-        } catch (err) {
-          console.error("Failed to stop scanner during cleanup:", err);
-        }
-      }
-      try {
-        html5QrCodeRef.current.clear();
-      } catch (err) {
-        console.error("Failed to clear scanner during cleanup:", err);
-      }
-      html5QrCodeRef.current = null;
-    }
+  // Barcode scanner handlers
+  const handleScanComplete = (barcode) => {
+    setSearchQuery(barcode);
+    setIsScannerOpen(false);
   };
 
-  const safeCleanupScanner = async (html5QrCodeRef, containerId) => {
-    if (html5QrCodeRef.current) {
-      if (html5QrCodeRef.current.isScanning) {
-        try {
-          await html5QrCodeRef.current.stop();
-        } catch (err) {
-          console.error("Failed to stop scanner during cleanup:", err);
-        }
-      }
-      // Only call clear if the container exists
-      if (document.getElementById(containerId)) {
-        try {
-          await html5QrCodeRef.current.clear();
-        } catch (err) {
-          console.error("Failed to clear scanner during cleanup:", err);
-        }
-      }
-      html5QrCodeRef.current = null;
-    }
+  const handleScanCancel = () => {
+    setIsScannerOpen(false);
   };
 
-  const BarcodeScanner = () => {
-    const [scannerStarted, setScannerStarted] = useState(false);
-    const [scannerError, setScannerError] = useState("");
-    const html5QrCode = useRef(null);
-    const scannedRef = useRef(false);
-
-    const [containerId] = useState(
-      () => `scanner-container-${Date.now()}-${Math.random()}`
-    );
-
-    useEffect(() => {
-      let isMounted = true;
-      let timeoutId;
-
-      async function startScanner() {
-        setScannerError("");
-        setScannerStarted(false);
-        scannedRef.current = false;
-
-        await safeCleanupScanner(html5QrCode);
-
-        await new Promise((resolve) => setTimeout(resolve, 200));
-
-        if (isScannerOpen && isMounted) {
-          const { Html5Qrcode, Html5QrcodeSupportedFormats } = await import(
-            "html5-qrcode"
-          );
-          html5QrCode.current = new Html5Qrcode(scannerContainerId.current);
-
-          const qrboxSize =
-            window.innerWidth < 768
-              ? { width: 200, height: 80 }
-              : { width: 250, height: 100 };
-
-          const config = {
-            fps: 10,
-            qrbox: qrboxSize,
-            formatsToSupport: [
-              Html5QrcodeSupportedFormats.CODE_128,
-              Html5QrcodeSupportedFormats.EAN_13,
-              Html5QrcodeSupportedFormats.EAN_8,
-              Html5QrcodeSupportedFormats.UPC_A,
-              Html5QrcodeSupportedFormats.UPC_E,
-              Html5QrcodeSupportedFormats.CODE_39,
-              Html5QrcodeSupportedFormats.CODE_93,
-            ],
-            rememberLastUsedCamera: true,
-            aspectRatio: 4 / 3,
-          };
-
-          const onScanSuccess = (decodedText) => {
-            if (scannedRef.current) return;
-            scannedRef.current = true;
-            setSearchQuery(decodedText);
-            context.alertBox("success", `Barcode detected: ${decodedText}`);
-            handleClose();
-          };
-
-          try {
-            await html5QrCode.current.start(
-              { facingMode: "environment" },
-              config,
-              onScanSuccess,
-              (errorMessage) => {}
-            );
-            setScannerStarted(true);
-          } catch (err) {
-            setScannerError(
-              "Failed to start camera. Please check permissions and try again."
-            );
-            setScannerStarted(false);
-            await safeCleanupScanner(html5QrCode);
-          }
-
-          // Fallback: If camera doesn't start in 10 seconds, show error and cleanup
-          timeoutId = setTimeout(async () => {
-            if (!scannerStarted) {
-              setScannerError(
-                "Camera initialization timed out. Please close and try again."
-              );
-              await safeCleanupScanner(html5QrCode);
-            }
-          }, 10000);
-        }
-      }
-
-      startScanner();
-
-      return () => {
-        clearTimeout(timeoutId);
-        safeCleanupScanner(html5QrCode, containerId);
-        setScannerStarted(false);
-      };
-    }, [isScannerOpen]);
-
-    const handleRetry = () => {
-      setScannerError("");
-      setIsScannerOpen(false);
-      setTimeout(() => setIsScannerOpen(true), 100);
-    };
-
-    const handleClose = async () => {
-      await safeCleanupScanner(html5QrCode);
-      setIsScannerOpen(false);
-      setScannerError("");
-      setScannerStarted(false);
-    };
-
-    return (
-      <div className="fixed top-0 left-0 w-full h-full bg-[#000000dd] z-50 flex flex-col justify-center items-center">
-        <div className="bg-white rounded-lg p-4 shadow-lg max-w-md w-full mx-4">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="text-lg font-semibold">Scan Barcode</h3>
-            <Button
-              onClick={handleClose}
-              className="!min-w-[30px] !w-[30px] !h-[30px] !text-gray-600"
-            >
-              ✕
-            </Button>
-          </div>
-
-          {scannerError ? (
-            <div className="text-center p-4">
-              <div className="text-red-500 mb-4 text-sm">{scannerError}</div>
-              <div className="flex gap-2 justify-center">
-                <Button
-                  variant="outlined"
-                  size="small"
-                  onClick={handleRetry}
-                  className="!text-blue-600 !border-blue-600"
-                >
-                  Try Again
-                </Button>
-                <Button
-                  variant="outlined"
-                  size="small"
-                  onClick={handleClose}
-                  className="!text-gray-600 !border-gray-400"
-                >
-                  Cancel
-                </Button>
-              </div>
-            </div>
-          ) : (
-            <div className="relative">
-              <div
-                id={containerId}
-                className="w-full bg-black rounded-lg overflow-hidden relative"
-                style={{
-                  position: "relative",
-                  width: "100%",
-                  height: "50vh",
-                  minHeight: "256px",
-                  maxHeight: "400px",
-                }}
-              >
-                {!scannerStarted && (
-                  <div className="absolute inset-0 flex items-center justify-center text-white z-10">
-                    <CircularProgress size={24} style={{ color: "white" }} />
-                    <span className="ml-2">Initializing camera...</span>
-                  </div>
-                )}
-              </div>
-
-              {scannerStarted && (
-                <div className="absolute inset-0 pointer-events-none z-20 flex justify-center items-center">
-                  <div className="w-[80%] max-w-[250px] h-20 border-2 border-green-500 bg-transparent rounded"></div>
-                </div>
-              )}
-
-              <p className="text-center mt-2 text-sm text-gray-600">
-                {scannerStarted
-                  ? "Position barcode in the frame"
-                  : "Initializing camera..."}
-              </p>
-            </div>
-          )}
-        </div>
-      </div>
-    );
-  };
   // ───────────────────────────── Render ──────────────────────────────
   return (
     <>
@@ -698,13 +462,12 @@ const Products = () => {
                 onChange={handleChangeProductCat}
               >
                 <MenuItem value={null}>None</MenuItem>
-                {context?.catData?.map((cat, index) => {
-                  return <MenuItem value={cat?._id}>{cat?.name}</MenuItem>;
-                })}
+                {context?.catData?.map((cat, index) => (
+                  <MenuItem value={cat?._id}>{cat?.name}</MenuItem>
+                ))}
               </Select>
             )}
           </div>
-
           <div className="col">
             <h4 className="font-[600] text-[13px] mb-2">Sub Category By</h4>
             {context?.catData?.length !== 0 && (
@@ -719,20 +482,16 @@ const Products = () => {
                 onChange={handleChangeProductSubCat}
               >
                 <MenuItem value={null}>None</MenuItem>
-                {context?.catData?.map((cat, index) => {
-                  return (
+                {context?.catData?.map(
+                  (cat) =>
                     cat?.children?.length !== 0 &&
-                    cat?.children?.map((subCat, index_) => {
-                      return (
-                        <MenuItem value={subCat?._id}>{subCat?.name}</MenuItem>
-                      );
-                    })
-                  );
-                })}
+                    cat?.children?.map((subCat) => (
+                      <MenuItem value={subCat?._id}>{subCat?.name}</MenuItem>
+                    ))
+                )}
               </Select>
             )}
           </div>
-
           <div className="col">
             <h4 className="font-[600] text-[13px] mb-2">
               Third Level Sub Category By
@@ -749,27 +508,22 @@ const Products = () => {
                 onChange={handleChangeProductThirdLavelCat}
               >
                 <MenuItem value={null}>None</MenuItem>
-                {context?.catData?.map((cat) => {
-                  return (
+                {context?.catData?.map(
+                  (cat) =>
                     cat?.children?.length !== 0 &&
-                    cat?.children?.map((subCat) => {
-                      return (
+                    cat?.children?.map(
+                      (subCat) =>
                         subCat?.children?.length !== 0 &&
-                        subCat?.children?.map((thirdLavelCat, index) => {
-                          return (
-                            <MenuItem value={thirdLavelCat?._id} key={index}>
-                              {thirdLavelCat?.name}
-                            </MenuItem>
-                          );
-                        })
-                      );
-                    })
-                  );
-                })}
+                        subCat?.children?.map((thirdLavelCat, index) => (
+                          <MenuItem value={thirdLavelCat?._id} key={index}>
+                            {thirdLavelCat?.name}
+                          </MenuItem>
+                        ))
+                    )
+                )}
               </Select>
             )}
           </div>
-
           <div className="col w-full ml-auto flex items-center">
             <div style={{ alignSelf: "end" }} className="w-full">
               <SearchBox
@@ -788,7 +542,6 @@ const Products = () => {
           <Table stickyHeader>
             <TableHead>
               <TableRow>
-                {/* Master checkbox */}
                 <TableCell padding="checkbox">
                   <Checkbox
                     {...label}
@@ -800,7 +553,6 @@ const Products = () => {
                     onChange={handleSelectAll}
                   />
                 </TableCell>
-                {/* Header cells */}
                 {columns.map((col) => (
                   <TableCell key={col.id} style={{ minWidth: col.minWidth }}>
                     {col.label}
@@ -821,7 +573,6 @@ const Products = () => {
                     <TableRow
                       className={product.checked ? "!bg-[#1976d21f]" : ""}
                     >
-                      {/* Checkbox */}
                       <TableCell padding="checkbox">
                         <Checkbox
                           {...label}
@@ -830,7 +581,6 @@ const Products = () => {
                           onChange={(e) => handleCheckboxChange(e, product._id)}
                         />
                       </TableCell>
-                      {/* Expand caret */}
                       <TableCell padding="none">
                         <IconButton
                           size="small"
@@ -847,7 +597,6 @@ const Products = () => {
                           )}
                         </IconButton>
                       </TableCell>
-                      {/* Product cell */}
                       <TableCell>
                         <div
                           className="flex items-center gap-4 w-[300px]"
@@ -920,7 +669,6 @@ const Products = () => {
                           fontSize={12}
                         />
                       </TableCell>
-                      {/* Action buttons */}
                       <TableCell>
                         <div className="flex items-center gap-1">
                           <Button
@@ -958,10 +706,9 @@ const Products = () => {
                         </div>
                       </TableCell>
                     </TableRow>
-                    {/* Collapsible variations row */}
                     <TableRow>
                       <TableCell
-                        colSpan={columns.length + 1 /* checkbox */}
+                        colSpan={columns.length + 1}
                         style={{ paddingBottom: 0, paddingTop: 0 }}
                       >
                         <VariationRow
@@ -976,8 +723,6 @@ const Products = () => {
             </TableBody>
           </Table>
         </TableContainer>
-
-        {/* Pagination */}
         <TablePagination
           rowsPerPageOptions={[50, 100, 150, 200]}
           component="div"
@@ -991,17 +736,12 @@ const Products = () => {
           }}
         />
       </div>
-
-      {/* Lightbox for images */}
       <Lightbox
         open={openLightbox}
         close={() => setOpenLightbox(false)}
         slides={photos}
       />
-
-      {/* Print dialog (unchanged from your original implementation) */}
       {openPrintDialog && (
-        // … keep your existing print-dialog markup & logic …
         <div className="fixed top-0 left-0 w-full h-full bg-[#00000055] z-50 flex justify-center items-center">
           <div className="bg-white rounded-lg p-6 shadow-lg w-[400px]">
             <h3 className="text-[18px] font-semibold mb-4">Print Barcode</h3>
@@ -1026,17 +766,14 @@ const Products = () => {
                 color="primary"
                 onClick={() => {
                   setOpenPrintDialog(false);
-
                   setTimeout(() => {
                     const printWindow = window.open("", "_blank");
-
                     if (!printWindow) {
                       alert(
                         "Popup blocked. Please allow popups for this site."
                       );
                       return;
                     }
-
                     const htmlContent = `
         <!DOCTYPE html>
         <html>
@@ -1064,7 +801,6 @@ const Products = () => {
                 </div>`
             )
             .join("")}
-
           <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
           <script>
             window.onload = function () {
@@ -1089,7 +825,6 @@ const Products = () => {
         </body>
         </html>
       `;
-
                     printWindow.document.write(htmlContent);
                     printWindow.document.close();
                   }, 100);
@@ -1101,8 +836,12 @@ const Products = () => {
           </div>
         </div>
       )}
-
-      {isScannerOpen && <BarcodeScanner />}
+      {isScannerOpen && (
+        <BarcodeScanner
+          onComplete={handleScanComplete}
+          onCancel={handleScanCancel}
+        />
+      )}
     </>
   );
 };
