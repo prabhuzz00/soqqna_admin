@@ -8,30 +8,20 @@ import {
 } from "@mui/material";
 import BarcodeScannerComponent from "react-qr-barcode-scanner";
 
-/**
- * Props:
- * - open: boolean (show/hide modal)
- * - onClose: function (called when modal is closed)
- * - onScan: function(barcode: string) (called with barcode on successful scan)
- */
 const BarcodeScanner = ({ open, onClose, onScan }) => {
   const [scannedBarcode, setScannedBarcode] = useState(null);
 
-  // Reset scannedBarcode each time dialog is opened
   useEffect(() => {
     if (open) setScannedBarcode(null);
   }, [open]);
 
-  // BarcodeScannerComponent calls onUpdate for every frame
   const handleUpdate = (err, result) => {
-    // Only call onScan if a result is found and it's different from the previous one
     if (result && result.text && result.text !== scannedBarcode) {
       setScannedBarcode(result.text);
-      // Clear previous query first, then set new value
       if (onScan) {
         onScan(result.text);
       }
-      setTimeout(onClose, 400); // Close scanner after short delay
+      setTimeout(onClose, 400);
     }
   };
 
@@ -45,13 +35,31 @@ const BarcodeScanner = ({ open, onClose, onScan }) => {
           alignItems: "center",
         }}
       >
-        <BarcodeScannerComponent
-          width={250} // smaller scanner area
-          height={100}
-          onUpdate={handleUpdate}
-        />
+        <div style={{ position: "relative", width: 250, height: 180 }}>
+          <BarcodeScannerComponent
+            width={250}
+            height={180}
+            onUpdate={handleUpdate}
+          />
+          {/* Camera frame guide overlay */}
+          <div
+            style={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              width: "180px",
+              height: "40px",
+              transform: "translate(-50%, -50%)",
+              border: "2px dashed #1976d2",
+              borderRadius: "8px",
+              pointerEvents: "none",
+              boxSizing: "border-box",
+              zIndex: 2,
+            }}
+          />
+        </div>
         <div style={{ textAlign: "center", marginTop: 10 }}>
-          <span>Point your camera at a barcode.</span>
+          <span>Place the barcode inside the frame.</span>
         </div>
       </DialogContent>
       <DialogActions>
