@@ -15,29 +15,39 @@ import BarcodeScannerComponent from "react-qr-barcode-scanner";
  * - onScan: function(barcode: string) (called with barcode on successful scan)
  */
 const BarcodeScanner = ({ open, onClose, onScan }) => {
-  const [scanned, setScanned] = useState(false);
+  const [scannedBarcode, setScannedBarcode] = useState(null);
 
-  // Reset scanned flag each time dialog is opened
+  // Reset scannedBarcode each time dialog is opened
   useEffect(() => {
-    if (open) setScanned(false);
+    if (open) setScannedBarcode(null);
   }, [open]);
 
   // BarcodeScannerComponent calls onUpdate for every frame
   const handleUpdate = (err, result) => {
-    if (result && result.text && !scanned) {
-      setScanned(true);
-      onScan(result.text); // Pass barcode back to parent
-      setTimeout(() => onClose(), 500); // Close scanner after short delay
+    // Only call onScan if a result is found and it's different from the previous one
+    if (result && result.text && result.text !== scannedBarcode) {
+      setScannedBarcode(result.text);
+      // Clear previous query first, then set new value
+      if (onScan) {
+        onScan(result.text);
+      }
+      setTimeout(onClose, 400); // Close scanner after short delay
     }
   };
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+    <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth>
       <DialogTitle>Scan Barcode</DialogTitle>
-      <DialogContent>
+      <DialogContent
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
         <BarcodeScannerComponent
-          width={400}
-          height={300}
+          width={250} // smaller scanner area
+          height={180}
           onUpdate={handleUpdate}
         />
         <div style={{ textAlign: "center", marginTop: 10 }}>
