@@ -441,11 +441,13 @@ const Products = () => {
   };
 
   const BarcodeScanner = () => {
-    const scannerRef = useRef(null);
+    const [scannerStarted, setScannerStarted] = useState(false);
+    const [scannerError, setScannerError] = useState("");
     const html5QrCode = useRef(null);
     const scannedRef = useRef(false);
 
-    const [scannerStarted, setScannerStarted] = useState(false);
+    // Unique container ID for each mount
+    const scannerContainerId = useRef(`scanner-container-${Date.now()}`);
 
     useEffect(() => {
       let isMounted = true;
@@ -453,18 +455,26 @@ const Products = () => {
 
       async function startScanner() {
         setScannerError("");
-        setIsScanning(false);
         setScannerStarted(false);
         scannedRef.current = false;
 
         // Cleanup previous scanner
-        await cleanupScanner(html5QrCode);
+        if (html5QrCode.current) {
+          try {
+            await html5QrCode.current.stop();
+            await html5QrCode.current.clear();
+          } catch (err) {}
+          html5QrCode.current = null;
+        }
 
         // Wait for DOM to mount scanner container
         await new Promise((resolve) => setTimeout(resolve, 200));
 
-        if (isScannerOpen && isMounted && scannerRef.current) {
-          html5QrCode.current = new Html5Qrcode("scanner-container");
+        if (isScannerOpen && isMounted) {
+          const { Html5Qrcode, Html5QrcodeSupportedFormats } = await import(
+            "html5-qrcode"
+          );
+          html5QrCode.current = new Html5Qrcode(scannerContainerId.current);
 
           const qrboxSize =
             window.innerWidth < 768
@@ -502,14 +512,18 @@ const Products = () => {
               onScanSuccess,
               (errorMessage) => {}
             );
-            setIsScanning(true);
             setScannerStarted(true);
           } catch (err) {
             setScannerError(
               "Failed to start camera. Please check permissions and try again."
             );
             setScannerStarted(false);
-            await cleanupScanner(html5QrCode);
+            if (html5QrCode.current) {
+              try {
+                await html5QrCode.current.clear();
+              } catch (err) {}
+              html5QrCode.current = null;
+            }
           }
 
           // Fallback: If camera doesn't start in 10 seconds, show error and cleanup
@@ -518,8 +532,12 @@ const Products = () => {
               setScannerError(
                 "Camera initialization timed out. Please close and try again."
               );
-              setIsScanning(false);
-              await cleanupScanner(html5QrCode);
+              if (html5QrCode.current) {
+                try {
+                  await html5QrCode.current.clear();
+                } catch (err) {}
+                html5QrCode.current = null;
+              }
             }
           }, 10000);
         }
@@ -530,8 +548,11 @@ const Products = () => {
       return () => {
         isMounted = false;
         clearTimeout(timeoutId);
-        cleanupScanner(html5QrCode);
-        setIsScanning(false);
+        if (html5QrCode.current) {
+          html5QrCode.current.stop().catch(() => {});
+          html5QrCode.current.clear().catch(() => {});
+          html5QrCode.current = null;
+        }
         setScannerStarted(false);
       };
       // eslint-disable-next-line
@@ -544,10 +565,15 @@ const Products = () => {
     };
 
     const handleClose = async () => {
-      await cleanupScanner(html5QrCode);
+      if (html5QrCode.current) {
+        try {
+          await html5QrCode.current.stop();
+          await html5QrCode.current.clear();
+        } catch (err) {}
+        html5QrCode.current = null;
+      }
       setIsScannerOpen(false);
       setScannerError("");
-      setIsScanning(false);
       setScannerStarted(false);
     };
 
@@ -589,8 +615,7 @@ const Products = () => {
           ) : (
             <div className="relative">
               <div
-                id="scanner-container"
-                ref={scannerRef}
+                id={scannerContainerId.current}
                 className="w-full bg-black rounded-lg overflow-hidden relative"
                 style={{
                   position: "relative",
