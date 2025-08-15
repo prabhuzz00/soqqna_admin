@@ -445,15 +445,27 @@ const Products = () => {
     const html5QrCode = useRef(null);
     const scannedRef = useRef(false);
 
+    // Track if scanner is actually started
+    const [scannerStarted, setScannerStarted] = useState(false);
+
     useEffect(() => {
       let isMounted = true;
+      let timeoutId;
 
       async function startScanner() {
-        // Always cleanup before starting
+        // Reset state
+        setScannerError("");
+        setIsScanning(false);
+        setScannerStarted(false);
+        scannedRef.current = false;
+
+        // Cleanup any previous scanner
         await cleanupScanner(html5QrCode);
 
-        if (isScannerOpen && isMounted) {
-          scannedRef.current = false;
+        // Wait for DOM to mount scanner container
+        await new Promise((resolve) => setTimeout(resolve, 100));
+
+        if (isScannerOpen && isMounted && scannerRef.current) {
           html5QrCode.current = new Html5Qrcode("scanner-container");
 
           const qrboxSize =
@@ -488,18 +500,21 @@ const Products = () => {
                 .stop()
                 .then(() => {
                   html5QrCode.current.clear();
+                  html5QrCode.current = null;
                   setIsScanning(false);
                   setIsScannerOpen(false);
-                  html5QrCode.current = null;
+                  setScannerStarted(false);
                 })
                 .catch((err) => {
                   console.error("Stop error:", err);
                   setIsScanning(false);
                   setIsScannerOpen(false);
+                  setScannerStarted(false);
                 });
             } else {
               setIsScanning(false);
               setIsScannerOpen(false);
+              setScannerStarted(false);
             }
           };
 
@@ -512,12 +527,24 @@ const Products = () => {
             )
             .then(() => {
               setIsScanning(true);
+              setScannerStarted(true);
             })
             .catch((err) => {
               setScannerError(
                 "Failed to start camera. Please check permissions and try again."
               );
+              setScannerStarted(false);
             });
+
+          // Fallback: If camera doesn't start in 5 seconds, show error
+          timeoutId = setTimeout(() => {
+            if (!scannerStarted) {
+              setScannerError(
+                "Camera initialization timed out. Please close and try again."
+              );
+              setIsScanning(false);
+            }
+          }, 5000);
         }
       }
 
@@ -525,71 +552,17 @@ const Products = () => {
 
       return () => {
         isMounted = false;
+        clearTimeout(timeoutId);
         cleanupScanner(html5QrCode);
         setIsScanning(false);
+        setScannerStarted(false);
       };
     }, [isScannerOpen]);
 
     const handleRetry = () => {
       setScannerError("");
-      scannedRef.current = false;
-      if (html5QrCode.current) {
-        if (html5QrCode.current.isScanning) {
-          html5QrCode.current.stop().catch(console.error);
-        }
-        const qrboxSize =
-          window.innerWidth < 768
-            ? { width: 200, height: 100 }
-            : { width: 250, height: 120 };
-        const config = {
-          fps: 10,
-          qrbox: qrboxSize,
-          formatsToSupport: [
-            Html5QrcodeSupportedFormats.CODE_128,
-            Html5QrcodeSupportedFormats.EAN_13,
-            Html5QrcodeSupportedFormats.EAN_8,
-            Html5QrcodeSupportedFormats.UPC_A,
-            Html5QrcodeSupportedFormats.UPC_E,
-            Html5QrcodeSupportedFormats.CODE_39,
-            Html5QrcodeSupportedFormats.CODE_93,
-          ],
-          rememberLastUsedCamera: true,
-          aspectRatio: 4 / 3,
-        };
-        const onScanSuccess = (decodedText) => {
-          if (scannedRef.current) return;
-          scannedRef.current = true;
-          setSearchQuery(decodedText);
-          context.alertBox("success", `Barcode detected: ${decodedText}`);
-          if (html5QrCode.current && html5QrCode.current.isScanning) {
-            html5QrCode.current
-              .stop()
-              .then(() => {
-                html5QrCode.current.clear();
-                setIsScannerOpen(false);
-                html5QrCode.current = null;
-                setScannerError("");
-                setIsScanning(false);
-              })
-              .catch((err) => console.error("Stop error:", err));
-          } else {
-            setIsScannerOpen(false);
-          }
-        };
-        html5QrCode.current
-          .start(
-            { facingMode: "environment" },
-            config,
-            onScanSuccess,
-            (errorMessage) => {}
-          )
-          .then(() => {
-            setIsScanning(true);
-          })
-          .catch((err) => {
-            setScannerError(getScannerError(err));
-          });
-      }
+      setIsScannerOpen(false);
+      setTimeout(() => setIsScannerOpen(true), 100); // Reopen scanner after short delay
     };
 
     const handleClose = () => {
@@ -602,14 +575,15 @@ const Products = () => {
             setIsScannerOpen(false);
             setScannerError("");
             setIsScanning(false);
+            setScannerStarted(false);
           })
           .catch((err) => {
             console.error("Error stopping scanner:", err);
-            // Do NOT call clear here if stop fails
             html5QrCode.current = null;
             setIsScannerOpen(false);
             setScannerError("");
             setIsScanning(false);
+            setScannerStarted(false);
           });
       } else if (html5QrCode.current) {
         html5QrCode.current.clear();
@@ -617,14 +591,15 @@ const Products = () => {
         setIsScannerOpen(false);
         setScannerError("");
         setIsScanning(false);
+        setScannerStarted(false);
       } else {
         setIsScannerOpen(false);
         setScannerError("");
         setIsScanning(false);
+        setScannerStarted(false);
       }
     };
 
-    // Update the scanner container style for responsiveness
     return (
       <div className="fixed top-0 left-0 w-full h-full bg-[#000000dd] z-50 flex flex-col justify-center items-center">
         <div className="bg-white rounded-lg p-4 shadow-lg max-w-md w-full mx-4">
@@ -674,22 +649,22 @@ const Products = () => {
                   maxHeight: "400px",
                 }}
               >
-                {!isScanning && (
+                {!scannerStarted && (
                   <div className="absolute inset-0 flex items-center justify-center text-white z-10">
                     <CircularProgress size={24} style={{ color: "white" }} />
-                    <span className="ml-2">Starting camera...</span>
+                    <span className="ml-2">Initializing camera...</span>
                   </div>
                 )}
               </div>
 
-              {isScanning && (
+              {scannerStarted && (
                 <div className="absolute inset-0 pointer-events-none z-20 flex justify-center items-center">
                   <div className="w-[80%] max-w-[250px] h-20 border-2 border-green-500 bg-transparent rounded"></div>
                 </div>
               )}
 
               <p className="text-center mt-2 text-sm text-gray-600">
-                {isScanning
+                {scannerStarted
                   ? "Position barcode in the frame"
                   : "Initializing camera..."}
               </p>
