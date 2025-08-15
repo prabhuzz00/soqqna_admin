@@ -35,9 +35,9 @@ const BarcodeScanner = ({ open, onClose, onScan }) => {
           alignItems: "center",
         }}
       >
-        <div style={{ position: "relative", width: 200, height: 180 }}>
+        <div style={{ position: "relative", width: 250, height: 180 }}>
           <BarcodeScannerComponent
-            width={200}
+            width={250}
             height={180}
             onUpdate={handleUpdate}
           />
@@ -47,8 +47,8 @@ const BarcodeScanner = ({ open, onClose, onScan }) => {
               position: "absolute",
               top: "50%",
               left: "50%",
-              width: "180px",
-              height: "80px",
+              width: "200px",
+              height: "100px",
               transform: "translate(-50%, -50%)",
               border: "2px dashed #1976d2",
               borderRadius: "8px",
@@ -58,7 +58,7 @@ const BarcodeScanner = ({ open, onClose, onScan }) => {
             }}
           />
         </div>
-        <div style={{ textAlign: "center", marginTop: 10 }}>
+        <div style={{ textAlign: "center", marginBottom: 10 }}>
           <span>Place the barcode inside the frame.</span>
         </div>
       </DialogContent>
