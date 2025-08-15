@@ -422,119 +422,111 @@ const Products = () => {
     setPage(newPage);
   };
 
+  const cleanupScanner = async (html5QrCodeRef) => {
+    if (html5QrCodeRef.current) {
+      if (html5QrCodeRef.current.isScanning) {
+        try {
+          await html5QrCodeRef.current.stop();
+        } catch (err) {
+          console.error("Failed to stop scanner during cleanup:", err);
+        }
+      }
+      try {
+        html5QrCodeRef.current.clear();
+      } catch (err) {
+        console.error("Failed to clear scanner during cleanup:", err);
+      }
+      html5QrCodeRef.current = null;
+    }
+  };
+
   const BarcodeScanner = () => {
     const scannerRef = useRef(null);
     const html5QrCode = useRef(null);
     const scannedRef = useRef(false);
 
     useEffect(() => {
-      if (isScannerOpen) {
-        scannedRef.current = false;
-        html5QrCode.current = new Html5Qrcode("scanner-container");
+      let isMounted = true;
 
-        const qrboxSize =
-          window.innerWidth < 768
-            ? { width: 200, height: 80 }
-            : { width: 250, height: 100 };
+      async function startScanner() {
+        // Always cleanup before starting
+        await cleanupScanner(html5QrCode);
 
-        const config = {
-          fps: 10,
-          qrbox: qrboxSize,
-          formatsToSupport: [
-            Html5QrcodeSupportedFormats.CODE_128,
-            Html5QrcodeSupportedFormats.EAN_13,
-            Html5QrcodeSupportedFormats.EAN_8,
-            Html5QrcodeSupportedFormats.UPC_A,
-            Html5QrcodeSupportedFormats.UPC_E,
-            Html5QrcodeSupportedFormats.CODE_39,
-            Html5QrcodeSupportedFormats.CODE_93,
-          ],
-          rememberLastUsedCamera: true,
-          aspectRatio: 4 / 3,
-        };
+        if (isScannerOpen && isMounted) {
+          scannedRef.current = false;
+          html5QrCode.current = new Html5Qrcode("scanner-container");
 
-        const onScanSuccess = (decodedText) => {
-          if (scannedRef.current) return;
-          scannedRef.current = true;
-          console.log("Barcode detected:", decodedText);
-          setSearchQuery(decodedText);
-          context.alertBox("success", `Barcode detected: ${decodedText}`);
+          const qrboxSize =
+            window.innerWidth < 768
+              ? { width: 200, height: 80 }
+              : { width: 250, height: 100 };
 
-          // Properly stop and clear the scanner
-          if (html5QrCode.current && html5QrCode.current.isScanning) {
-            html5QrCode.current
-              .stop()
-              .then(() => {
-                html5QrCode.current.clear();
-                setIsScanning(false);
-                setIsScannerOpen(false);
-                html5QrCode.current = null;
-              })
-              .catch((err) => {
-                console.error("Stop error:", err);
-                // Force close even if stop fails
-                setIsScanning(false);
-                setIsScannerOpen(false);
-              });
-          } else {
-            setIsScanning(false);
-            setIsScannerOpen(false);
-          }
-        };
+          const config = {
+            fps: 10,
+            qrbox: qrboxSize,
+            formatsToSupport: [
+              Html5QrcodeSupportedFormats.CODE_128,
+              Html5QrcodeSupportedFormats.EAN_13,
+              Html5QrcodeSupportedFormats.EAN_8,
+              Html5QrcodeSupportedFormats.UPC_A,
+              Html5QrcodeSupportedFormats.UPC_E,
+              Html5QrcodeSupportedFormats.CODE_39,
+              Html5QrcodeSupportedFormats.CODE_93,
+            ],
+            rememberLastUsedCamera: true,
+            aspectRatio: 4 / 3,
+          };
 
-        html5QrCode.current
-          .start(
-            { facingMode: "environment" },
-            config,
-            onScanSuccess,
-            (errorMessage) => {
-              // Suppress continuous scan errors
+          const onScanSuccess = (decodedText) => {
+            if (scannedRef.current) return;
+            scannedRef.current = true;
+            setSearchQuery(decodedText);
+            context.alertBox("success", `Barcode detected: ${decodedText}`);
+
+            if (html5QrCode.current && html5QrCode.current.isScanning) {
+              html5QrCode.current
+                .stop()
+                .then(() => {
+                  html5QrCode.current.clear();
+                  setIsScanning(false);
+                  setIsScannerOpen(false);
+                  html5QrCode.current = null;
+                })
+                .catch((err) => {
+                  console.error("Stop error:", err);
+                  setIsScanning(false);
+                  setIsScannerOpen(false);
+                });
+            } else {
+              setIsScanning(false);
+              setIsScannerOpen(false);
             }
-          )
-          .then(() => {
-            console.log("Scanner started successfully");
-            setIsScanning(true);
-          })
-          .catch((err) => {
-            console.error("Failed to start scanner:", err);
-            let errorMsg =
-              "Failed to start camera. Please check permissions and try again.";
-            if (err.name === "NotAllowedError") {
-              errorMsg =
-                "Camera permission denied. Please allow camera access in your browser settings.";
-            } else if (err.name === "NotFoundError") {
-              errorMsg = "No camera found on this device.";
-            } else if (err.name === "NotReadableError") {
-              errorMsg =
-                "Camera is being used by another application. Please close it and try again.";
-            }
-            setScannerError(errorMsg);
-          });
+          };
+
+          html5QrCode.current
+            .start(
+              { facingMode: "environment" },
+              config,
+              onScanSuccess,
+              (errorMessage) => {}
+            )
+            .then(() => {
+              setIsScanning(true);
+            })
+            .catch((err) => {
+              setScannerError(
+                "Failed to start camera. Please check permissions and try again."
+              );
+            });
+        }
       }
 
+      startScanner();
+
       return () => {
-        if (html5QrCode.current) {
-          // Always check isScanning before calling clear
-          if (html5QrCode.current.isScanning) {
-            html5QrCode.current
-              .stop()
-              .then(() => {
-                html5QrCode.current.clear();
-                html5QrCode.current = null;
-                setIsScanning(false);
-              })
-              .catch((err) => {
-                console.error("Failed to stop scanner:", err);
-                // Do NOT call clear here if stop fails
-                html5QrCode.current = null;
-                setIsScanning(false);
-              });
-          } else {
-            html5QrCode.current.clear();
-            html5QrCode.current = null;
-            setIsScanning(false);
-          }
-        }
+        isMounted = false;
+        cleanupScanner(html5QrCode);
+        setIsScanning(false);
       };
     }, [isScannerOpen]);
 
@@ -567,7 +559,6 @@ const Products = () => {
         const onScanSuccess = (decodedText) => {
           if (scannedRef.current) return;
           scannedRef.current = true;
-          console.log("Barcode detected:", decodedText);
           setSearchQuery(decodedText);
           context.alertBox("success", `Barcode detected: ${decodedText}`);
           if (html5QrCode.current && html5QrCode.current.isScanning) {
