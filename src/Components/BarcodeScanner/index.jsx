@@ -47,7 +47,7 @@ const BarcodeScanner = ({ open, onClose, onScan }) => {
       >
         <BarcodeScannerComponent
           width={250} // smaller scanner area
-          height={180}
+          height={100}
           onUpdate={handleUpdate}
         />
         <div style={{ textAlign: "center", marginTop: 10 }}>

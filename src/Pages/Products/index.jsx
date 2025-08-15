@@ -996,6 +996,12 @@ const Products = () => {
   }, [context?.isOpenFullScreenPanel, page, rowsPerPage]);
 
   useEffect(() => {
+    if (isScannerOpen) {
+      setSearchQuery(""); // Clear search query when scanner is opened
+    }
+  }, [isScannerOpen]);
+
+  useEffect(() => {
     if (!searchQuery) {
       getProducts(page, rowsPerPage);
       return;
@@ -1579,10 +1585,7 @@ const Products = () => {
       <BarcodeScanner
         open={isScannerOpen}
         onClose={() => setIsScannerOpen(false)}
-        onScan={(barcode) => {
-          setSearchQuery(""); // Clear previous search
-          setTimeout(() => setSearchQuery(barcode), 100); // Set new barcode
-        }}
+        onScan={(barcode) => setSearchQuery(barcode)} // Set scanned value directly
       />
 
       {openPrintDialog && (
