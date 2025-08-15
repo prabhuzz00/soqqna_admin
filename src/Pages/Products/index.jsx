@@ -40,7 +40,6 @@ import {
   deleteMultipleData,
 } from "../../utils/api";
 import { MdQrCodeScanner } from "react-icons/md";
-import BarcodeScanner from "@/components/BarcodeScanner";
 
 const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
@@ -835,12 +834,6 @@ const Products = () => {
             </div>
           </div>
         </div>
-      )}
-      {isScannerOpen && (
-        <BarcodeScanner
-          onComplete={handleScanComplete}
-          onCancel={handleScanCancel}
-        />
       )}
     </>
   );
