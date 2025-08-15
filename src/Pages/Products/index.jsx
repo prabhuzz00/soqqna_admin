@@ -445,7 +445,6 @@ const Products = () => {
     const html5QrCode = useRef(null);
     const scannedRef = useRef(false);
 
-    // Track if scanner is actually started
     const [scannerStarted, setScannerStarted] = useState(false);
 
     useEffect(() => {
@@ -453,13 +452,12 @@ const Products = () => {
       let timeoutId;
 
       async function startScanner() {
-        // Reset state
         setScannerError("");
         setIsScanning(false);
         setScannerStarted(false);
         scannedRef.current = false;
 
-        // Cleanup any previous scanner
+        // Cleanup previous scanner
         await cleanupScanner(html5QrCode);
 
         // Wait for DOM to mount scanner container
@@ -536,15 +534,17 @@ const Products = () => {
               setScannerStarted(false);
             });
 
-          // Fallback: If camera doesn't start in 5 seconds, show error
+          // Fallback: If camera doesn't start in 10 seconds, show error
           timeoutId = setTimeout(() => {
             if (!scannerStarted) {
               setScannerError(
                 "Camera initialization timed out. Please close and try again."
               );
               setIsScanning(false);
+              // Try to cleanup if stuck
+              cleanupScanner(html5QrCode);
             }
-          }, 5000);
+          }, 10000);
         }
       }
 
@@ -553,6 +553,7 @@ const Products = () => {
       return () => {
         isMounted = false;
         clearTimeout(timeoutId);
+        // Always cleanup on unmount/close
         cleanupScanner(html5QrCode);
         setIsScanning(false);
         setScannerStarted(false);
@@ -562,42 +563,30 @@ const Products = () => {
     const handleRetry = () => {
       setScannerError("");
       setIsScannerOpen(false);
-      setTimeout(() => setIsScannerOpen(true), 100); // Reopen scanner after short delay
+      setTimeout(() => setIsScannerOpen(true), 100);
     };
 
-    const handleClose = () => {
+    const handleClose = async () => {
       if (html5QrCode.current && html5QrCode.current.isScanning) {
-        html5QrCode.current
-          .stop()
-          .then(() => {
-            html5QrCode.current.clear();
-            html5QrCode.current = null;
-            setIsScannerOpen(false);
-            setScannerError("");
-            setIsScanning(false);
-            setScannerStarted(false);
-          })
-          .catch((err) => {
-            console.error("Error stopping scanner:", err);
-            html5QrCode.current = null;
-            setIsScannerOpen(false);
-            setScannerError("");
-            setIsScanning(false);
-            setScannerStarted(false);
-          });
-      } else if (html5QrCode.current) {
-        html5QrCode.current.clear();
+        try {
+          await html5QrCode.current.stop();
+          await html5QrCode.current.clear();
+        } catch (err) {
+          console.error("Error stopping/clearing scanner:", err);
+        }
         html5QrCode.current = null;
-        setIsScannerOpen(false);
-        setScannerError("");
-        setIsScanning(false);
-        setScannerStarted(false);
-      } else {
-        setIsScannerOpen(false);
-        setScannerError("");
-        setIsScanning(false);
-        setScannerStarted(false);
+      } else if (html5QrCode.current) {
+        try {
+          await html5QrCode.current.clear();
+        } catch (err) {
+          console.error("Error clearing scanner:", err);
+        }
+        html5QrCode.current = null;
       }
+      setIsScannerOpen(false);
+      setScannerError("");
+      setIsScanning(false);
+      setScannerStarted(false);
     };
 
     return (
