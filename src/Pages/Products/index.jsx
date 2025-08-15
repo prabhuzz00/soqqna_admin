@@ -461,7 +461,7 @@ const Products = () => {
         await cleanupScanner(html5QrCode);
 
         // Wait for DOM to mount scanner container
-        await new Promise((resolve) => setTimeout(resolve, 100));
+        await new Promise((resolve) => setTimeout(resolve, 200));
 
         if (isScannerOpen && isMounted && scannerRef.current) {
           html5QrCode.current = new Html5Qrcode("scanner-container");
@@ -492,37 +492,34 @@ const Products = () => {
             scannedRef.current = true;
             setSearchQuery(decodedText);
             context.alertBox("success", `Barcode detected: ${decodedText}`);
-
-            handleClose(); // Always cleanup and close after scan
+            handleClose();
           };
 
-          html5QrCode.current
-            .start(
+          try {
+            await html5QrCode.current.start(
               { facingMode: "environment" },
               config,
               onScanSuccess,
               (errorMessage) => {}
-            )
-            .then(() => {
-              setIsScanning(true);
-              setScannerStarted(true);
-            })
-            .catch((err) => {
-              setScannerError(
-                "Failed to start camera. Please check permissions and try again."
-              );
-              setScannerStarted(false);
-              handleClose(); // Cleanup if camera fails
-            });
+            );
+            setIsScanning(true);
+            setScannerStarted(true);
+          } catch (err) {
+            setScannerError(
+              "Failed to start camera. Please check permissions and try again."
+            );
+            setScannerStarted(false);
+            await cleanupScanner(html5QrCode);
+          }
 
           // Fallback: If camera doesn't start in 10 seconds, show error and cleanup
-          timeoutId = setTimeout(() => {
+          timeoutId = setTimeout(async () => {
             if (!scannerStarted) {
               setScannerError(
                 "Camera initialization timed out. Please close and try again."
               );
               setIsScanning(false);
-              handleClose();
+              await cleanupScanner(html5QrCode);
             }
           }, 10000);
         }
@@ -537,6 +534,7 @@ const Products = () => {
         setIsScanning(false);
         setScannerStarted(false);
       };
+      // eslint-disable-next-line
     }, [isScannerOpen]);
 
     const handleRetry = () => {
@@ -546,22 +544,7 @@ const Products = () => {
     };
 
     const handleClose = async () => {
-      if (html5QrCode.current && html5QrCode.current.isScanning) {
-        try {
-          await html5QrCode.current.stop();
-          await html5QrCode.current.clear();
-        } catch (err) {
-          console.error("Error stopping/clearing scanner:", err);
-        }
-        html5QrCode.current = null;
-      } else if (html5QrCode.current) {
-        try {
-          await html5QrCode.current.clear();
-        } catch (err) {
-          console.error("Error clearing scanner:", err);
-        }
-        html5QrCode.current = null;
-      }
+      await cleanupScanner(html5QrCode);
       setIsScannerOpen(false);
       setScannerError("");
       setIsScanning(false);
