@@ -35,9 +35,9 @@ const BarcodeScanner = ({ open, onClose, onScan }) => {
           alignItems: "center",
         }}
       >
-        <div style={{ position: "relative", width: 250, height: 180 }}>
+        <div style={{ position: "relative", width: 180, height: 180 }}>
           <BarcodeScannerComponent
-            width={250}
+            width={180}
             height={180}
             onUpdate={handleUpdate}
           />
@@ -48,7 +48,7 @@ const BarcodeScanner = ({ open, onClose, onScan }) => {
               top: "50%",
               left: "50%",
               width: "180px",
-              height: "40px",
+              height: "80px",
               transform: "translate(-50%, -50%)",
               border: "2px dashed #1976d2",
               borderRadius: "8px",
