@@ -514,6 +514,7 @@ const Products = () => {
 
       return () => {
         if (html5QrCode.current) {
+          // Always check isScanning before calling clear
           if (html5QrCode.current.isScanning) {
             html5QrCode.current
               .stop()
@@ -531,6 +532,7 @@ const Products = () => {
           } else {
             html5QrCode.current.clear();
             html5QrCode.current = null;
+            setIsScanning(false);
           }
         }
       };
@@ -545,8 +547,8 @@ const Products = () => {
         }
         const qrboxSize =
           window.innerWidth < 768
-            ? { width: 200, height: 80 }
-            : { width: 250, height: 100 };
+            ? { width: 200, height: 100 }
+            : { width: 250, height: 120 };
         const config = {
           fps: 10,
           qrbox: qrboxSize,
