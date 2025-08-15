@@ -440,21 +440,21 @@ const Products = () => {
     }
   };
 
-  const safeCleanupScanner = async (html5QrCodeRef) => {
+  const safeCleanupScanner = async (html5QrCodeRef, containerId) => {
     if (html5QrCodeRef.current) {
       if (html5QrCodeRef.current.isScanning) {
         try {
           await html5QrCodeRef.current.stop();
-          await html5QrCodeRef.current.clear();
         } catch (err) {
-          console.error("Failed to stop/clear scanner:", err);
-          // Do NOT call clear again if stop fails
+          console.error("Failed to stop scanner during cleanup:", err);
         }
-      } else {
+      }
+      // Only call clear if the container exists
+      if (document.getElementById(containerId)) {
         try {
           await html5QrCodeRef.current.clear();
         } catch (err) {
-          console.error("Failed to clear scanner:", err);
+          console.error("Failed to clear scanner during cleanup:", err);
         }
       }
       html5QrCodeRef.current = null;
@@ -467,8 +467,9 @@ const Products = () => {
     const html5QrCode = useRef(null);
     const scannedRef = useRef(false);
 
-    // Unique container ID for each mount
-    const scannerContainerId = useRef(`scanner-container-${Date.now()}`);
+    const [containerId] = useState(
+      () => `scanner-container-${Date.now()}-${Math.random()}`
+    );
 
     useEffect(() => {
       let isMounted = true;
@@ -549,12 +550,10 @@ const Products = () => {
       startScanner();
 
       return () => {
-        isMounted = false;
         clearTimeout(timeoutId);
-        safeCleanupScanner(html5QrCode);
+        safeCleanupScanner(html5QrCode, containerId);
         setScannerStarted(false);
       };
-      // eslint-disable-next-line
     }, [isScannerOpen]);
 
     const handleRetry = () => {
@@ -608,7 +607,7 @@ const Products = () => {
           ) : (
             <div className="relative">
               <div
-                id={scannerContainerId.current}
+                id={containerId}
                 className="w-full bg-black rounded-lg overflow-hidden relative"
                 style={{
                   position: "relative",
