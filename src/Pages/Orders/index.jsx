@@ -277,6 +277,7 @@ export const Orders = () => {
                             Out for Delivery
                           </MenuItem>
                           <MenuItem value={"Delivered"}>Delivered</MenuItem>
+                          <MenuItem value={"Returned"}>Returned</MenuItem>
                           <MenuItem value={"Canceled"}>Canceled</MenuItem>
                         </Select>
                       </td>

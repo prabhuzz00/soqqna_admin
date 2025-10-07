@@ -258,7 +258,7 @@ export const OrdersReturn = () => {
                           <option value="pending">Pending</option>
                           <option value="out for pickup">Out for Pickup</option>
                           <option value="pickedup">Picked Up</option>
-                          <option value="returned">Returned</option>
+                          <option value="Returned">Returned</option>
                         </select>
                       </td>
 
