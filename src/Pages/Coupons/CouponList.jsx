@@ -375,6 +375,12 @@ export default function CouponList() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCouponId, setEditingCouponId] = useState(null);
   const [formError, setFormError] = useState("");
+
+  // New state for categories and products
+  const [categories, setCategories] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [loadingCategories, setLoadingCategories] = useState(false);
+  const [loadingProducts, setLoadingProducts] = useState(false);
   const [formData, setFormData] = useState({
     code: "",
     discountType: "percentage",
@@ -384,7 +390,10 @@ export default function CouponList() {
     expiryDate: "",
     usageLimit: "",
     maxUserUsage: "",
-    isAdmin: false, // NEW
+    isAdmin: false,
+    applicationType: "all",
+    applicableCategories: [],
+    applicableProducts: [],
   });
 
   // ──────────────────────────── fetch list
@@ -401,23 +410,89 @@ export default function CouponList() {
       setLoading(false);
     }
   };
+
+  // Fetch categories for coupon restrictions
+  const fetchCategories = async () => {
+    setLoadingCategories(true);
+    try {
+      const res = await fetchDataFromApi("/api/category");
+      console.log("Categories response:", res);
+      setCategories(res?.data || []);
+    } catch (err) {
+      console.error("Failed to fetch categories:", err);
+    } finally {
+      setLoadingCategories(false);
+    }
+  };
+
+  // Fetch products for coupon restrictions
+  const fetchProducts = async () => {
+    setLoadingProducts(true);
+    try {
+      const res = await fetchDataFromApi(
+        "/api/product/getAllProducts?page=1&limit=1000"
+      );
+      console.log("Products response:", res);
+      setProducts(res?.products || []);
+    } catch (err) {
+      console.error("Failed to fetch products:", err);
+    } finally {
+      setLoadingProducts(false);
+    }
+  };
+
   useEffect(() => {
     fetchCoupons();
   }, [page]);
 
+  useEffect(() => {
+    fetchCategories();
+    fetchProducts();
+  }, []);
+
   // ───────────────────────── handlers
   const handlePageChange = (p) => p >= 1 && p <= totalPages && setPage(p);
 
-  const handleInputChange = (e) =>
-    setFormData({
-      ...formData,
-      [e.target.name]:
-        e.target.type === "checkbox" ? e.target.checked : e.target.value,
-    });
+  const handleInputChange = (e) => {
+    const { name, value, type, checked } = e.target;
+
+    if (name === "applicableCategories" || name === "applicableProducts") {
+      // Handle multi-select for categories and products
+      const selectedOptions = Array.from(
+        e.target.selectedOptions,
+        (option) => option.value
+      );
+      setFormData((prev) => ({
+        ...prev,
+        [name]: selectedOptions,
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: type === "checkbox" ? checked : value,
+      }));
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setFormError("");
+
+    // Validation for category/product selection
+    if (
+      formData.applicationType === "categories" &&
+      formData.applicableCategories.length === 0
+    ) {
+      setFormError("Please select at least one category");
+      return;
+    }
+    if (
+      formData.applicationType === "products" &&
+      formData.applicableProducts.length === 0
+    ) {
+      setFormError("Please select at least one product");
+      return;
+    }
 
     const url = editingCouponId
       ? `/api/coupons/${editingCouponId}`
@@ -446,7 +521,10 @@ export default function CouponList() {
       expiryDate: c.expiryDate.split("T")[0],
       usageLimit: c.usageLimit,
       maxUserUsage: c.maxUserUsage || "",
-      isAdmin: !!c.isAdmin, // NEW
+      isAdmin: !!c.isAdmin,
+      applicationType: c.applicationType || "all",
+      applicableCategories: c.applicableCategories || [],
+      applicableProducts: c.applicableProducts || [],
     });
     setEditingCouponId(c._id);
     setIsModalOpen(true);
@@ -489,7 +567,10 @@ export default function CouponList() {
       expiryDate: "",
       usageLimit: "",
       maxUserUsage: "",
-      isAdmin: false, // reset
+      isAdmin: false,
+      applicationType: "all",
+      applicableCategories: [],
+      applicableProducts: [],
     });
   };
 
@@ -524,6 +605,7 @@ export default function CouponList() {
               <th className="py-2 px-4 border-b text-left">Expiry</th>
               <th className="py-2 px-4 border-b text-left">Usage</th>
               <th className="py-2 px-4 border-b text-left">Max/User</th>
+              <th className="py-2 px-4 border-b text-left">Applies To</th>
               <th className="py-2 px-4 border-b text-left">Status</th>
               <th className="py-2 px-4 border-b text-left">Actions</th>
             </tr>
@@ -531,7 +613,7 @@ export default function CouponList() {
           <tbody>
             {!loading && coupons.length === 0 ? (
               <tr>
-                <td colSpan="9" className="py-4 text-center text-gray-500">
+                <td colSpan="10" className="py-4 text-center text-gray-500">
                   No coupons found
                 </td>
               </tr>
@@ -556,6 +638,15 @@ export default function CouponList() {
                   </td>
                   <td className="py-2 px-4 border-b">
                     {c.maxUserUsage || "∞"}
+                  </td>
+                  <td className="py-2 px-4 border-b">
+                    <span className="text-sm">
+                      {c.applicationType === "all" && "All Products"}
+                      {c.applicationType === "categories" &&
+                        `${c.applicableCategories?.length || 0} Categories`}
+                      {c.applicationType === "products" &&
+                        `${c.applicableProducts?.length || 0} Products`}
+                    </span>
                   </td>
                   <td className="py-2 px-4 border-b">
                     <span
@@ -618,153 +709,271 @@ export default function CouponList() {
 
       {/* modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg max-w-md w-full">
-            <h2 className="text-xl font-bold mb-4">
-              {editingCouponId ? "Edit Coupon" : "Create Coupon"}
-            </h2>
-            {formError && <p className="text-red-500 mb-4">{formError}</p>}
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {/* Coupon Code */}
-              <div>
-                <label className="block text-sm font-medium">Coupon Code</label>
-                <input
-                  type="text"
-                  name="code"
-                  value={formData.code}
-                  onChange={handleInputChange}
-                  className="w-full border p-2 rounded"
-                  required
-                />
-              </div>
-              {/* Discount Type */}
-              <div>
-                <label className="block text-sm font-medium">
-                  Discount Type
-                </label>
-                <select
-                  name="discountType"
-                  value={formData.discountType}
-                  onChange={handleInputChange}
-                  className="w-full border p-2 rounded"
-                >
-                  <option value="percentage">Percentage</option>
-                  <option value="fixed">Fixed Amount</option>
-                </select>
-              </div>
-              {/* Discount Value */}
-              <div>
-                <label className="block text-sm font-medium">
-                  Discount Value
-                </label>
-                <input
-                  type="number"
-                  name="discountValue"
-                  value={formData.discountValue}
-                  onChange={handleInputChange}
-                  className="w-full border p-2 rounded"
-                  required
-                  min="0"
-                />
-              </div>
-              {/* Min Order */}
-              <div>
-                <label className="block text-sm font-medium">
-                  Minimum Order Amount
-                </label>
-                <input
-                  type="number"
-                  name="minOrderAmount"
-                  value={formData.minOrderAmount}
-                  onChange={handleInputChange}
-                  className="w-full border p-2 rounded"
-                  min="0"
-                />
-              </div>
-              {/* Max Discount */}
-              <div>
-                <label className="block text-sm font-medium">
-                  Maximum Discount Amount
-                </label>
-                <input
-                  type="number"
-                  name="maxDiscountAmount"
-                  value={formData.maxDiscountAmount}
-                  onChange={handleInputChange}
-                  className="w-full border p-2 rounded"
-                  min="0"
-                />
-              </div>
-              {/* Expiry */}
-              <div>
-                <label className="block text-sm font-medium">Expiry Date</label>
-                <input
-                  type="date"
-                  name="expiryDate"
-                  value={formData.expiryDate}
-                  onChange={handleInputChange}
-                  className="w-full border p-2 rounded"
-                  required
-                />
-              </div>
-              {/* Usage Limit */}
-              <div>
-                <label className="block text-sm font-medium">Usage Limit</label>
-                <input
-                  type="number"
-                  name="usageLimit"
-                  value={formData.usageLimit}
-                  onChange={handleInputChange}
-                  className="w-full border p-2 rounded"
-                  min="1"
-                />
-              </div>
-              {/* Max/User */}
-              <div>
-                <label className="block text-sm font-medium">
-                  Max Usage Per User
-                </label>
-                <input
-                  type="number"
-                  name="maxUserUsage"
-                  value={formData.maxUserUsage}
-                  onChange={handleInputChange}
-                  className="w-full border p-2 rounded"
-                  min="1"
-                  placeholder="Leave blank for no limit"
-                />
-              </div>
-              {/* NEW isAdmin checkbox */}
-              <div className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  id="isAdmin"
-                  name="isAdmin"
-                  checked={formData.isAdmin}
-                  onChange={handleInputChange}
-                  className="h-4 w-4"
-                />
-                <label htmlFor="isAdmin" className="text-sm font-medium">
-                  Admin-only coupon
-                </label>
-              </div>
-              {/* buttons */}
-              <div className="flex justify-end space-x-2">
-                <button
-                  type="button"
-                  onClick={closeModal}
-                  className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-                >
-                  {editingCouponId ? "Update" : "Create"}
-                </button>
-              </div>
-            </form>
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-md w-full max-h-[90vh] flex flex-col">
+            <div className="p-6 border-b border-gray-200">
+              <h2 className="text-xl font-bold">
+                {editingCouponId ? "Edit Coupon" : "Create Coupon"}
+              </h2>
+              {formError && <p className="text-red-500 mt-2">{formError}</p>}
+            </div>
+            <div className="flex-1 overflow-y-auto p-6">
+              {/* Debug Info */}
+              {process.env.NODE_ENV === "development" && (
+                <div className="mb-4 p-2 bg-gray-100 rounded text-xs">
+                  <p>Categories loaded: {categories.length}</p>
+                  <p>Products loaded: {products.length}</p>
+                </div>
+              )}
+
+              <form onSubmit={handleSubmit} className="space-y-4">
+                {/* Coupon Code */}
+                <div>
+                  <label className="block text-sm font-medium">
+                    Coupon Code
+                  </label>
+                  <input
+                    type="text"
+                    name="code"
+                    value={formData.code}
+                    onChange={handleInputChange}
+                    className="w-full border p-2 rounded"
+                    required
+                  />
+                </div>
+                {/* Discount Type */}
+                <div>
+                  <label className="block text-sm font-medium">
+                    Discount Type
+                  </label>
+                  <select
+                    name="discountType"
+                    value={formData.discountType}
+                    onChange={handleInputChange}
+                    className="w-full border p-2 rounded"
+                  >
+                    <option value="percentage">Percentage</option>
+                    <option value="fixed">Fixed Amount</option>
+                  </select>
+                </div>
+                {/* Discount Value */}
+                <div>
+                  <label className="block text-sm font-medium">
+                    Discount Value
+                  </label>
+                  <input
+                    type="number"
+                    name="discountValue"
+                    value={formData.discountValue}
+                    onChange={handleInputChange}
+                    className="w-full border p-2 rounded"
+                    required
+                    min="0"
+                  />
+                </div>
+                {/* Min Order */}
+                <div>
+                  <label className="block text-sm font-medium">
+                    Minimum Order Amount
+                  </label>
+                  <input
+                    type="number"
+                    name="minOrderAmount"
+                    value={formData.minOrderAmount}
+                    onChange={handleInputChange}
+                    className="w-full border p-2 rounded"
+                    min="0"
+                  />
+                </div>
+                {/* Max Discount */}
+                <div>
+                  <label className="block text-sm font-medium">
+                    Maximum Discount Amount
+                  </label>
+                  <input
+                    type="number"
+                    name="maxDiscountAmount"
+                    value={formData.maxDiscountAmount}
+                    onChange={handleInputChange}
+                    className="w-full border p-2 rounded"
+                    min="0"
+                  />
+                </div>
+                {/* Expiry */}
+                <div>
+                  <label className="block text-sm font-medium">
+                    Expiry Date
+                  </label>
+                  <input
+                    type="date"
+                    name="expiryDate"
+                    value={formData.expiryDate}
+                    onChange={handleInputChange}
+                    className="w-full border p-2 rounded"
+                    required
+                  />
+                </div>
+                {/* Usage Limit */}
+                <div>
+                  <label className="block text-sm font-medium">
+                    Usage Limit
+                  </label>
+                  <input
+                    type="number"
+                    name="usageLimit"
+                    value={formData.usageLimit}
+                    onChange={handleInputChange}
+                    className="w-full border p-2 rounded"
+                    min="1"
+                  />
+                </div>
+                {/* Max/User */}
+                <div>
+                  <label className="block text-sm font-medium">
+                    Max Usage Per User
+                  </label>
+                  <input
+                    type="number"
+                    name="maxUserUsage"
+                    value={formData.maxUserUsage}
+                    onChange={handleInputChange}
+                    className="w-full border p-2 rounded"
+                    min="1"
+                    placeholder="Leave blank for no limit"
+                  />
+                </div>
+                {/* NEW isAdmin checkbox */}
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    id="isAdmin"
+                    name="isAdmin"
+                    checked={formData.isAdmin}
+                    onChange={handleInputChange}
+                    className="h-4 w-4"
+                  />
+                  <label htmlFor="isAdmin" className="text-sm font-medium">
+                    Admin-only coupon
+                  </label>
+                </div>
+
+                {/* Application Type */}
+                <div>
+                  <label className="block text-sm font-medium">Apply To</label>
+                  <select
+                    name="applicationType"
+                    value={formData.applicationType}
+                    onChange={handleInputChange}
+                    className="w-full border p-2 rounded"
+                  >
+                    <option value="all">All Products</option>
+                    <option value="categories">Specific Categories</option>
+                    <option value="products">Specific Products</option>
+                  </select>
+                </div>
+
+                {/* Categories Selection */}
+                {formData.applicationType === "categories" && (
+                  <div>
+                    <label className="block text-sm font-medium">
+                      Select Categories
+                    </label>
+                    {loadingCategories ? (
+                      <p className="text-gray-500">Loading categories...</p>
+                    ) : categories.length === 0 ? (
+                      <p className="text-red-500">
+                        No categories found. Check API endpoint.
+                      </p>
+                    ) : (
+                      <select
+                        name="applicableCategories"
+                        multiple
+                        value={formData.applicableCategories}
+                        onChange={handleInputChange}
+                        className="w-full border p-2 rounded h-32"
+                      >
+                        {categories.length > 0 ? (
+                          categories.map((category) => (
+                            <option
+                              key={category._id || category.id}
+                              value={category._id || category.id}
+                            >
+                              {category.name ||
+                                category.catName ||
+                                "Unnamed Category"}
+                            </option>
+                          ))
+                        ) : (
+                          <option disabled>No categories available</option>
+                        )}
+                      </select>
+                    )}
+                    <p className="text-xs text-gray-500 mt-1">
+                      Hold Ctrl/Cmd to select multiple categories
+                    </p>
+                  </div>
+                )}
+
+                {/* Products Selection */}
+                {formData.applicationType === "products" && (
+                  <div>
+                    <label className="block text-sm font-medium">
+                      Select Products
+                    </label>
+                    {loadingProducts ? (
+                      <p className="text-gray-500">Loading products...</p>
+                    ) : products.length === 0 ? (
+                      <p className="text-red-500">
+                        No products found. Check API endpoint.
+                      </p>
+                    ) : (
+                      <select
+                        name="applicableProducts"
+                        multiple
+                        value={formData.applicableProducts}
+                        onChange={handleInputChange}
+                        className="w-full border p-2 rounded h-32"
+                      >
+                        {products.length > 0 ? (
+                          products.map((product) => (
+                            <option
+                              key={product._id || product.id}
+                              value={product._id || product.id}
+                            >
+                              {product.name ||
+                                product.productName ||
+                                "Unnamed Product"}
+                            </option>
+                          ))
+                        ) : (
+                          <option disabled>No products available</option>
+                        )}
+                      </select>
+                    )}
+                    <p className="text-xs text-gray-500 mt-1">
+                      Hold Ctrl/Cmd to select multiple products
+                    </p>
+                  </div>
+                )}
+
+                {/* buttons */}
+                <div className="flex justify-end space-x-2">
+                  <button
+                    type="button"
+                    onClick={closeModal}
+                    className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                  >
+                    {editingCouponId ? "Update" : "Create"}
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
         </div>
       )}
