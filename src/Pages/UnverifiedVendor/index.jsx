@@ -7,6 +7,12 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  TextField,
+  FormControl,
+  InputLabel,
+  Box,
+  Typography,
+  Chip,
 } from "@mui/material";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -39,6 +45,7 @@ const columns = [
   { id: "index", label: "INDEX", minWidth: 80 },
   { id: "vendor", label: "VENDOR", minWidth: 80 },
   { id: "vendorPhone", label: "VENDOR PHONE NO", minWidth: 130 },
+  { id: "serviceZone", label: "SERVICE ZONES", minWidth: 150 },
   { id: "verifyStatus", label: "VERIFICATION STATUS", minWidth: 130 },
   { id: "status", label: "STATUS", minWidth: 100 },
   { id: "createdDate", label: "CREATED", minWidth: 130 },
@@ -53,10 +60,14 @@ const UnverifiedVendors = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [openVerifyDialog, setOpenVerifyDialog] = useState(false);
+  const [openCommissionDialog, setOpenCommissionDialog] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [openStatusDialog, setOpenStatusDialog] = useState(false);
   const [selectedVendorId, setSelectedVendorId] = useState(null);
+  const [selectedVendor, setSelectedVendor] = useState(null);
   const [selectedVendorStatus, setSelectedVendorStatus] = useState(null);
+  const [commissionRate, setCommissionRate] = useState("");
+  const [commissionError, setCommissionError] = useState("");
 
   const context = useContext(MyContext);
   const navigate = useNavigate();
@@ -122,9 +133,12 @@ const UnverifiedVendors = () => {
     });
   };
 
-  const handleVerifyClick = (id) => {
-    setSelectedVendorId(id);
-    setOpenVerifyDialog(true);
+  const handleVerifyClick = (vendor) => {
+    setSelectedVendor(vendor);
+    setSelectedVendorId(vendor._id);
+    setCommissionRate("");
+    setCommissionError("");
+    setOpenCommissionDialog(true);
   };
 
   const handleDeleteClick = (id) => {
@@ -143,6 +157,14 @@ const UnverifiedVendors = () => {
     setSelectedVendorId(null);
   };
 
+  const handleCommissionDialogClose = () => {
+    setOpenCommissionDialog(false);
+    setSelectedVendorId(null);
+    setSelectedVendor(null);
+    setCommissionRate("");
+    setCommissionError("");
+  };
+
   const handleDeleteDialogClose = () => {
     setOpenDeleteDialog(false);
     setSelectedVendorId(null);
@@ -154,23 +176,39 @@ const UnverifiedVendors = () => {
     setSelectedVendorStatus(null);
   };
 
-  const verifyVendor = () => {
+  const verifyVendor = (approved = true) => {
+    // Validate commission rate if approving
+    if (approved) {
+      const rate = parseFloat(commissionRate);
+      if (isNaN(rate) || rate < 0 || rate > 100) {
+        setCommissionError("Please enter a valid commission rate between 0 and 100");
+        return;
+      }
+    }
+
     setIsLoading(true);
-    patchDataLatest(`/api/vendor/verify/${selectedVendorId}`)
+    const requestData = approved 
+      ? { commissionRate: parseFloat(commissionRate), approved: true }
+      : { approved: false };
+
+    patchDataLatest(`/api/vendor/verify/${selectedVendorId}`, requestData)
       .then((res) => {
         if (res.error) {
           context.alertBox("error", res.message);
         } else {
-          context.alertBox("success", "Vendor verified successfully");
+          const message = approved 
+            ? "Vendor verified successfully" 
+            : "Vendor application rejected";
+          context.alertBox("success", message);
           getVendors(page, rowsPerPage);
         }
-        handleVerifyDialogClose();
+        handleCommissionDialogClose();
         setIsLoading(false);
       })
       .catch((error) => {
-        context.alertBox("error", "Failed to verify vendor");
+        context.alertBox("error", "Failed to process vendor application");
         console.error("Verify vendor error:", error);
-        handleVerifyDialogClose();
+        handleCommissionDialogClose();
         setIsLoading(false);
       });
   };
@@ -308,11 +346,28 @@ const UnverifiedVendors = () => {
                     </span>
                   </TableCell>
                   <TableCell style={{ minWidth: columns[3].minWidth }}>
+                    <div className="flex flex-wrap gap-1">
+                      {vendor.serviceZone ? (
+                        vendor.serviceZone.split(',').map((zone, index) => (
+                          <Chip 
+                            key={index} 
+                            label={zone.trim()} 
+                            size="small" 
+                            variant="outlined"
+                            sx={{ fontSize: '10px', height: '20px' }}
+                          />
+                        ))
+                      ) : (
+                        <span className="text-gray-500 text-xs">All zones</span>
+                      )}
+                    </div>
+                  </TableCell>
+                  <TableCell style={{ minWidth: columns[4].minWidth }}>
                     <span className="inline-block py-1 px-4 rounded-full text-[11px] capitalize bg-red-500 text-white font-[500]">
                       Not Verified
                     </span>
                   </TableCell>
-                  <TableCell style={{ minWidth: columns[4].minWidth }}>
+                  <TableCell style={{ minWidth: columns[5].minWidth }}>
                     <span
                       className="inline-block py-1 px-4 rounded-full text-[11px] capitalize font-[500] text-white"
                       style={{
@@ -322,13 +377,13 @@ const UnverifiedVendors = () => {
                       {vendor.status ? "Active" : "Inactive"}
                     </span>
                   </TableCell>
-                  <TableCell style={{ minWidth: columns[5].minWidth }}>
+                  <TableCell style={{ minWidth: columns[6].minWidth }}>
                     <span className="flex items-center gap-2">
                       <SlCalender />
                       {vendor.createdAt.split("T")[0]}
                     </span>
                   </TableCell>
-                  <TableCell style={{ minWidth: columns[6].minWidth }}>
+                  <TableCell style={{ minWidth: columns[7].minWidth }}>
                     <div className="flex items-center gap-1">
                       <Button
                         className="!w-[35px] !h-[35px] bg-[#f1f1f1] !border !border-[rgba(0,0,0,0.4)] !rounded-full hover:!bg-[#f1f1f1] !min-w-[35px]"
@@ -339,7 +394,7 @@ const UnverifiedVendors = () => {
                         <AiOutlineEdit className="text-[rgba(0,0,0,0.7)] text-[20px]" />
                       </Button>
                       <Button
-                        onClick={() => handleVerifyClick(vendor._id)}
+                        onClick={() => handleVerifyClick(vendor)}
                         variant="outlined"
                         color="success"
                         size="small"
@@ -408,6 +463,91 @@ const UnverifiedVendors = () => {
           </Button>
           <Button onClick={verifyVendor} color="primary" autoFocus>
             OK
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Commission Rate Dialog */}
+      <Dialog
+        open={openCommissionDialog}
+        onClose={handleCommissionDialogClose}
+        aria-labelledby="commission-dialog-title"
+        maxWidth="md"
+        fullWidth
+      >
+        <DialogTitle id="commission-dialog-title">
+          Vendor Verification - Set Commission Rate
+        </DialogTitle>
+        <DialogContent>
+          <Box sx={{ mt: 2 }}>
+            {selectedVendor && (
+              <Box sx={{ mb: 3 }}>
+                <Typography variant="h6" gutterBottom>
+                  Vendor Information:
+                </Typography>
+                <Typography><strong>Store Name:</strong> {selectedVendor.storeName}</Typography>
+                <Typography><strong>Owner:</strong> {selectedVendor.ownerName}</Typography>
+                <Typography><strong>Email:</strong> {selectedVendor.emailAddress}</Typography>
+                <Typography><strong>Phone:</strong> {selectedVendor.phoneNumber}</Typography>
+                
+                {selectedVendor.serviceZone && (
+                  <Box sx={{ mt: 2 }}>
+                    <Typography><strong>Service Zones:</strong></Typography>
+                    <Box sx={{ mt: 1 }}>
+                      {selectedVendor.serviceZone.split(',').map((zone, index) => (
+                        <Chip key={index} label={zone.trim()} sx={{ mr: 1, mb: 1 }} />
+                      ))}
+                    </Box>
+                  </Box>
+                )}
+              </Box>
+            )}
+            
+            <FormControl fullWidth>
+              <TextField
+                label="Commission Rate (%)"
+                type="number"
+                value={commissionRate}
+                onChange={(e) => {
+                  setCommissionRate(e.target.value);
+                  setCommissionError("");
+                }}
+                error={!!commissionError}
+                helperText={commissionError || "Enter commission rate between 0 and 100"}
+                inputProps={{ min: 0, max: 100, step: 0.1 }}
+                variant="outlined"
+                fullWidth
+              />
+            </FormControl>
+            
+            <DialogContentText sx={{ mt: 2 }}>
+              Setting a commission rate will verify and activate this vendor account. 
+              All vendor products will be updated with their selected service zones.
+            </DialogContentText>
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button 
+            onClick={handleCommissionDialogClose} 
+            color="secondary"
+            disabled={isLoading}
+          >
+            Cancel
+          </Button>
+          <Button 
+            onClick={() => verifyVendor(false)} 
+            color="error"
+            disabled={isLoading}
+          >
+            Reject
+          </Button>
+          <Button 
+            onClick={() => verifyVendor(true)} 
+            color="primary" 
+            variant="contained"
+            disabled={isLoading || !commissionRate}
+          >
+            {isLoading ? <CircularProgress size={20} /> : "Approve & Verify"}
           </Button>
         </DialogActions>
       </Dialog>
